@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-awdFIlbfvnuncA60MdRDmggk7Mhfbyk/oxWNr/q8mJI='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-Nagt0P/9YN1mYGiMKJxudVGWDMoe+qVNbFc6V+KXw6k='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC, and Chris Korzen, who makes Convoy.">
@@ -120,8 +120,11 @@ html.motion .stage { height: 220vh; }
 .rule { height: 1px; margin: clamp(56px, 9vh, 96px) 0 28px; background: linear-gradient(to right, var(--line), rgba(242,243,245,0)); }
 .work { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
 .project { display: flex; gap: 18px; align-items: center; padding: 20px 22px; border-radius: 20px; text-decoration: none; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.01)); transition: border-color .25s, transform .25s, background .25s; }
-.project:hover { border-color: rgba(242,243,245,.34); transform: translateY(-2px); background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.015)); }
+/* Only a card that goes somewhere lifts; the others are facts, not links. */
+a.project:hover { border-color: rgba(242,243,245,.34); transform: translateY(-2px); background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.015)); }
 .project img { width: 56px; height: 56px; border-radius: 14px; flex: none; }
+.glyph { width: 56px; height: 56px; border-radius: 14px; flex: none; display: grid; place-items: center; border: 1px solid var(--line); background: linear-gradient(160deg, #272b33, #101216); }
+.glyph svg { width: 26px; height: 26px; fill: none; stroke: #d9dce2; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .project strong { display: block; font-size: 18px; }
 .project span { display: block; color: var(--muted); font-size: 14px; line-height: 1.45; }
 .project .go { margin-left: auto; color: var(--ink-2); font-size: 18px; }
@@ -212,6 +215,14 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
           <div><strong>Convoy</strong><span>Drive together. Routes, crews and live voice for the road.</span></div>
           <span class="go" aria-hidden="true">↗</span>
         </a>
+        <div class="project reveal d2">
+          <div class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></div>
+          <div><strong>Publix</strong><span>Software Engineer</span></div>
+        </div>
+        <div class="project reveal d3">
+          <div class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div>
+          <div><strong>Investing</strong><span>Managing a $100K+ stock portfolio</span></div>
+        </div>
       </div>
     </div>
   </section>
