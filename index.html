@@ -4,63 +4,345 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Korzen LLC</title>
-<meta name="description" content="Korzen LLC">
+<meta name="description" content="Korzen LLC, and Chris Korzen, who makes Convoy.">
 <link rel="canonical" href="https://korzengroup.com/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" as="image" href="/img/supercar-1672.webp" imagesrcset="/img/supercar-960.webp 960w, /img/supercar-1672.webp 1672w" imagesizes="(max-width: 700px) 125vw, min(1672px, 100vw)">
+<link rel="preload" as="image" href="/img/supercar-hq-1672.webp" imagesrcset="/img/supercar-hq-960.webp 960w, /img/supercar-hq-1672.webp 1672w" imagesizes="(max-width: 700px) 125vw, min(1672px, 100vw)">
 <meta name="theme-color" content="#000000">
+<script>document.documentElement.classList.add('js');</script>
+<!--
+  The homepage (2026-09-25). "The homepage website image doesn't fade properly
+  and you can see where it stops ... The page should also scroll down where a
+  profile on me will be placed. Scrolling down should have a cool modern
+  animation where the title dazzles. The car should also animate away."
+
+  - The photo melts into the page: its sides and its floor are feathered to
+    transparent by two nested masks (one across, one down), so wherever the
+    picture ends there is only black. It is also encoded at a higher quality
+    (supercar-hq-*), and a fine grain dithers the dark floor instead of
+    letting it band.
+  - The first screen is pinned while you scroll through it (.stage is the
+    runway). A light sweeps across KORZEN LLC, each letter flaring and
+    glinting as it passes; then the letters part and dissolve upward. The car
+    pulls away to the right, slow and then fast, leaving its headlights'
+    trails and a smear behind it.
+  - Then the profile rises into place.
+
+  Nothing but transform, opacity and filter moves, one frame at a time. With
+  "reduce motion" on — or without JavaScript — the page is still: the photo,
+  the title, and the profile underneath.
+-->
 <style>
 @font-face { font-family: Archivo; src: url(/archivo.woff) format('woff'); font-weight: 100 900; font-display: swap; }
-/* The photo's edges are pure black, so the page is too and there is no seam. */
-:root { color-scheme: dark; --ink: #f2f3f5; --line: rgba(242,243,245,.16); }
+:root { color-scheme: dark; --ink: #f2f3f5; --ink-2: rgba(242,243,245,.72); --muted: rgba(242,243,245,.5); --line: rgba(242,243,245,.14); --silver: linear-gradient(180deg, #ffffff 0%, #c9ccd2 55%, #8d9199 100%); }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: #000; }
-body {
-  color: var(--ink); min-height: 100vh; min-height: 100svh; overflow-x: hidden;
-  font: 16px/1.5 Archivo, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-header { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; justify-content: flex-end; padding: 20px clamp(16px, 4vw, 40px); }
+html { scroll-behavior: smooth; }
+body { color: var(--ink); font: 16px/1.5 Archivo, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+/* ── header: the name returns, small, once the title has gone ────────────── */
+header { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; padding: 20px clamp(16px, 4vw, 40px); pointer-events: none; }
+header a { pointer-events: auto; }
+.brand { text-decoration: none; font-weight: 800; letter-spacing: .32em; font-size: 13px; color: var(--ink); }
+html.motion .brand { opacity: 0; }
 .admin {
-  color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase;
+  margin-left: auto; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase;
   padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.04);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: background .2s, border-color .2s;
 }
 .admin:hover { background: rgba(255,255,255,.1); border-color: rgba(242,243,245,.34); }
-.admin:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-main { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.hero { position: relative; width: min(1672px, 100vw); flex: none; }
-.hero img { display: block; width: 100%; height: auto; }
-.hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 14%; background: linear-gradient(to bottom, rgba(0,0,0,0), #000); pointer-events: none; }
-h1 {
-  position: absolute; left: 0; right: 0; top: 13%; margin: 0; text-align: center;
-  font-weight: 800; letter-spacing: .32em; text-indent: .32em; text-transform: uppercase; line-height: 1;
-  font-size: clamp(26px, 5.6vw, 84px);
-  background: linear-gradient(180deg, #ffffff 0%, #c9ccd2 55%, #8d9199 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+.admin:focus-visible, .brand:focus-visible, .cue:focus-visible, .project:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* ── the stage: pinned while the runway scrolls past it ─────────────────── */
+.stage { position: relative; }
+html.motion .stage { height: 220vh; }
+/* Black, and its own group: the grain and the smear blend against this black,
+   so where nothing is lit they add nothing at all. */
+.pin {
+  position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; isolation: isolate; background: #000;
+  --W: min(1672px, 100vw); --H: calc(var(--W) * 0.5628);
 }
-@media (max-width: 700px) {
-  .hero { width: 125vw; }
-  h1 { top: 10%; font-size: clamp(22px, 7.4vw, 44px); }
+@media (max-width: 700px) { .pin { --W: 125vw; } }
+/* The photo's box, centred; the car, its smear and the title all share it. */
+.frame { position: absolute; width: var(--W); height: var(--H); left: calc(50% - var(--W) / 2); top: calc(50% - var(--H) / 2); }
+/* Feathered across here, and down on the picture inside: nested masks multiply.
+   The photo's own background is black, so the feathering leaves no edge at all. */
+.car, .smear { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%); will-change: transform, opacity; }
+.car picture, .smear picture { display: block; width: 100%; height: 100%; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 74%, rgba(0,0,0,.5) 87%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 74%, rgba(0,0,0,.5) 87%, transparent 100%); }
+.car img, .smear img { display: block; width: 100%; height: 100%; }
+/* Over the car, adding light only: the rims and headlights, blurred and
+   dragged out behind it — a smear, never a second car. */
+.smear { opacity: 0; mix-blend-mode: screen; transform-origin: 90% 50%; filter: blur(7px); }
+.trail { position: absolute; left: 0; top: 0; width: 1000px; height: max(2px, .16vw); margin-top: calc(max(2px, .16vw) / -2); transform-origin: 0 50%; opacity: 0; border-radius: 2px; background: linear-gradient(to right, rgba(210,228,255,0), rgba(225,238,255,.95)); box-shadow: 0 0 14px 2px rgba(170,200,255,.28); will-change: transform, opacity; }
+.trail.floor { filter: blur(2px); height: max(3px, .24vw); }
+.grain { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: overlay; opacity: .5; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* ── the title: silver letters, and a light that crosses them ───────────── */
+.titlebox { pointer-events: none; }
+.title { position: absolute; left: 0; right: 0; top: 13%; margin: 0; text-align: center; font-weight: 800; text-transform: uppercase; line-height: 1; white-space: nowrap; font-size: clamp(26px, 5.6vw, 84px); will-change: transform; }
+.letters { display: inline-block; }
+.ch {
+  display: inline-block; margin: 0 .16em; color: transparent; will-change: transform, filter, opacity;
+  background-image: linear-gradient(100deg, rgba(255,255,255,0) 40%, rgba(255,255,255,.97) 50%, rgba(255,255,255,0) 60%), var(--silver);
+  background-repeat: no-repeat; background-size: var(--tw, 100px) 100%, 100% 100%;
+  background-position: calc(var(--s, -99999px) - var(--x, 0px)) 0, 0 0;
+  -webkit-background-clip: text; background-clip: text;
 }
+.gap { display: inline-block; width: .42em; }
+.spark { position: absolute; left: 0; top: 0; width: clamp(14px, 1.9vw, 30px); height: auto; opacity: 0; fill: #fff; filter: drop-shadow(0 0 6px rgba(255,255,255,.9)); will-change: transform, opacity; }
+.cue { position: absolute; left: 50%; bottom: max(28px, 4vh); translate: -50% 0; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 10px; text-decoration: none; font-size: 11px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
+.cue i { display: block; width: 1px; height: 44px; background: linear-gradient(to bottom, rgba(242,243,245,0), rgba(242,243,245,.7)); background-size: 100% 200%; }
+@media (max-width: 700px) { .title { top: 10%; font-size: clamp(22px, 7.4vw, 44px); } }
+
+/* ── the profile ─────────────────────────────────────────────────────────── */
+.about { position: relative; padding: clamp(96px, 16vh, 180px) clamp(16px, 5vw, 64px) clamp(80px, 12vh, 140px); background: radial-gradient(900px 480px at 78% 8%, rgba(150,160,180,.07), rgba(0,0,0,0) 70%), #000; }
+.about-in { width: min(1080px, 100%); margin: 0 auto; }
+.eyebrow { margin: 0 0 30px; font-size: 12px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); }
+.profile { display: grid; grid-template-columns: minmax(200px, 300px) 1fr; gap: clamp(28px, 5vw, 72px); align-items: center; }
+.portrait { position: relative; aspect-ratio: 4 / 5; border-radius: 26px; overflow: hidden; display: grid; place-items: center; background: radial-gradient(120% 90% at 30% 10%, #20242c, #0a0b0e 70%); border: 1px solid var(--line); }
+.portrait::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.08) 50%, rgba(255,255,255,0) 65%); translate: -60% 0; transition: translate 1.2s cubic-bezier(.2,.7,.1,1); }
+.portrait:hover::after { translate: 60% 0; }
+.portrait span { font-weight: 800; font-size: clamp(56px, 7vw, 88px); letter-spacing: .06em; background: var(--silver); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.about h2 { margin: 0 0 14px; font-size: clamp(40px, 7vw, 84px); line-height: .98; letter-spacing: -.02em; font-weight: 800; background: var(--silver); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.role { margin: 0 0 24px; font-size: clamp(16px, 1.6vw, 19px); color: var(--ink-2); letter-spacing: .02em; }
+.bio p { margin: 0 0 16px; max-width: 58ch; font-size: clamp(16px, 1.4vw, 18px); line-height: 1.7; color: var(--ink-2); }
+.rule { height: 1px; margin: clamp(56px, 9vh, 96px) 0 28px; background: linear-gradient(to right, var(--line), rgba(242,243,245,0)); }
+.work { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.project { display: flex; gap: 18px; align-items: center; padding: 20px 22px; border-radius: 20px; text-decoration: none; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.01)); transition: border-color .25s, transform .25s, background .25s; }
+.project:hover { border-color: rgba(242,243,245,.34); transform: translateY(-2px); background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.015)); }
+.project img { width: 56px; height: 56px; border-radius: 14px; flex: none; }
+.project strong { display: block; font-size: 18px; }
+.project span { display: block; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.project .go { margin-left: auto; color: var(--ink-2); font-size: 18px; }
+footer { padding: 28px clamp(16px, 4vw, 40px) 40px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 13px; border-top: 1px solid rgba(242,243,245,.06); }
+footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
+@media (max-width: 720px) {
+  .profile { grid-template-columns: 1fr; }
+  .portrait { width: min(220px, 62%); }
+}
+html.js .reveal { opacity: 0; transform: translateY(26px); filter: blur(8px); transition: opacity 1s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter 1s cubic-bezier(.2,.7,.1,1); }
+html.js .reveal.in { opacity: 1; transform: none; filter: none; }
+html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-delay: .2s; } html.js .reveal.d3 { transition-delay: .3s; }
+
+/* ── arriving, and moving only when motion is welcome ───────────────────── */
 @media (prefers-reduced-motion: no-preference) {
-  .hero img { animation: reveal 1.6s cubic-bezier(.2,.7,.1,1) both; }
-  h1 { animation: rise 1.2s .2s cubic-bezier(.2,.7,.1,1) both; }
+  .car picture { animation: reveal 1.6s cubic-bezier(.2,.7,.1,1) both; }
+  .titlebox { animation: rise 1.2s .2s cubic-bezier(.2,.7,.1,1) both; }
+  .cue span, .cue i { animation: rise 1s 1.1s cubic-bezier(.2,.7,.1,1) both; }
+  .cue i { animation: rise 1s 1.1s cubic-bezier(.2,.7,.1,1) both, drip 2.2s 2.1s ease-in-out infinite; }
   @keyframes reveal { from { opacity: 0; transform: scale(1.03); } to { opacity: 1; transform: none; } }
   @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes drip { 0% { background-position: 0 100%; } 100% { background-position: 0 -100%; } }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js .reveal { opacity: 1; transform: none; filter: none; transition: none; }
 }
 </style>
 </head>
 <body>
-<header><a class="admin" href="/admin/">Admin</a></header>
+<header>
+  <a class="brand" href="#top" aria-label="Korzen LLC, back to the top">KORZEN</a>
+  <a class="admin" href="/admin/">Admin</a>
+</header>
 <main>
-  <div class="hero">
-    <picture>
-      <source type="image/webp" srcset="/img/supercar-960.webp 960w, /img/supercar-1672.webp 1672w" sizes="(max-width: 700px) 125vw, min(1672px, 100vw)">
-      <img src="/img/supercar-1672.jpg" srcset="/img/supercar-960.jpg 960w, /img/supercar-1672.jpg 1672w" sizes="(max-width: 700px) 125vw, min(1672px, 100vw)" width="1672" height="941" alt="A black supercar in low light">
-    </picture>
-    <h1>Korzen LLC</h1>
-  </div>
+  <section class="stage" id="top" aria-label="Korzen LLC">
+    <div class="pin">
+      <div class="frame car">
+        <picture>
+          <source type="image/webp" srcset="/img/supercar-hq-960.webp 960w, /img/supercar-hq-1672.webp 1672w" sizes="(max-width: 700px) 125vw, min(1672px, 100vw)">
+          <img src="/img/supercar-hq-1672.jpg" srcset="/img/supercar-hq-960.jpg 960w, /img/supercar-hq-1672.jpg 1672w" sizes="(max-width: 700px) 125vw, min(1672px, 100vw)" width="1672" height="941" alt="A black supercar in low light">
+        </picture>
+      </div>
+      <div class="frame smear" aria-hidden="true">
+        <picture>
+          <source type="image/webp" srcset="/img/supercar-hq-960.webp 960w, /img/supercar-hq-1672.webp 1672w" sizes="(max-width: 700px) 125vw, min(1672px, 100vw)">
+          <img src="/img/supercar-hq-1672.jpg" srcset="/img/supercar-hq-960.jpg 960w, /img/supercar-hq-1672.jpg 1672w" sizes="(max-width: 700px) 125vw, min(1672px, 100vw)" width="1672" height="941" alt="">
+        </picture>
+      </div>
+      <i class="trail" aria-hidden="true"></i>
+      <i class="trail floor" aria-hidden="true"></i>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="frame titlebox">
+        <h1 class="title"><span class="sr">Korzen LLC</span><span class="letters" aria-hidden="true"><span class="ch">K</span><span class="ch">O</span><span class="ch">R</span><span class="ch">Z</span><span class="ch">E</span><span class="ch">N</span><span class="gap"></span><span class="ch">L</span><span class="ch">L</span><span class="ch">C</span></span></h1>
+      </div>
+      <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C12.9 8.1 15.9 11.1 24 12 15.9 12.9 12.9 15.9 12 24 11.1 15.9 8.1 12.9 0 12 8.1 11.1 11.1 8.1 12 0Z"/></svg>
+      <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C12.9 8.1 15.9 11.1 24 12 15.9 12.9 12.9 15.9 12 24 11.1 15.9 8.1 12.9 0 12 8.1 11.1 11.1 8.1 12 0Z"/></svg>
+      <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C12.9 8.1 15.9 11.1 24 12 15.9 12.9 12.9 15.9 12 24 11.1 15.9 8.1 12.9 0 12 8.1 11.1 11.1 8.1 12 0Z"/></svg>
+      <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C12.9 8.1 15.9 11.1 24 12 15.9 12.9 12.9 15.9 12 24 11.1 15.9 8.1 12.9 0 12 8.1 11.1 11.1 8.1 12 0Z"/></svg>
+      <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C12.9 8.1 15.9 11.1 24 12 15.9 12.9 12.9 15.9 12 24 11.1 15.9 8.1 12.9 0 12 8.1 11.1 11.1 8.1 12 0Z"/></svg>
+      <a class="cue" href="#about"><span>Scroll</span><i aria-hidden="true"></i></a>
+    </div>
+  </section>
+
+  <section class="about" id="about" aria-labelledby="about-name">
+    <div class="about-in">
+      <p class="eyebrow reveal">About</p>
+      <div class="profile">
+        <div class="portrait reveal" aria-hidden="true"><span>CK</span></div>
+        <div class="bio">
+          <h2 id="about-name" class="reveal d1">Chris Korzen</h2>
+          <p class="role reveal d1">Korzen LLC · Creator of Convoy</p>
+          <div class="reveal d2">
+            <p>Chris makes Convoy, the app for people who love to drive, and love to drive together: one route for the whole run, every car on the map, and a voice channel that keeps the group talking.</p>
+          </div>
+        </div>
+      </div>
+      <div class="rule reveal" aria-hidden="true"></div>
+      <p class="eyebrow reveal">Work</p>
+      <div class="work">
+        <a class="project reveal d1" href="https://convoy.korzengroup.com">
+          <img src="/img/convoy-icon.png" width="56" height="56" alt="">
+          <div><strong>Convoy</strong><span>Drive together. Routes, crews and live voice for the road.</span></div>
+          <span class="go" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
 </main>
+<footer>
+  <span>© 2026 Korzen LLC</span>
+  <a href="/admin/">Admin</a>
+</footer>
+<script>
+/*
+  The scroll. One number, p, from 0 at the top of the stage to 1 where it lets
+  go, and everything on the stage is drawn from it, once a frame.
+*/
+(function () {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  // The profile rises into place as it arrives; with no observer or no motion, it is simply there.
+  var reveals = $$('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+  if (reduce) return;
+  document.documentElement.classList.add('motion');
+
+  var stage = $('.stage'), pin = $('.pin'), car = $('.car'), smear = $('.smear');
+  var title = $('.title'), box = $('.letters'), cue = $('.cue'), brand = $('.brand');
+  var letters = $$('.ch'), sparks = $$('.spark'), trails = $$('.trail');
+  /*
+    The light trails, in fractions of the photo: each runs from where the
+    headlight was (x 52.2%, y 54.1%, measured from the image) to where the
+    car's tail is now at that height (x 17%) — a long exposure, stopped by the
+    car itself. The second is its reflection on the wet floor, fainter.
+  */
+  var TRAILS = [
+    { from: [0.522, 0.541], tail: [0.17, 0.541], strength: 1 },
+    { from: [0.522, 0.8], tail: [0.17, 0.8], strength: 0.4 },
+  ];
+  // The letters that glint as the light crosses them: K, Z, N, the second L, C.
+  var GLINT = [0, 3, 5, 7, 8];
+  var g = { tw: 1, centers: [], sparks: [], sparkAt: [], frame: [0, 0, 1, 1], centre: [0, 0], top: 0, run: 1, spread: 40 };
+
+  var clamp = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+  var inOut = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+
+  function measure() {
+    // Measured at rest: nothing on the stage may be moved while it is read.
+    [car, title].concat(letters).forEach(function (el) { el.style.transform = ''; });
+    var pr = pin.getBoundingClientRect();
+    g.top = stage.getBoundingClientRect().top + window.pageYOffset;
+    g.run = Math.max(1, stage.offsetHeight - window.innerHeight);
+    g.tw = box.offsetWidth || 1;
+    box.style.setProperty('--tw', g.tw + 'px');
+    g.spread = parseFloat(getComputedStyle(title).fontSize) * 0.9;
+    g.centers = letters.map(function (el) {
+      var x = el.offsetLeft - box.offsetLeft;
+      el.style.setProperty('--x', x + 'px');
+      return x + el.offsetWidth / 2;
+    });
+    g.sparks = GLINT.map(function (i) {
+      var r = letters[i].getBoundingClientRect();
+      return [r.right - pr.left - r.width * 0.12, r.top - pr.top + r.height * 0.1];
+    });
+    g.sparkAt = GLINT.map(function (i) { return 0.32 * clamp((g.centers[i] / g.tw + 0.18) / 1.36); });
+    var fr = car.getBoundingClientRect();
+    g.frame = [fr.left - pr.left, fr.top - pr.top, fr.width, fr.height];
+    g.centre = [g.frame[0] + fr.width / 2, g.frame[1] + fr.height / 2];
+  }
+  /** A point of the photo, in fractions, on the stage at rest. */
+  function spot(f) { return [g.frame[0] + f[0] * g.frame[2], g.frame[1] + f[1] * g.frame[3]]; }
+
+  function render(p) {
+    var vw = pin.clientWidth, vh = pin.clientHeight;
+    cue.style.opacity = (1 - clamp(p / 0.05)).toFixed(3);
+
+    // The title: a light crosses it, and each letter flares as it passes...
+    var q = clamp(p / 0.32);
+    var band = (-0.18 + 1.36 * q) * g.tw;
+    box.style.setProperty('--s', (band - g.tw / 2).toFixed(1) + 'px');
+    // ...then the letters part and dissolve upward.
+    var ex = inOut(clamp((p - 0.34) / 0.34));
+    var mid = (letters.length - 1) / 2;
+    letters.forEach(function (el, i) {
+      var f = q > 0 && q < 1 ? Math.max(0, 1 - Math.abs(band - g.centers[i]) / (0.1 * g.tw)) : 0;
+      el.style.transform = 'translate3d(' + ((i - mid) * ex * g.spread).toFixed(1) + 'px,' + (-f * 4 - ex * 26).toFixed(1) + 'px,0)';
+      var fx = [];
+      if (f > 0.02) fx.push('drop-shadow(0 0 ' + (f * 18).toFixed(1) + 'px rgba(255,255,255,' + (0.9 * f).toFixed(2) + '))');
+      if (ex > 0.01) fx.push('blur(' + (ex * 8).toFixed(1) + 'px)');
+      el.style.filter = fx.length ? fx.join(' ') : 'none';
+      el.style.opacity = (1 - ex).toFixed(3);
+    });
+    title.style.transform = 'scale(' + (1 + 0.12 * ex).toFixed(4) + ')';
+    sparks.forEach(function (s, k) {
+      var t = (p - g.sparkAt[k]) / 0.07, a = t > 0 && t < 1 ? Math.sin(Math.PI * t) : 0;
+      s.style.opacity = a.toFixed(3);
+      s.style.transform = 'translate3d(' + g.sparks[k][0].toFixed(1) + 'px,' + g.sparks[k][1].toFixed(1) + 'px,0) translate(-50%,-50%) scale(' + (0.25 + 0.75 * a).toFixed(3) + ') rotate(' + (a * 90).toFixed(1) + 'deg)';
+    });
+
+    // The car pulls away: slow, then gone, past the right of the screen.
+    var pc = clamp((p - 0.12) / 0.68), e = pc * pc * pc;
+    var X = e * 1.15 * vw, Y = e * 0.05 * vh, S = 1 + 0.18 * e;
+    var fade = 1 - clamp((pc - 0.88) / 0.12);
+    car.style.transform = 'translate3d(' + X.toFixed(1) + 'px,' + Y.toFixed(1) + 'px,0) scale(' + S.toFixed(4) + ')';
+    car.style.opacity = fade.toFixed(3);
+    // Its speed, 0 to 1: the slope of X, which is what a smear and a trail answer to.
+    var speed = pc * pc;
+    smear.style.transform = 'translate3d(' + (X * 0.9).toFixed(1) + 'px,' + (Y * 0.9).toFixed(1) + 'px,0) scale(' + S.toFixed(4) + ') scaleX(' + (1 + 0.55 * speed).toFixed(3) + ')';
+    smear.style.opacity = (0.38 * speed * fade).toFixed(3);
+    // The headlight's path, from where it was up to the car's tail.
+    trails.forEach(function (tr, i) {
+      var t = TRAILS[i], c = g.centre, from = spot(t.from), tail = spot(t.tail);
+      var dx = c[0] + X + (tail[0] - c[0]) * S - from[0], dy = c[1] + Y + (tail[1] - c[1]) * S - from[1];
+      var len = dx > 0 ? Math.sqrt(dx * dx + dy * dy) : 0;
+      tr.style.transform = 'translate3d(' + from[0].toFixed(1) + 'px,' + from[1].toFixed(1) + 'px,0) rotate(' + Math.atan2(dy, dx).toFixed(4) + 'rad) scaleX(' + (len / 1000).toFixed(4) + ')';
+      tr.style.opacity = len ? (t.strength * Math.min(1, speed * 1.8) * (1 - clamp((pc - 0.8) / 0.2))).toFixed(3) : '0';
+    });
+
+    // With the title gone, the name waits in the corner.
+    brand.style.opacity = clamp((p - 0.6) / 0.15).toFixed(3);
+  }
+
+  var queued = false;
+  function frame() {
+    queued = false;
+    render(clamp((window.pageYOffset - g.top) / g.run));
+  }
+  function queue() { if (!queued) { queued = true; requestAnimationFrame(frame); } }
+  function remeasure() { measure(); frame(); }
+
+  remeasure();
+  // The title rises in on arrival; its letters are only where they stay once it has.
+  document.querySelector('.titlebox').addEventListener('animationend', remeasure);
+  addEventListener('scroll', queue, { passive: true });
+  addEventListener('resize', function () { requestAnimationFrame(remeasure); });
+  // The font arriving changes every letter's width.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+  addEventListener('load', remeasure);
+})();
+</script>
 <script>
 /* Until GitHub's "Enforce HTTPS" is on, send visitors to https the moment the
    certificate works: a picture fetched over https that loads proves it does. */
