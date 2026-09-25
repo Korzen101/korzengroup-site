@@ -61,5 +61,15 @@ h1 {
     <h1>Korzen LLC</h1>
   </div>
 </main>
+<script>
+/* Until GitHub's "Enforce HTTPS" is on, send visitors to https the moment the
+   certificate works: a picture fetched over https that loads proves it does. */
+(function () {
+  if (location.protocol !== 'http:' || !/(^|\.)korzengroup\.com$/.test(location.hostname)) return;
+  var probe = new Image();
+  probe.onload = function () { location.replace('https://korzengroup.com' + location.pathname + location.search + location.hash); };
+  probe.src = 'https://' + location.hostname + '/favicon.svg?https-check=' + Date.now();
+})();
+</script>
 </body>
 </html>
