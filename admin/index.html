@@ -12,7 +12,8 @@
   number and name is set as text, never as markup. The policy below lets it
   talk to that function and nothing else.
 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7eHNrAC0nt+RlmvGYPEImibhimBzx2J+X8RTDFu8nxo=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-0g82qvocVSpT5SAEcC6SZSFG+6gSXT7l4gsWHiGMBCE='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#07080a">
@@ -160,6 +161,7 @@ dd { margin: 0; text-align: right; font-weight: 600; white-space: nowrap; font-v
 .person .nm { font-weight: 700; } .person .un { color: var(--muted); font-size: 13px; }
 .profile-head { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
 .profile-head .nm { font-size: 20px; font-weight: 800; }
+.mt-12 { margin-top: 12px; } .mt-14 { margin-top: 14px; } .mb-12 { margin-bottom: 12px; }
 .kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; margin: 12px 0; }
 .kv span:nth-child(odd) { color: var(--muted); }
 .recover { margin: 4px 0 14px; padding: 14px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--panel-2); }
@@ -221,7 +223,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
       <div class="hero-row" id="hero"></div>
       <h2>Last 30 days</h2>
       <div class="grid g-4" id="charts"></div>
-      <div class="grid g-4" style="margin-top:14px">
+      <div class="grid g-4 mt-14">
         <div class="card"><div class="chart-head"><h3>Usage</h3><span class="muted small">of each plan's limit</span></div><div id="usage"></div></div>
         <div class="card hbars"><div class="chart-head"><h3>People</h3><span class="muted small">active, of all users</span></div><div id="people"></div></div>
       </div>
@@ -243,7 +245,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
       </div>
       <div id="view-content">
         <h2 id="content-h">Content reports</h2>
-        <div class="seg" id="content-filter" style="margin-bottom:12px">
+        <div class="seg mb-12" id="content-filter">
           <button type="button" data-f="open" aria-pressed="true">Open</button>
           <button type="button" data-f="closed" aria-pressed="false">Closed</button>
         </div>
@@ -251,7 +253,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
       </div>
       <div id="view-issues" hidden>
         <h2>Issue reports</h2>
-        <div class="seg" id="issue-filter" style="margin-bottom:12px">
+        <div class="seg mb-12" id="issue-filter">
           <button type="button" data-f="open" aria-pressed="true">Open</button>
           <button type="button" data-f="closed" aria-pressed="false">Resolved</button>
         </div>
@@ -265,7 +267,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
               <input id="search" placeholder="Username, handle or name" autocomplete="off" spellcheck="false" aria-label="Find a person">
               <button class="btn" type="submit">Find</button>
             </form>
-            <div class="list" id="results" style="margin-top:12px"></div>
+            <div class="list mt-12" id="results"></div>
           </div>
           <div id="person"><div class="empty">Find somebody to see their account, what they've made and reports against them, to give them a recovery email, or to ban or unban them.</div></div>
         </div>
@@ -277,6 +279,17 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
 
 <script>
 (() => {
+  /*
+    Never inside somebody else's page. A framed copy of a signed-in dashboard
+    could be clicked through by a page laid over it (clickjacking), and GitHub
+    Pages cannot send X-Frame-Options, so the page refuses to draw itself:
+    both panels stay hidden, and the top window is sent here instead.
+  */
+  if (window.top !== window.self) {
+    document.body.replaceChildren();
+    try { window.top.location.replace(window.location.href); } catch (e) {}
+    return;
+  }
   const API = 'https://tmhditmqlunnebzullwt.supabase.co/functions/v1/admin-stats';
   const KEY = 'korzen.admin.session';
   const $ = (id) => document.getElementById(id);
@@ -308,6 +321,8 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
   };
   const day = (d) => new Date(d + 'T00:00:00Z').toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
   const cap = (s) => String(s || '').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+  // A link from the function becomes an href only if it is plain https — never javascript: or data:.
+  const safeLink = (u) => typeof u === 'string' && /^https:\/\/[^\s"'<>]+$/.test(u);
 
   async function call(body) {
     const token = session.get();
@@ -468,7 +483,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
     if (s.plan) c.append(el('p', 'plan', s.plan));
     if (s.metrics && s.metrics.length) c.append(metrics(s.metrics));
     if (s.note) c.append(el('p', 'note', s.note));
-    if (s.link) { const a = el('a', 'open', 'Open dashboard ↗'); a.href = s.link; a.target = '_blank'; a.rel = 'noopener noreferrer'; c.append(a); }
+    if (safeLink(s.link)) { const a = el('a', 'open', 'Open dashboard ↗'); a.href = s.link; a.target = '_blank'; a.rel = 'noopener noreferrer'; c.append(a); }
     return c;
   }
 
@@ -548,7 +563,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
     const secrets = $('secrets'); secrets.replaceChildren();
     for (const k of data.secrets || []) secrets.append(el('span', 'chip ' + (k.set ? 'set' : 'missing'), k.name + (k.set ? '' : ' (not set)')));
     const also = $('also'); also.replaceChildren();
-    for (const x of data.static || []) {
+    for (const x of (data.static || []).filter((s) => safeLink(s.link))) {
       const li = el('li'); const link = el('a', '', x.name); link.href = x.link; link.target = '_blank'; link.rel = 'noopener noreferrer';
       li.append(link, document.createTextNode(' — ' + x.role)); also.append(li);
     }

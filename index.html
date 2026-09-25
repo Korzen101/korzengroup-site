@@ -3,13 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-awdFIlbfvnuncA60MdRDmggk7Mhfbyk/oxWNr/q8mJI='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC, and Chris Korzen, who makes Convoy.">
 <link rel="canonical" href="https://korzengroup.com/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" as="image" href="/img/supercar-hq-1672.webp" imagesrcset="/img/supercar-hq-960.webp 960w, /img/supercar-hq-1672.webp 1672w" imagesizes="(max-width: 700px) 125vw, min(1672px, 100vw)">
 <meta name="theme-color" content="#000000">
-<script>document.documentElement.classList.add('js');</script>
+<script>
+document.documentElement.classList.add('js');
+// Never shown inside somebody else's page (GitHub Pages cannot send X-Frame-Options).
+if (window.top !== window.self) { try { window.top.location.replace(window.location.href); } catch (e) {} }
+</script>
 <!--
   The homepage (2026-09-25). "The homepage website image doesn't fade properly
   and you can see where it stops ... The page should also scroll down where a
@@ -100,11 +107,13 @@ html.motion .stage { height: 220vh; }
 .about { position: relative; padding: clamp(96px, 16vh, 180px) clamp(16px, 5vw, 64px) clamp(80px, 12vh, 140px); background: radial-gradient(900px 480px at 78% 8%, rgba(150,160,180,.07), rgba(0,0,0,0) 70%), #000; }
 .about-in { width: min(1080px, 100%); margin: 0 auto; }
 .eyebrow { margin: 0 0 30px; font-size: 12px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); }
-.profile { display: grid; grid-template-columns: minmax(200px, 300px) 1fr; gap: clamp(28px, 5vw, 72px); align-items: center; }
-.portrait { position: relative; aspect-ratio: 4 / 5; border-radius: 26px; overflow: hidden; display: grid; place-items: center; background: radial-gradient(120% 90% at 30% 10%, #20242c, #0a0b0e 70%); border: 1px solid var(--line); }
-.portrait::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.08) 50%, rgba(255,255,255,0) 65%); translate: -60% 0; transition: translate 1.2s cubic-bezier(.2,.7,.1,1); }
-.portrait:hover::after { translate: 60% 0; }
-.portrait span { font-weight: 800; font-size: clamp(56px, 7vw, 88px); letter-spacing: .06em; background: var(--silver); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.profile { display: grid; grid-template-columns: auto 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
+/* His portrait (2026-09-25: his own photo, cropped like LinkedIn, backdrop replaced by a dark studio), round, in a silver ring; a sheen crosses it on hover. */
+.portrait { position: relative; width: clamp(136px, 15vw, 188px); aspect-ratio: 1; border-radius: 50%; padding: 3px; overflow: hidden; background: linear-gradient(160deg, #ffffff 0%, #8d9199 42%, #23272e 100%); box-shadow: 0 24px 70px rgba(0,0,0,.65), 0 0 90px rgba(170,180,200,.1); }
+.portrait picture, .portrait img { display: block; width: 100%; height: 100%; border-radius: 50%; }
+.portrait img { object-fit: cover; background: #111; }
+.portrait::after { content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.16) 50%, rgba(255,255,255,0) 65%); translate: -70% 0; transition: translate 1.2s cubic-bezier(.2,.7,.1,1); }
+.portrait:hover::after { translate: 70% 0; }
 .about h2 { margin: 0 0 14px; font-size: clamp(40px, 7vw, 84px); line-height: .98; letter-spacing: -.02em; font-weight: 800; background: var(--silver); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .role { margin: 0 0 24px; font-size: clamp(16px, 1.6vw, 19px); color: var(--ink-2); letter-spacing: .02em; }
 .bio p { margin: 0 0 16px; max-width: 58ch; font-size: clamp(16px, 1.4vw, 18px); line-height: 1.7; color: var(--ink-2); }
@@ -120,7 +129,7 @@ footer { padding: 28px clamp(16px, 4vw, 40px) 40px; display: flex; justify-conte
 footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
 @media (max-width: 720px) {
   .profile { grid-template-columns: 1fr; }
-  .portrait { width: min(220px, 62%); }
+  .portrait { width: 128px; }
 }
 html.js .reveal { opacity: 0; transform: translateY(26px); filter: blur(8px); transition: opacity 1s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter 1s cubic-bezier(.2,.7,.1,1); }
 html.js .reveal.in { opacity: 1; transform: none; filter: none; }
@@ -181,7 +190,12 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
     <div class="about-in">
       <p class="eyebrow reveal">About</p>
       <div class="profile">
-        <div class="portrait reveal" aria-hidden="true"><span>CK</span></div>
+        <div class="portrait reveal">
+          <picture>
+            <source type="image/webp" srcset="/img/chris-korzen.webp">
+            <img src="/img/chris-korzen.jpg" width="512" height="512" alt="Chris Korzen" loading="lazy" decoding="async">
+          </picture>
+        </div>
         <div class="bio">
           <h2 id="about-name" class="reveal d1">Chris Korzen</h2>
           <p class="role reveal d1">Korzen LLC · Creator of Convoy</p>
