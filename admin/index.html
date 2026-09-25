@@ -8,114 +8,268 @@
 <!--
   Nothing secret lives on this page. It signs in to the admin-stats Edge
   Function (ConvoyExpo/supabase/functions/admin-stats), keeps the session it
-  gets back in this tab only, and draws the numbers that function returns.
-  The policy below lets it talk to that function and nothing else.
+  gets back in this tab only, and draws what that function returns. Every
+  number and name is set as text, never as markup. The policy below lets it
+  talk to that function and nothing else.
 -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#060708">
+<meta name="theme-color" content="#07080a">
 <style>
 @font-face { font-family: Archivo; src: url(/archivo.woff) format('woff'); font-weight: 100 900; font-display: swap; }
 :root {
-  color-scheme: dark; --bg: #060708; --panel: #0f1113; --panel2: #15181b; --ink: #f2f3f5; --muted: rgba(242,243,245,.58);
-  --line: rgba(242,243,245,.10); --ok: #3ccf8e; --warn: #f5b841; --error: #ff6b5b; --info: #9aa6b8;
+  color-scheme: dark;
+  --bg: #07080a; --panel: #101215; --panel-2: #16191d; --raise: #1c2025; --line: rgba(242,243,245,.08); --line-2: rgba(242,243,245,.14);
+  --ink: #f2f3f5; --ink-2: rgba(242,243,245,.72); --muted: rgba(242,243,245,.5);
+  /* The data hue (one series per chart) and its track, stepped for the dark surface. */
+  --series: #3987e5; --series-track: rgba(57,135,229,.16);
+  /* Status: never colour alone — every use sits beside a word. */
+  --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b; --info: #8b97a8;
 }
 * { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
-  background-image: radial-gradient(120% 60% at 50% 0%, #14171c 0%, rgba(20,23,28,0) 60%);
-  font: 15px/1.5 Archivo, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+html { background: var(--bg); }
+body {
+  margin: 0; min-height: 100vh; color: var(--ink);
+  background: radial-gradient(1200px 520px at 50% -140px, #17202c 0%, rgba(23,32,44,0) 70%), var(--bg);
+  font: 15px/1.5 Archivo, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;
+}
 a { color: var(--ink); }
-button { font: inherit; }
-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px clamp(16px, 4vw, 40px); }
-.brand { color: var(--ink); text-decoration: none; font-weight: 800; letter-spacing: .28em; font-size: 14px; }
-.pill { color: var(--ink); background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
-  font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
-.pill:hover { background: rgba(255,255,255,.08); }
-.pill:disabled { opacity: .5; cursor: default; }
-main { padding: 0 clamp(16px, 4vw, 40px) 64px; max-width: 1240px; margin: 0 auto; }
+button, input { font: inherit; color: inherit; }
 [hidden] { display: none !important; }
+.wrap { max-width: 1260px; margin: 0 auto; padding: 0 clamp(16px, 3.5vw, 36px); }
 
-#login { min-height: calc(100vh - 140px); display: grid; place-items: center; }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
-#login .card { width: min(380px, 100%); }
-#login h1 { margin: 0 0 20px; font-size: 22px; letter-spacing: .14em; text-transform: uppercase; }
-label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
-input { display: block; width: 100%; margin-top: 6px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
-  background: var(--panel2); color: var(--ink); font: inherit; font-size: 16px; }
-input:focus { outline: 2px solid rgba(242,243,245,.5); outline-offset: 1px; }
-.primary { width: 100%; margin-top: 6px; padding: 12px 14px; border: 0; border-radius: 12px; background: var(--ink); color: #0b0c0e;
-  font-weight: 700; letter-spacing: .04em; cursor: pointer; }
-.primary:disabled { opacity: .6; cursor: default; }
-.error { color: var(--error); min-height: 1.5em; margin: 12px 0 0; font-size: 14px; }
-.error.info { color: var(--muted); }
+/* ── chrome ─────────────────────────────────────────────────────────────── */
+header.top { position: sticky; top: 0; z-index: 5; background: rgba(7,8,10,.72); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 18px; min-height: 60px; }
+.brand { color: var(--ink); text-decoration: none; font-weight: 800; letter-spacing: .3em; font-size: 13px; margin-right: 6px; }
+.tabs { display: flex; gap: 4px; flex: 1; }
+.tab { border: 0; background: none; padding: 8px 14px; border-radius: 10px; color: var(--muted); font-weight: 600; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+.tab:hover { color: var(--ink); background: rgba(255,255,255,.04); }
+.tab[aria-selected="true"] { color: var(--ink); background: var(--raise); }
+.count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--critical); color: #fff; font-size: 12px; font-weight: 700; display: inline-grid; place-items: center; }
+.btn { border: 1px solid var(--line-2); background: rgba(255,255,255,.03); border-radius: 10px; padding: 8px 14px; font-weight: 600; cursor: pointer; font-size: 14px; }
+.btn:hover { background: rgba(255,255,255,.08); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.primary { background: var(--ink); color: #0b0c0e; border-color: var(--ink); }
+.btn.danger { border-color: rgba(208,59,59,.55); color: #ff8f8f; }
+.btn.danger:hover { background: rgba(208,59,59,.12); }
+.btn.small { padding: 5px 10px; font-size: 13px; border-radius: 8px; }
+main { padding: 24px 0 72px; }
+.titlebar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.titlebar h1 { margin: 0; font-size: clamp(26px, 3.6vw, 36px); letter-spacing: -.01em; }
+.titlebar .sub { color: var(--muted); font-size: 13px; }
+h2 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 34px 0 12px; font-weight: 700; }
+.banner { background: rgba(208,59,59,.1); border: 1px solid rgba(208,59,59,.4); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
+.card { background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)) , var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+.grid { display: grid; gap: 14px; }
+.g-4 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.g-3 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
 
-.titlebar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 8px 0 18px; }
-.titlebar h1 { margin: 0; font-size: clamp(24px, 4vw, 34px); letter-spacing: .02em; }
-.stamp { color: var(--muted); font-size: 13px; }
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 28px; }
-.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
-.tile .n { font-size: clamp(28px, 4vw, 38px); font-weight: 800; line-height: 1.1; }
-.tile .l { color: var(--muted); font-size: 13px; margin-top: 4px; }
-.tile.alert .n { color: var(--warn); }
-h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 30px 0 12px; font-weight: 700; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+/* ── status: a dot and a word ───────────────────────────────────────────── */
+.status { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--ink-2); padding: 3px 10px 3px 8px; border-radius: 999px; background: rgba(255,255,255,.05); white-space: nowrap; }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--info); }
+.status.ok::before { background: var(--good); } .status.warn::before { background: var(--warning); }
+.status.error::before { background: var(--critical); } .status.serious::before { background: var(--serious); }
+
+/* ── the hero and tiles ─────────────────────────────────────────────────── */
+.hero-row { display: grid; grid-template-columns: minmax(280px, 1.4fr) repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+.hero .n { font-size: clamp(48px, 7vw, 68px); font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+.hero .l { color: var(--ink-2); margin-top: 6px; }
+.hero .spark { margin-top: 16px; height: 44px; }
+.tile .n { font-size: 34px; font-weight: 800; line-height: 1.05; }
+.tile .l { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.tile .d { margin-top: 10px; }
+
+/* ── columns (one series; 4px rounded data-end, square at the baseline) ─── */
+.chart-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.chart-head h3 { margin: 0; font-size: 16px; }
+.chart-head .v { font-size: 22px; font-weight: 800; }
+.cols { position: relative; height: 128px; display: flex; align-items: flex-end; gap: 2px; border-bottom: 1px solid var(--line-2); padding-top: 18px; }
+.col { flex: 1 1 0; max-width: 24px; display: flex; align-items: flex-end; height: 100%; justify-content: center; cursor: default; outline: none; }
+.col i { display: block; width: 100%; background: var(--series); border-radius: 4px 4px 0 0; min-height: 0; transition: filter .15s; }
+.col.zero i { background: var(--series-track); height: 2px !important; border-radius: 1px; }
+.col:hover i, .col:focus-visible i { filter: brightness(1.25); }
+.cols .ymax { position: absolute; top: 0; left: 0; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 6px; }
+details.table { margin-top: 12px; font-size: 13px; }
+details.table summary { color: var(--muted); cursor: pointer; }
+details.table table { width: 100%; border-collapse: collapse; margin-top: 8px; font-variant-numeric: tabular-nums; }
+details.table td { padding: 3px 0; border-bottom: 1px solid var(--line); } details.table td:last-child { text-align: right; }
+#tip { position: fixed; z-index: 20; pointer-events: none; background: #0b0d10; border: 1px solid var(--line-2); border-radius: 10px; padding: 7px 10px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.45); white-space: nowrap; }
+#tip b { font-weight: 700; }
+
+/* ── meters: fill carries severity, track is the same hue, lighter ───────── */
+.meter { margin: 14px 0 4px; }
+.meter:first-of-type { margin-top: 4px; }
+.meter .row { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+.meter .row .v { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.bar { height: 10px; border-radius: 999px; background: var(--series-track); overflow: hidden; margin-top: 8px; }
+.bar i { display: block; height: 100%; border-radius: 999px; background: var(--series); min-width: 3px; }
+.bar.warn i { background: var(--warning); } .bar.crit i { background: var(--critical); }
+.hbars .meter .bar { height: 12px; }
+
+/* ── services ───────────────────────────────────────────────────────────── */
 .svc { display: flex; flex-direction: column; gap: 10px; }
 .svc .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .svc h3 { margin: 0; font-size: 17px; }
-.status { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid currentColor; }
-.status.ok { color: var(--ok); } .status.warn { color: var(--warn); } .status.error { color: var(--error); } .status.info { color: var(--info); }
-.role, .plan, .note { color: var(--muted); font-size: 13px; margin: 0; }
-.plan { color: var(--ink); opacity: .8; }
-dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 14px; }
-dt { color: var(--muted); }
-dt small { display: block; color: var(--muted); opacity: .8; font-size: 12px; }
-dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
-.svc a.open { font-size: 13px; color: var(--muted); text-decoration: none; margin-top: auto; }
-.svc a.open:hover { color: var(--ink); }
+.svc .role { color: var(--muted); font-size: 13px; margin: 0; }
+.svc .plan { color: var(--ink-2); font-size: 13px; margin: 0; }
+.svc .note { color: var(--muted); font-size: 13px; margin: 0; }
+dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 7px 14px; font-size: 14px; }
+dt { color: var(--ink-2); } dt small { display: block; color: var(--muted); font-size: 12px; }
+dd { margin: 0; text-align: right; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.open { font-size: 13px; color: var(--muted); text-decoration: none; margin-top: auto; }
+.open:hover { color: var(--ink); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { font-size: 12px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); }
-.chip.set::before { content: "● "; color: var(--ok); } .chip.missing::before { content: "○ "; color: var(--warn); }
+.chip { font-size: 12px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); display: inline-flex; align-items: center; gap: 7px; }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+.chip.set::before { background: var(--good); } .chip.missing::before { background: var(--warning); }
 .also { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .also li { color: var(--muted); font-size: 14px; } .also a { font-weight: 600; }
-.banner { background: rgba(255,107,91,.08); border: 1px solid rgba(255,107,91,.35); color: var(--ink); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.stat { background: var(--panel-2); border-radius: 12px; padding: 12px 14px; }
+.stat .n { font-size: 22px; font-weight: 800; } .stat .l { font-size: 12px; color: var(--muted); }
+
+/* ── moderation ─────────────────────────────────────────────────────────── */
+.seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: none; padding: 7px 12px; border-radius: 9px; color: var(--muted); font-weight: 600; cursor: pointer; font-size: 14px; }
+.seg button[aria-pressed="true"] { background: var(--raise); color: var(--ink); }
+.mod-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 960px) { .mod-layout { grid-template-columns: 1fr; } }
+.list { display: grid; gap: 10px; }
+.item { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: grid; gap: 8px; }
+.item .head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tag { font-size: 12px; font-weight: 700; letter-spacing: .02em; padding: 2px 9px; border-radius: 999px; background: rgba(57,135,229,.16); color: #cfe0f7; }
+.tag.grey { background: rgba(255,255,255,.07); color: var(--ink-2); }
+.item .when { margin-left: auto; color: var(--muted); font-size: 12px; }
+.quote { border-left: 3px solid var(--line-2); padding: 6px 10px; color: var(--ink-2); background: rgba(255,255,255,.02); border-radius: 0 8px 8px 0; white-space: pre-wrap; word-break: break-word; }
+.who { font-size: 13px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; }
+.who button { border: 0; background: none; padding: 0; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-size: 13px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.empty { color: var(--muted); padding: 18px; text-align: center; border: 1px dashed var(--line-2); border-radius: 14px; }
+.search { display: flex; gap: 8px; }
+.search input { flex: 1; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--panel-2); font-size: 15px; }
+.search input:focus { outline: 2px solid rgba(57,135,229,.6); outline-offset: 1px; }
+.person { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+.person:hover, .person[aria-current="true"] { border-color: rgba(57,135,229,.6); }
+.avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #2a78d6, #104281); font-weight: 800; flex: none; }
+.avatar.big { width: 58px; height: 58px; font-size: 22px; }
+.person .nm { font-weight: 700; } .person .un { color: var(--muted); font-size: 13px; }
+.profile-head { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.profile-head .nm { font-size: 20px; font-weight: 800; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; margin: 12px 0; }
+.kv span:nth-child(odd) { color: var(--muted); }
+
+/* ── sign-in ────────────────────────────────────────────────────────────── */
+#login { min-height: calc(100vh - 160px); display: grid; place-items: center; }
+#login .card { width: min(380px, 100%); }
+#login h1 { margin: 0 0 20px; font-size: 22px; letter-spacing: .14em; text-transform: uppercase; }
+label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.field { display: block; width: 100%; margin-top: 6px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--panel-2); font-size: 16px; }
+.field:focus { outline: 2px solid rgba(57,135,229,.6); outline-offset: 1px; }
+#signin { width: 100%; margin-top: 6px; padding: 12px 14px; }
+.error { color: #ff8f8f; min-height: 1.5em; margin: 12px 0 0; font-size: 14px; }
+.error.info { color: var(--muted); }
+@media (max-width: 640px) {
+  header.top .wrap { gap: 8px; }
+  .brand { letter-spacing: .2em; font-size: 12px; }
+  .tab { padding: 8px 10px; }
+  .hero-row { grid-template-columns: 1fr 1fr; }
+  .hero-row .hero { grid-column: 1 / -1; }
+}
 </style>
 </head>
 <body>
-<header>
+<header class="top"><div class="wrap">
   <a class="brand" href="/">KORZEN</a>
-  <button class="pill" id="signout" type="button" hidden>Sign out</button>
-</header>
-<main>
+  <nav class="tabs" id="tabs" role="tablist" hidden>
+    <button class="tab" role="tab" id="tab-overview" aria-selected="true" type="button">Overview</button>
+    <button class="tab" role="tab" id="tab-moderation" aria-selected="false" type="button">Moderation <span class="count" id="modcount" hidden></span></button>
+  </nav>
+  <button class="btn small" id="signout" type="button" hidden>Sign out</button>
+</div></header>
+
+<main class="wrap">
   <section id="login" hidden>
     <div class="card">
       <h1>Admin</h1>
       <form id="login-form" novalidate>
-        <label>Username<input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
-        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
-        <button class="primary" type="submit" id="signin">Sign in</button>
+        <label>Username<input class="field" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+        <label>Password<input class="field" name="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn primary" type="submit" id="signin">Sign in</button>
         <p class="error" id="login-error" role="alert"></p>
       </form>
     </div>
   </section>
 
-  <section id="dash" hidden>
+  <div id="app" hidden>
     <div class="titlebar">
-      <h1>Convoy</h1>
-      <div><span class="stamp" id="stamp"></span> <button class="pill" id="refresh" type="button">Refresh</button></div>
+      <div><h1>Convoy</h1><div class="sub" id="stamp"></div></div>
+      <button class="btn" id="refresh" type="button">Refresh</button>
     </div>
     <div class="banner" id="banner" hidden></div>
-    <div class="tiles" id="tiles"></div>
-    <h2>People and activity</h2>
-    <div class="grid" id="convoy"></div>
-    <h2>Services</h2>
-    <div class="grid" id="services"></div>
-    <h2>Keys on the server</h2>
-    <div class="chips" id="secrets"></div>
-    <h2>Also used</h2>
-    <ul class="also" id="also"></ul>
-  </section>
+
+    <section id="overview" role="tabpanel" aria-labelledby="tab-overview">
+      <div class="hero-row" id="hero"></div>
+      <h2>Last 30 days</h2>
+      <div class="grid g-4" id="charts"></div>
+      <div class="grid g-4" style="margin-top:14px">
+        <div class="card"><div class="chart-head"><h3>Usage</h3><span class="muted small">of each plan's limit</span></div><div id="usage"></div></div>
+        <div class="card hbars"><div class="chart-head"><h3>People</h3><span class="muted small">active, of all users</span></div><div id="people"></div></div>
+      </div>
+      <h2>All time</h2>
+      <div class="card"><div class="stats" id="totals"></div></div>
+      <h2>Services</h2>
+      <div class="grid g-3" id="services"></div>
+      <h2>Keys on the server</h2>
+      <div class="chips" id="secrets"></div>
+      <h2>Also used</h2>
+      <ul class="also" id="also"></ul>
+    </section>
+
+    <section id="moderation" role="tabpanel" aria-labelledby="tab-moderation" hidden>
+      <div class="seg" id="modseg">
+        <button type="button" data-view="content" aria-pressed="true">Content reports</button>
+        <button type="button" data-view="issues" aria-pressed="false">Issue reports</button>
+        <button type="button" data-view="people" aria-pressed="false">People</button>
+      </div>
+      <div id="view-content">
+        <h2 id="content-h">Content reports</h2>
+        <div class="seg" id="content-filter" style="margin-bottom:12px">
+          <button type="button" data-f="open" aria-pressed="true">Open</button>
+          <button type="button" data-f="closed" aria-pressed="false">Closed</button>
+        </div>
+        <div class="list" id="content-list"></div>
+      </div>
+      <div id="view-issues" hidden>
+        <h2>Issue reports</h2>
+        <div class="seg" id="issue-filter" style="margin-bottom:12px">
+          <button type="button" data-f="open" aria-pressed="true">Open</button>
+          <button type="button" data-f="closed" aria-pressed="false">Resolved</button>
+        </div>
+        <div class="list" id="issue-list"></div>
+      </div>
+      <div id="view-people" hidden>
+        <h2>People</h2>
+        <div class="mod-layout">
+          <div>
+            <form class="search" id="search-form" novalidate>
+              <input id="search" placeholder="Username, handle or name" autocomplete="off" spellcheck="false" aria-label="Find a person">
+              <button class="btn" type="submit">Find</button>
+            </form>
+            <div class="list" id="results" style="margin-top:12px"></div>
+          </div>
+          <div id="person"><div class="empty">Find somebody to see their account, what they've made, reports against them, and to ban or unban them.</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
 </main>
+<div id="tip" hidden></div>
+
 <script>
 (() => {
   const API = 'https://tmhditmqlunnebzullwt.supabase.co/functions/v1/admin-stats';
@@ -132,29 +286,162 @@ dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weig
     return e;
   };
   const num = (v) => (v === undefined || v === null || v === '' ? '—' : typeof v === 'number' ? v.toLocaleString() : String(v));
+  const bytes = (n) => {
+    if (!Number.isFinite(n)) return '—';
+    const u = ['B', 'KB', 'MB', 'GB', 'TB']; let i = 0;
+    while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+    return (n >= 10 || i === 0 ? Math.round(n) : n.toFixed(1)) + ' ' + u[i];
+  };
   const when = (iso) => { try { return new Date(iso).toLocaleString(); } catch { return String(iso); } };
+  const ago = (iso) => {
+    const s = (Date.now() - Date.parse(iso)) / 1000;
+    if (!Number.isFinite(s)) return '';
+    if (s < 90) return 'just now';
+    if (s < 5400) return Math.round(s / 60) + ' min ago';
+    if (s < 129600) return Math.round(s / 3600) + ' h ago';
+    return Math.round(s / 86400) + ' days ago';
+  };
+  const day = (d) => new Date(d + 'T00:00:00Z').toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  const cap = (s) => String(s || '').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
 
-  async function call(body, token) {
+  async function call(body) {
+    const token = session.get();
     try {
       const res = await fetch(API, {
         method: 'POST',
         headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}),
         body: JSON.stringify(body),
       });
-      return { status: res.status, data: await res.json().catch(() => ({})) };
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401 && body.action !== 'login') { session.set(''); showLogin('Your session ended. Sign in again.', true); }
+      return { status: res.status, data };
     } catch {
       return { status: 0, data: { error: 'Could not reach the server. Check the connection and try again.' } };
     }
   }
 
+  // ── sign-in ──────────────────────────────────────────────────────────────
   function showLogin(message, info) {
-    $('dash').hidden = true;
-    $('signout').hidden = true;
+    $('app').hidden = true; $('tabs').hidden = true; $('signout').hidden = true;
     $('login').hidden = false;
     $('login-error').textContent = message || '';
     $('login-error').className = 'error' + (info ? ' info' : '');
     const u = document.querySelector('#login-form input[name=username]');
     if (u && !u.value) u.focus();
+  }
+  function showApp() {
+    $('login').hidden = true; $('app').hidden = false; $('tabs').hidden = false; $('signout').hidden = false;
+  }
+  $('login-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const form = ev.currentTarget;
+    const username = form.username.value.trim();
+    const password = form.password.value;
+    if (!username || !password) { $('login-error').textContent = 'Enter the username and the password.'; return; }
+    $('signin').disabled = true;
+    $('login-error').textContent = ''; $('login-error').className = 'error';
+    const { status, data } = await call({ action: 'login', username, password });
+    $('signin').disabled = false;
+    form.password.value = '';
+    if (status === 200 && data.token) { session.set(data.token); form.reset(); showApp(); return route(); }
+    $('login-error').textContent = data.error || (status === 0 ? 'Could not reach the server.' : 'Sign-in failed (' + status + ').');
+  });
+  $('signout').addEventListener('click', () => { session.set(''); showLogin('Signed out.', true); });
+
+  // ── tabs ─────────────────────────────────────────────────────────────────
+  function route() {
+    const mod = location.hash === '#moderation';
+    $('tab-overview').setAttribute('aria-selected', String(!mod));
+    $('tab-moderation').setAttribute('aria-selected', String(mod));
+    $('overview').hidden = mod; $('moderation').hidden = !mod;
+    return mod ? loadModeration() : loadOverview();
+  }
+  $('tab-overview').addEventListener('click', () => { history.replaceState(null, '', '#overview'); route(); });
+  $('tab-moderation').addEventListener('click', () => { history.replaceState(null, '', '#moderation'); route(); });
+  $('refresh').addEventListener('click', () => route());
+
+  function banner(text) { $('banner').hidden = !text; $('banner').textContent = text || ''; }
+  function stamp(iso) { $('stamp').textContent = 'Updated ' + when(iso); }
+
+  // ── tooltip, shared by every column ─────────────────────────────────────
+  const tip = $('tip');
+  function showTip(target, text, x, y) {
+    tip.replaceChildren();
+    const [a, b] = text;
+    tip.append(el('b', '', a), document.createTextNode(' · ' + b));
+    tip.hidden = false;
+    const r = target.getBoundingClientRect();
+    const px = x ?? r.left + r.width / 2, py = y ?? r.top;
+    const w = tip.offsetWidth;
+    tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, px - w / 2)) + 'px';
+    tip.style.top = Math.max(8, py - tip.offsetHeight - 10) + 'px';
+  }
+  const hideTip = () => { tip.hidden = true; };
+
+  /** Thirty columns, one series: the title names it, so there is no legend. */
+  function columns(title, days, values, noun) {
+    const c = el('div', 'card');
+    const total = values.reduce((a, b) => a + b, 0);
+    const week = values.slice(-7).reduce((a, b) => a + b, 0);
+    const head = el('div', 'chart-head');
+    const left = el('div');
+    left.append(el('h3', '', title), el('div', 'muted small', num(week) + ' this week'));
+    head.append(left, el('div', 'v', num(total)));
+    c.append(head);
+    const max = Math.max(1, ...values);
+    const cols = el('div', 'cols');
+    cols.setAttribute('role', 'img');
+    cols.setAttribute('aria-label', title + ', last 30 days: ' + total + ' in all, most in a day ' + max);
+    cols.append(el('span', 'ymax', num(max)));
+    values.forEach((v, i) => {
+      const col = el('div', 'col' + (v ? '' : ' zero'));
+      col.tabIndex = 0;
+      col.setAttribute('aria-label', day(days[i]) + ': ' + v + ' ' + noun);
+      const bar = el('i');
+      bar.style.height = v ? Math.max(4, (v / max) * 100) + '%' : '2px';
+      col.append(bar);
+      const text = [day(days[i]), v.toLocaleString() + ' ' + noun];
+      col.addEventListener('pointerenter', (e) => showTip(col, text, e.clientX, col.getBoundingClientRect().top));
+      col.addEventListener('pointerleave', hideTip);
+      col.addEventListener('focus', () => showTip(col, text));
+      col.addEventListener('blur', hideTip);
+      cols.append(col);
+    });
+    c.append(cols);
+    const axis = el('div', 'axis');
+    axis.append(el('span', '', day(days[0])), el('span', '', day(days[days.length - 1])));
+    c.append(axis);
+    const det = el('details', 'table');
+    det.append(el('summary', '', 'Show the numbers'));
+    const table = el('table');
+    days.slice().reverse().forEach((d, i) => {
+      const tr = el('tr');
+      tr.append(el('td', '', day(d)), el('td', '', values[values.length - 1 - i]));
+      table.append(tr);
+    });
+    det.append(table);
+    c.append(det);
+    return c;
+  }
+
+  /** A share of a whole. `severity` only for limits, where full is bad; a share of people is not. */
+  function meter(label, used, limit, fmt, more, severity = true) {
+    const m = el('div', 'meter');
+    const pct = limit ? (used / limit) * 100 : 0;
+    const row = el('div', 'row');
+    const shown = fmt(used) + (more ? '+' : '') + ' of ' + fmt(limit);
+    const level = !severity ? '' : pct >= 90 ? 'crit' : pct >= 70 ? 'warn' : '';
+    const word = level === 'crit' ? ' · nearly full' : level === 'warn' ? ' · getting full' : '';
+    row.append(el('span', '', label), el('span', 'v', shown + ' · ' + (pct < 1 && used > 0 ? '<1' : Math.round(pct)) + '%' + word));
+    const bar = el('div', 'bar' + (level ? ' ' + level : ''));
+    bar.setAttribute('role', 'meter');
+    bar.setAttribute('aria-valuemin', '0'); bar.setAttribute('aria-valuemax', String(limit)); bar.setAttribute('aria-valuenow', String(used));
+    bar.setAttribute('aria-label', label + ': ' + shown);
+    const fill = el('i');
+    fill.style.width = Math.min(100, pct) + '%';
+    bar.append(fill);
+    m.append(row, bar);
+    return m;
   }
 
   function metrics(list) {
@@ -166,139 +453,301 @@ dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weig
     }
     return dl;
   }
-
-  function card(title, list, extra) {
+  const statusWord = { ok: 'Working', warn: 'Attention', error: 'Problem', info: 'Info' };
+  function service(s) {
     const c = el('div', 'card svc');
     const top = el('div', 'top');
-    top.append(el('h3', '', title));
-    if (extra && extra.status) top.append(el('span', 'status ' + extra.status, extra.status));
+    top.append(el('h3', '', s.name), el('span', 'status ' + s.status, statusWord[s.status] || s.status));
     c.append(top);
-    if (extra && extra.role) c.append(el('p', 'role', extra.role));
-    if (extra && extra.plan) c.append(el('p', 'plan', extra.plan));
-    if (list && list.length) c.append(metrics(list));
-    if (extra && extra.note) c.append(el('p', 'note', extra.note));
-    if (extra && extra.link) {
-      const a = el('a', 'open', 'Open dashboard ↗');
-      a.href = extra.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
-      c.append(a);
-    }
+    if (s.role) c.append(el('p', 'role', s.role));
+    if (s.plan) c.append(el('p', 'plan', s.plan));
+    if (s.metrics && s.metrics.length) c.append(metrics(s.metrics));
+    if (s.note) c.append(el('p', 'note', s.note));
+    if (s.link) { const a = el('a', 'open', 'Open dashboard ↗'); a.href = s.link; a.target = '_blank'; a.rel = 'noopener noreferrer'; c.append(a); }
     return c;
   }
 
-  function render(d) {
-    $('stamp').textContent = 'Updated ' + when(d.generatedAt);
-    const h = d.headline || {};
-    const tiles = $('tiles');
-    tiles.replaceChildren();
-    const tile = (n, label, alert) => {
-      const t = el('div', 'tile' + (alert ? ' alert' : ''));
+  // ── overview ─────────────────────────────────────────────────────────────
+  async function loadOverview() {
+    $('refresh').disabled = true;
+    const { status, data } = await call({ action: 'stats' });
+    $('refresh').disabled = false;
+    if (status === 401) return;
+    if (status !== 200) return banner(data.error || 'The server answered ' + status + '.');
+    banner('');
+    stamp(data.generatedAt);
+    const h = data.headline || {}, c = data.convoy || {}, act = c.activity || {}, s = data.series;
+
+    const hero = $('hero'); hero.replaceChildren();
+    const big = el('div', 'card hero');
+    big.append(el('div', 'n', num(h.users)), el('div', 'l', 'people on Convoy'));
+    if (s) {
+      const spark = el('div', 'cols spark');
+      const max = Math.max(1, ...s.signups);
+      spark.setAttribute('role', 'img');
+      spark.setAttribute('aria-label', 'Sign-ups over the last 30 days: ' + s.signups.reduce((a, b) => a + b, 0));
+      s.signups.forEach((v, i) => {
+        const col = el('div', 'col' + (v ? '' : ' zero')); const bar = el('i');
+        bar.style.height = v ? Math.max(6, (v / max) * 100) + '%' : '2px'; col.append(bar);
+        const text = [day(s.days[i]), v + ' sign-up' + (v === 1 ? '' : 's')];
+        col.addEventListener('pointerenter', (e) => showTip(col, text, e.clientX, col.getBoundingClientRect().top));
+        col.addEventListener('pointerleave', hideTip);
+        spark.append(col);
+      });
+      big.append(spark);
+    }
+    hero.append(big);
+    const tile = (n, label, sub, alert) => {
+      const t = el('div', 'card tile');
       t.append(el('div', 'n', num(n)), el('div', 'l', label));
-      tiles.append(t);
+      if (sub) { const d = el('div', 'd'); d.append(sub); t.append(d); }
+      if (alert) t.style.borderColor = 'rgba(250,178,25,.45)';
+      hero.append(t);
     };
-    tile(h.users, 'Users');
+    const pill = (cls, text) => el('span', 'status ' + cls, text);
     tile(h.newUsers7d, 'New this week');
     tile(h.active7d, 'Active this week');
-    tile(h.contentReportsOpen, 'Content reports open', h.contentReportsOpen > 0);
-    tile(h.issueReportsOpen, 'Issue reports open', h.issueReportsOpen > 0);
+    tile(h.contentReportsOpen, 'Content reports open', h.contentReportsOpen > 0 ? pill('warn', 'Answer within 24 h') : pill('ok', 'All clear'), h.contentReportsOpen > 0);
+    tile(h.issueReportsOpen, 'Issue reports open', h.issueReportsOpen > 0 ? pill('warn', 'Waiting') : pill('ok', 'All clear'), false);
+    setModCount((h.contentReportsOpen || 0) + (h.issueReportsOpen || 0));
 
-    const convoy = $('convoy');
-    convoy.replaceChildren();
-    const c = d.convoy;
-    if (!c) {
-      convoy.append(card('Waiting for migration 0088', [], {
-        note: 'Users and open reports above are counted already. Run supabase/migrations/0088_admin_stats.sql in the SQL editor for sign-ups, activity, database and storage size.',
-      }));
-    } else {
-      const a = c.accounts || {}, act = c.active || {}, r = c.reports || {}, x = c.activity || {};
-      convoy.append(card('Accounts', [
-        { label: 'People', value: a.total },
-        { label: 'New today', value: a.new_1d },
-        { label: 'New this week', value: a.new_7d },
-        { label: 'New in 30 days', value: a.new_30d },
-        { label: 'Active today', value: act.d1 },
-        { label: 'Active this week', value: act.d7 },
-        { label: 'Active in 30 days', value: act.d30 },
-      ]));
-      convoy.append(card('Reports', [
-        { label: 'Content reports open', value: r.content_open, hint: r.oldest_open_at ? 'oldest ' + when(r.oldest_open_at) : undefined },
-        { label: 'Content reports this week', value: r.content_7d },
-        { label: 'Content reports, all time', value: r.content_total },
-        { label: 'Issue reports open', value: r.issues_open },
-        { label: 'Issue reports, all time', value: r.issues_total },
-      ], { note: 'Answer content reports within 24 hours: Settings → Developer → Content Reports.' }));
-      convoy.append(card('Activity', [
-        { label: 'Runs', value: x.runs, hint: num(x.runs_7d) + ' this week · ' + num(x.runs_live) + ' live now' },
-        { label: 'Posts', value: x.posts, hint: num(x.posts_7d) + ' this week' },
-        { label: 'Comments', value: x.comments },
-        { label: 'Messages', value: x.messages, hint: num(x.messages_7d) + ' this week' },
-        { label: 'Crews', value: x.crews },
-        { label: 'Cars', value: x.cars },
-        { label: 'Routes', value: x.routes },
-        { label: 'Friendships', value: x.friendships },
-      ]));
+    const charts = $('charts'); charts.replaceChildren();
+    if (s) {
+      charts.append(
+        columns('Sign-ups', s.days, s.signups, 'sign-ups'),
+        columns('Runs', s.days, s.runs, 'runs'),
+        columns('Messages', s.days, s.messages, 'messages'),
+        columns('Posts', s.days, s.posts, 'posts'),
+      );
+    } else charts.append(el('div', 'empty', 'The daily numbers did not load this time. Refresh to try again.'));
+
+    const usage = $('usage'); usage.replaceChildren();
+    for (const u of data.usage || []) usage.append(meter(u.label, u.used, u.limit, u.unit === 'bytes' ? bytes : (n) => n.toLocaleString(), u.more));
+    if (!(data.usage || []).length) usage.append(el('p', 'muted', 'Nothing to measure yet.'));
+
+    const people = $('people'); people.replaceChildren();
+    const total = h.users || 0, a = c.active || {};
+    [['Today', a.d1], ['This week', a.d7], ['This month', a.d30]].forEach(([l, v]) => people.append(meter('Active ' + l.toLowerCase(), v || 0, Math.max(1, total), (n) => n.toLocaleString(), false, false)));
+    if (c.accounts) {
+      const p = el('p', 'muted small'); p.style.margin = '14px 0 0';
+      p.textContent = num(c.accounts.new_30d) + ' new in 30 days · ' + num(c.accounts.auth_users) + ' sign-in accounts in all (probes and deleted profiles included)';
+      people.append(p);
     }
 
-    const services = $('services');
-    services.replaceChildren();
-    for (const s of d.services || []) services.append(card(s.name, s.metrics, s));
+    const totals = $('totals'); totals.replaceChildren();
+    [['Runs', act.runs], ['Live now', act.runs_live], ['Posts', act.posts], ['Comments', act.comments], ['Messages', act.messages], ['Crews', act.crews], ['Cars', act.cars], ['Routes', act.routes], ['Friendships', act.friendships]]
+      .forEach(([l, v]) => { const st = el('div', 'stat'); st.append(el('div', 'n', num(v)), el('div', 'l', l)); totals.append(st); });
 
-    const secrets = $('secrets');
-    secrets.replaceChildren();
-    for (const s of d.secrets || []) secrets.append(el('span', 'chip ' + (s.set ? 'set' : 'missing'), s.name));
-
-    const also = $('also');
-    also.replaceChildren();
-    for (const s of d.static || []) {
-      const li = el('li');
-      const a = el('a', '', s.name);
-      a.href = s.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
-      li.append(a, document.createTextNode(' — ' + s.role));
-      also.append(li);
+    const services = $('services'); services.replaceChildren();
+    for (const sv of data.services || []) services.append(service(sv));
+    const secrets = $('secrets'); secrets.replaceChildren();
+    for (const k of data.secrets || []) secrets.append(el('span', 'chip ' + (k.set ? 'set' : 'missing'), k.name + (k.set ? '' : ' (not set)')));
+    const also = $('also'); also.replaceChildren();
+    for (const x of data.static || []) {
+      const li = el('li'); const link = el('a', '', x.name); link.href = x.link; link.target = '_blank'; link.rel = 'noopener noreferrer';
+      li.append(link, document.createTextNode(' — ' + x.role)); also.append(li);
     }
   }
 
-  async function load() {
-    const token = session.get();
-    if (!token) return showLogin();
+  function setModCount(n) { const b = $('modcount'); b.hidden = !n; b.textContent = n > 99 ? '99+' : String(n); }
+
+  // ── moderation ───────────────────────────────────────────────────────────
+  let queuesData = { contentReports: [], issueReports: [] };
+  const filters = { content: 'open', issues: 'open' };
+  let modView = 'content';
+
+  function segment(containerId, attr, onPick) {
+    $(containerId).addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      for (const x of $(containerId).querySelectorAll('button')) x.setAttribute('aria-pressed', String(x === b));
+      onPick(b.getAttribute(attr));
+    });
+  }
+  segment('modseg', 'data-view', (v) => { modView = v; for (const k of ['content', 'issues', 'people']) $('view-' + k).hidden = k !== v; if (v === 'people') $('search').focus(); });
+  segment('content-filter', 'data-f', (f) => { filters.content = f; renderReports(); });
+  segment('issue-filter', 'data-f', (f) => { filters.issues = f; renderIssues(); });
+
+  async function act(button, body, confirmText) {
+    if (confirmText && !confirm(confirmText)) return false;
+    if (button) button.disabled = true;
+    const { status, data } = await call(body);
+    if (button) button.disabled = false;
+    if (status !== 200) { alert(data.error || 'That did not work (' + status + ').'); return false; }
+    return true;
+  }
+
+  async function loadModeration() {
     $('refresh').disabled = true;
-    const { status, data } = await call({ action: 'stats' }, token);
+    const { status, data } = await call({ action: 'moderation' });
     $('refresh').disabled = false;
-    if (status === 401) { session.set(''); return showLogin('Your session ended. Sign in again.', true); }
-    $('login').hidden = true;
-    $('dash').hidden = false;
-    $('signout').hidden = false;
-    const banner = $('banner');
-    if (status !== 200) {
-      banner.hidden = false;
-      banner.textContent = data.error || 'The server answered ' + status + '.';
-      return;
-    }
-    banner.hidden = true;
-    render(data);
+    if (status === 401) return;
+    if (status !== 200) return banner(data.error || 'The server answered ' + status + '.');
+    banner('');
+    stamp(new Date().toISOString());
+    queuesData = data;
+    const open = data.contentReports.filter((r) => r.status === 'open').length + data.issueReports.filter((i) => i.status === 'open').length;
+    setModCount(open);
+    renderReports(); renderIssues();
   }
 
-  $('login-form').addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    const form = ev.currentTarget;
-    const username = form.username.value.trim();
-    const password = form.password.value;
-    if (!username || !password) { $('login-error').textContent = 'Enter the username and the password.'; return; }
-    $('signin').disabled = true;
-    $('login-error').textContent = '';
-    $('login-error').className = 'error';
-    const { status, data } = await call({ action: 'login', username, password });
-    $('signin').disabled = false;
-    form.password.value = '';
-    if (status === 200 && data.token) {
-      session.set(data.token);
-      form.reset();
-      return load();
+  function personButton(p) {
+    if (!p) return el('span', '', 'somebody since deleted');
+    const b = el('button', '', (p.name || 'No name') + (p.username ? ' (@' + p.username + ')' : ''));
+    b.type = 'button';
+    b.addEventListener('click', () => openPerson(p.id));
+    return b;
+  }
+
+  function renderReports() {
+    const list = $('content-list'); list.replaceChildren();
+    const rows = queuesData.contentReports.filter((r) => (filters.content === 'open') === (r.status === 'open'));
+    if (!rows.length) { list.append(el('div', 'empty', filters.content === 'open' ? 'No open content reports. Nothing waiting.' : 'Nothing closed yet.')); return; }
+    for (const r of rows) {
+      const it = el('div', 'item');
+      const head = el('div', 'head');
+      head.append(el('span', 'tag', cap(r.reason)), el('span', 'tag grey', cap(r.kind)));
+      if (r.status !== 'open') head.append(el('span', 'status ' + (r.status === 'actioned' ? 'ok' : 'info'), r.status === 'actioned' ? 'Handled' : 'Dismissed'));
+      head.append(el('span', 'when', ago(r.at)));
+      it.append(head);
+      if (r.excerpt) it.append(el('div', 'quote', r.excerpt));
+      if (r.detail) it.append(el('div', 'muted small', 'Their note: ' + r.detail));
+      const who = el('div', 'who');
+      const a = el('span', '', 'Reported: '); a.append(personButton(r.reported));
+      const b = el('span', '', 'By: '); b.append(personButton(r.reporter));
+      who.append(a, b); it.append(who);
+      const actions = el('div', 'actions');
+      if (r.status === 'open') {
+        if (r.kind !== 'user') {
+          const rm = el('button', 'btn small danger', 'Remove ' + r.kind); rm.type = 'button';
+          rm.addEventListener('click', async () => { if (await act(rm, { action: 'remove_content', id: r.id }, 'Remove this ' + r.kind + ' for everybody? This cannot be undone.')) loadModeration(); });
+          actions.append(rm);
+        }
+        const done = el('button', 'btn small', 'Mark handled'); done.type = 'button';
+        done.addEventListener('click', async () => { if (await act(done, { action: 'report_status', id: r.id, status: 'actioned' })) loadModeration(); });
+        const dis = el('button', 'btn small', 'Dismiss'); dis.type = 'button';
+        dis.addEventListener('click', async () => { if (await act(dis, { action: 'report_status', id: r.id, status: 'dismissed' })) loadModeration(); });
+        actions.append(done, dis);
+        if (r.reported) {
+          const view = el('button', 'btn small', 'View account'); view.type = 'button';
+          view.addEventListener('click', () => openPerson(r.reported.id));
+          actions.append(view);
+        }
+      } else {
+        const re = el('button', 'btn small', 'Reopen'); re.type = 'button';
+        re.addEventListener('click', async () => { if (await act(re, { action: 'report_status', id: r.id, status: 'open' })) loadModeration(); });
+        actions.append(re);
+      }
+      it.append(actions);
+      list.append(it);
     }
-    $('login-error').textContent = data.error || (status === 0 ? 'Could not reach the server.' : 'Sign-in failed (' + status + ').');
+  }
+
+  function renderIssues() {
+    const list = $('issue-list'); list.replaceChildren();
+    const rows = queuesData.issueReports.filter((i) => (filters.issues === 'open') === (i.status === 'open'));
+    if (!rows.length) { list.append(el('div', 'empty', filters.issues === 'open' ? 'No open issue reports.' : 'Nothing resolved yet.')); return; }
+    for (const i of rows) {
+      const it = el('div', 'item');
+      const head = el('div', 'head');
+      head.append(el('span', 'tag', cap(i.topic)));
+      if (i.status !== 'open') head.append(el('span', 'status ok', 'Resolved'));
+      head.append(el('span', 'when', ago(i.at)));
+      it.append(head, el('div', 'quote', i.body));
+      const who = el('div', 'who'); const b = el('span', '', 'From: '); b.append(personButton(i.reporter)); who.append(b); it.append(who);
+      if (i.context) { const d = el('details', 'table'); d.append(el('summary', '', 'What the phone said about itself'), el('div', 'quote small', i.context)); it.append(d); }
+      const actions = el('div', 'actions');
+      const btn = el('button', 'btn small', i.status === 'open' ? 'Resolve' : 'Reopen'); btn.type = 'button';
+      btn.addEventListener('click', async () => { if (await act(btn, { action: 'issue_status', id: i.id, status: i.status === 'open' ? 'resolved' : 'open' })) loadModeration(); });
+      actions.append(btn); it.append(actions);
+      list.append(it);
+    }
+  }
+
+  // ── people ───────────────────────────────────────────────────────────────
+  const initial = (p) => (p.name || p.username || '?').trim().charAt(0).toUpperCase();
+  $('search-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const q = $('search').value.trim();
+    const results = $('results'); results.replaceChildren();
+    if (q.length < 2) { results.append(el('div', 'empty', 'Type at least two letters.')); return; }
+    const { status, data } = await call({ action: 'user_search', q });
+    if (status !== 200) { results.append(el('div', 'empty', data.error || 'Search failed.')); return; }
+    if (!data.users.length) { results.append(el('div', 'empty', 'Nobody matches "' + q + '".')); return; }
+    for (const u of data.users) {
+      const b = el('button', 'person'); b.type = 'button'; b.dataset.id = u.id;
+      const text = el('div');
+      text.append(el('div', 'nm', u.name || 'No name'), el('div', 'un', (u.username ? '@' + u.username : '') + (u.handle ? ' · ' + u.handle : '') + ' · joined ' + ago(u.joined)));
+      b.append(el('div', 'avatar', initial(u)), text);
+      b.addEventListener('click', () => openPerson(u.id));
+      results.append(b);
+    }
   });
-  $('refresh').addEventListener('click', load);
-  $('signout').addEventListener('click', () => { session.set(''); showLogin('Signed out.', true); });
-  load();
+
+  async function openPerson(id) {
+    if (modView !== 'people') {
+      location.hash = '#moderation';
+      for (const x of $('modseg').querySelectorAll('button')) x.setAttribute('aria-pressed', String(x.dataset.view === 'people'));
+      modView = 'people'; for (const k of ['content', 'issues', 'people']) $('view-' + k).hidden = k !== 'people';
+    }
+    for (const x of $('results').querySelectorAll('.person')) x.setAttribute('aria-current', String(x.dataset.id === id));
+    const box = $('person'); box.replaceChildren(el('div', 'empty', 'Loading…'));
+    const { status, data: u } = await call({ action: 'user', id });
+    box.replaceChildren();
+    if (status !== 200) { box.append(el('div', 'empty', u.error || 'Could not load that account.')); return; }
+    const card = el('div', 'card');
+    const head = el('div', 'profile-head');
+    const title = el('div');
+    title.append(el('div', 'nm', u.name || 'No name'), el('div', 'muted', (u.username ? '@' + u.username : '') + (u.handle ? ' · ' + u.handle : '')));
+    head.append(el('div', 'avatar big', initial(u)), title);
+    card.append(head);
+    const state = el('div', 'actions');
+    if (u.ban) state.append(el('span', 'status error', 'Banned' + (u.ban.since ? ' ' + ago(u.ban.since) : '')));
+    else state.append(el('span', 'status ok', 'Active'));
+    if (u.owner) state.append(el('span', 'status info', 'Owner'));
+    if (u.hidden) state.append(el('span', 'status info', 'Hidden (test account)'));
+    card.append(state);
+    if (u.ban && u.ban.reason) card.append(el('p', 'muted small', 'Reason: ' + u.ban.reason));
+    const kv = el('div', 'kv');
+    const pair = (k, v) => kv.append(el('span', '', k), el('span', '', v));
+    pair('Joined', when(u.joined));
+    pair('Last seen', u.lastSeen ? ago(u.lastSeen) : 'never');
+    pair('Last sign-in', u.lastSignIn ? ago(u.lastSignIn) : '—');
+    pair('Recovery email', u.recoveryEmail ? u.recoveryEmail + (u.recoveryVerified ? ' (verified)' : ' (not verified)') : 'none');
+    pair('Phones for push', u.devices.total ? u.devices.total + ' (iOS ' + u.devices.ios + ', Android ' + u.devices.android + ')' : 'none');
+    if (u.topSpeedMph) pair('Top speed', Math.round(u.topSpeedMph) + ' mph');
+    if (u.location) pair('Location', u.location);
+    if (u.bio) pair('Bio', u.bio);
+    card.append(kv);
+    const st = el('div', 'stats');
+    [['Cars', u.counts.cars], ['Posts', u.counts.posts], ['Comments', u.counts.comments], ['Messages', u.counts.messages], ['Runs hosted', u.counts.runsHosted], ['Crews owned', u.counts.crewsOwned], ['Friends', u.counts.friends]]
+      .forEach(([l, v]) => { const s = el('div', 'stat'); s.append(el('div', 'n', num(v)), el('div', 'l', l)); st.append(s); });
+    card.append(st);
+    const reps = el('p', 'small');
+    reps.style.margin = '14px 0';
+    reps.textContent = 'Reported ' + u.reports.against + ' time' + (u.reports.against === 1 ? '' : 's') + (u.reports.againstOpen ? ' (' + u.reports.againstOpen + ' open)' : '') + ' · made ' + u.reports.made + ' report' + (u.reports.made === 1 ? '' : 's') + ' · sent ' + u.reports.issuesSent + ' issue report' + (u.reports.issuesSent === 1 ? '' : 's');
+    card.append(reps);
+    const actions = el('div', 'actions');
+    if (u.owner) actions.append(el('span', 'muted small', 'The owner’s account cannot be banned from here.'));
+    else if (u.ban) {
+      const un = el('button', 'btn', 'Unban'); un.type = 'button';
+      un.addEventListener('click', async () => { if (await act(un, { action: 'unban', id: u.id }, 'Let ' + (u.name || 'this person') + ' sign in again?')) openPerson(u.id); });
+      actions.append(un);
+    } else {
+      const ban = el('button', 'btn danger', 'Ban'); ban.type = 'button';
+      ban.addEventListener('click', async () => {
+        const reason = prompt('Why is ' + (u.name || 'this person') + ' being banned? (kept with the account)');
+        if (reason === null) return;
+        if (await act(ban, { action: 'ban', id: u.id, reason }, 'Ban ' + (u.name || 'this person') + '? They are signed out within the hour and cannot sign in again until unbanned.')) openPerson(u.id);
+      });
+      actions.append(ban);
+    }
+    card.append(actions);
+    box.append(card);
+  }
+
+  // ── start ────────────────────────────────────────────────────────────────
+  if (session.get()) { showApp(); route(); } else showLogin();
+  addEventListener('hashchange', () => { if (session.get()) route(); });
 })();
 </script>
 <script>
