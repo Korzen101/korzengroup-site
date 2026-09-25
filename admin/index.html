@@ -162,6 +162,11 @@ dd { margin: 0; text-align: right; font-weight: 600; white-space: nowrap; font-v
 .profile-head .nm { font-size: 20px; font-weight: 800; }
 .kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; margin: 12px 0; }
 .kv span:nth-child(odd) { color: var(--muted); }
+.recover { margin: 4px 0 14px; padding: 14px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--panel-2); }
+.recover .h { font-weight: 700; margin-bottom: 10px; }
+.recover p { margin: 10px 0 0; }
+.recover input { background: var(--panel); }
+.done { border: 1px solid rgba(12,163,12,.45); background: rgba(12,163,12,.1); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; font-size: 14px; }
 
 /* ── sign-in ────────────────────────────────────────────────────────────── */
 #login { min-height: calc(100vh - 160px); display: grid; place-items: center; }
@@ -262,7 +267,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
             </form>
             <div class="list" id="results" style="margin-top:12px"></div>
           </div>
-          <div id="person"><div class="empty">Find somebody to see their account, what they've made, reports against them, and to ban or unban them.</div></div>
+          <div id="person"><div class="empty">Find somebody to see their account, what they've made and reports against them, to give them a recovery email, or to ban or unban them.</div></div>
         </div>
       </div>
     </section>
@@ -683,7 +688,35 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
     }
   });
 
-  async function openPerson(id) {
+  /*
+    A recovery email for somebody who has none verified — the person who has
+    forgotten a password and has nowhere for a code to go. Saved verified, so
+    Forgot Password? works for them at once; the code that reaches the inbox is
+    the proof it is theirs. Only an address they wrote in from.
+  */
+  function recoveryForm(u) {
+    const who = u.name || (u.username ? '@' + u.username : 'this person');
+    const box = el('div', 'recover');
+    box.append(el('div', 'h', u.recoveryEmail ? 'Replace the unverified recovery email' : 'Add a recovery email'));
+    const form = el('form', 'search'); form.noValidate = true;
+    const input = el('input'); input.type = 'email'; input.placeholder = 'Their email address';
+    input.autocomplete = 'off'; input.spellcheck = false; input.setAttribute('aria-label', 'Recovery email for ' + who);
+    const add = el('button', 'btn', 'Add'); add.type = 'submit';
+    form.append(input, add);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { alert('That does not look like an email address.'); input.focus(); return; }
+      const asked = 'Add ' + email + ' as ' + who + '’s verified recovery email?\n\nPassword reset codes for this account will go there. Only do this for an address they wrote to you from.';
+      if (await act(add, { action: 'set_recovery_email', id: u.id, email }, asked)) {
+        openPerson(u.id, 'Added. Ask ' + who + ' to tap Forgot Password? on the sign-in screen and enter their username or this email. The code goes to that inbox.');
+      }
+    });
+    box.append(form, el('p', 'muted small', 'Only an address the person wrote to you from. It is saved as verified, so they can reset their password straight away. Each email can belong to one account only.'));
+    return box;
+  }
+
+  async function openPerson(id, note) {
     if (modView !== 'people') {
       location.hash = '#moderation';
       for (const x of $('modseg').querySelectorAll('button')) x.setAttribute('aria-pressed', String(x.dataset.view === 'people'));
@@ -695,6 +728,7 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
     box.replaceChildren();
     if (status !== 200) { box.append(el('div', 'empty', u.error || 'Could not load that account.')); return; }
     const card = el('div', 'card');
+    if (note) card.append(el('div', 'done', note));
     const head = el('div', 'profile-head');
     const title = el('div');
     title.append(el('div', 'nm', u.name || 'No name'), el('div', 'muted', (u.username ? '@' + u.username : '') + (u.handle ? ' · ' + u.handle : '')));
@@ -712,12 +746,13 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
     pair('Joined', when(u.joined));
     pair('Last seen', u.lastSeen ? ago(u.lastSeen) : 'never');
     pair('Last sign-in', u.lastSignIn ? ago(u.lastSignIn) : '—');
-    pair('Recovery email', u.recoveryEmail ? u.recoveryEmail + (u.recoveryVerified ? ' (verified)' : ' (not verified)') : 'none');
+    pair('Recovery email', u.recoveryEmail ? u.recoveryEmail + (u.recoveryVerified ? (u.recoveryAddedHere ? ' (verified · added here)' : ' (verified)') : ' (not verified)') : 'none');
     pair('Phones for push', u.devices.total ? u.devices.total + ' (iOS ' + u.devices.ios + ', Android ' + u.devices.android + ')' : 'none');
     if (u.topSpeedMph) pair('Top speed', Math.round(u.topSpeedMph) + ' mph');
     if (u.location) pair('Location', u.location);
     if (u.bio) pair('Bio', u.bio);
     card.append(kv);
+    if (!u.owner && !u.recoveryVerified) card.append(recoveryForm(u));
     const st = el('div', 'stats');
     [['Cars', u.counts.cars], ['Posts', u.counts.posts], ['Comments', u.counts.comments], ['Messages', u.counts.messages], ['Runs hosted', u.counts.runsHosted], ['Crews owned', u.counts.crewsOwned], ['Friends', u.counts.friends]]
       .forEach(([l, v]) => { const s = el('div', 'stat'); s.append(el('div', 'n', num(v)), el('div', 'l', l)); st.append(s); });
