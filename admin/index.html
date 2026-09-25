@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!--
+  Nothing secret lives on this page. It signs in to the admin-stats Edge
+  Function (ConvoyExpo/supabase/functions/admin-stats), keeps the session it
+  gets back in this tab only, and draws the numbers that function returns.
+  The policy below lets it talk to that function and nothing else.
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<title>Admin · Korzen LLC</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#060708">
+<style>
+@font-face { font-family: Archivo; src: url(/archivo.woff) format('woff'); font-weight: 100 900; font-display: swap; }
+:root {
+  color-scheme: dark; --bg: #060708; --panel: #0f1113; --panel2: #15181b; --ink: #f2f3f5; --muted: rgba(242,243,245,.58);
+  --line: rgba(242,243,245,.10); --ok: #3ccf8e; --warn: #f5b841; --error: #ff6b5b; --info: #9aa6b8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
+  background-image: radial-gradient(120% 60% at 50% 0%, #14171c 0%, rgba(20,23,28,0) 60%);
+  font: 15px/1.5 Archivo, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--ink); }
+button { font: inherit; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px clamp(16px, 4vw, 40px); }
+.brand { color: var(--ink); text-decoration: none; font-weight: 800; letter-spacing: .28em; font-size: 14px; }
+.pill { color: var(--ink); background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
+  font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.pill:hover { background: rgba(255,255,255,.08); }
+.pill:disabled { opacity: .5; cursor: default; }
+main { padding: 0 clamp(16px, 4vw, 40px) 64px; max-width: 1240px; margin: 0 auto; }
+[hidden] { display: none !important; }
+
+#login { min-height: calc(100vh - 140px); display: grid; place-items: center; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
+#login .card { width: min(380px, 100%); }
+#login h1 { margin: 0 0 20px; font-size: 22px; letter-spacing: .14em; text-transform: uppercase; }
+label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+input { display: block; width: 100%; margin-top: 6px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--panel2); color: var(--ink); font: inherit; font-size: 16px; }
+input:focus { outline: 2px solid rgba(242,243,245,.5); outline-offset: 1px; }
+.primary { width: 100%; margin-top: 6px; padding: 12px 14px; border: 0; border-radius: 12px; background: var(--ink); color: #0b0c0e;
+  font-weight: 700; letter-spacing: .04em; cursor: pointer; }
+.primary:disabled { opacity: .6; cursor: default; }
+.error { color: var(--error); min-height: 1.5em; margin: 12px 0 0; font-size: 14px; }
+.error.info { color: var(--muted); }
+
+.titlebar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 8px 0 18px; }
+.titlebar h1 { margin: 0; font-size: clamp(24px, 4vw, 34px); letter-spacing: .02em; }
+.stamp { color: var(--muted); font-size: 13px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 28px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
+.tile .n { font-size: clamp(28px, 4vw, 38px); font-weight: 800; line-height: 1.1; }
+.tile .l { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.tile.alert .n { color: var(--warn); }
+h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 30px 0 12px; font-weight: 700; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.svc { display: flex; flex-direction: column; gap: 10px; }
+.svc .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.svc h3 { margin: 0; font-size: 17px; }
+.status { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid currentColor; }
+.status.ok { color: var(--ok); } .status.warn { color: var(--warn); } .status.error { color: var(--error); } .status.info { color: var(--info); }
+.role, .plan, .note { color: var(--muted); font-size: 13px; margin: 0; }
+.plan { color: var(--ink); opacity: .8; }
+dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 14px; }
+dt { color: var(--muted); }
+dt small { display: block; color: var(--muted); opacity: .8; font-size: 12px; }
+dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.svc a.open { font-size: 13px; color: var(--muted); text-decoration: none; margin-top: auto; }
+.svc a.open:hover { color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 12px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); }
+.chip.set::before { content: "● "; color: var(--ok); } .chip.missing::before { content: "○ "; color: var(--warn); }
+.also { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.also li { color: var(--muted); font-size: 14px; } .also a { font-weight: 600; }
+.banner { background: rgba(255,107,91,.08); border: 1px solid rgba(255,107,91,.35); color: var(--ink); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="/">KORZEN</a>
+  <button class="pill" id="signout" type="button" hidden>Sign out</button>
+</header>
+<main>
+  <section id="login" hidden>
+    <div class="card">
+      <h1>Admin</h1>
+      <form id="login-form" novalidate>
+        <label>Username<input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="primary" type="submit" id="signin">Sign in</button>
+        <p class="error" id="login-error" role="alert"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="dash" hidden>
+    <div class="titlebar">
+      <h1>Convoy</h1>
+      <div><span class="stamp" id="stamp"></span> <button class="pill" id="refresh" type="button">Refresh</button></div>
+    </div>
+    <div class="banner" id="banner" hidden></div>
+    <div class="tiles" id="tiles"></div>
+    <h2>People and activity</h2>
+    <div class="grid" id="convoy"></div>
+    <h2>Services</h2>
+    <div class="grid" id="services"></div>
+    <h2>Keys on the server</h2>
+    <div class="chips" id="secrets"></div>
+    <h2>Also used</h2>
+    <ul class="also" id="also"></ul>
+  </section>
+</main>
+<script>
+(() => {
+  const API = 'https://tmhditmqlunnebzullwt.supabase.co/functions/v1/admin-stats';
+  const KEY = 'korzen.admin.session';
+  const $ = (id) => document.getElementById(id);
+  const session = {
+    get() { try { return sessionStorage.getItem(KEY) || ''; } catch { return ''; } },
+    set(v) { try { if (v) sessionStorage.setItem(KEY, v); else sessionStorage.removeItem(KEY); } catch {} },
+  };
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = String(text);
+    return e;
+  };
+  const num = (v) => (v === undefined || v === null || v === '' ? '—' : typeof v === 'number' ? v.toLocaleString() : String(v));
+  const when = (iso) => { try { return new Date(iso).toLocaleString(); } catch { return String(iso); } };
+
+  async function call(body, token) {
+    try {
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}),
+        body: JSON.stringify(body),
+      });
+      return { status: res.status, data: await res.json().catch(() => ({})) };
+    } catch {
+      return { status: 0, data: { error: 'Could not reach the server. Check the connection and try again.' } };
+    }
+  }
+
+  function showLogin(message, info) {
+    $('dash').hidden = true;
+    $('signout').hidden = true;
+    $('login').hidden = false;
+    $('login-error').textContent = message || '';
+    $('login-error').className = 'error' + (info ? ' info' : '');
+    const u = document.querySelector('#login-form input[name=username]');
+    if (u && !u.value) u.focus();
+  }
+
+  function metrics(list) {
+    const dl = el('dl');
+    for (const m of list || []) {
+      const dt = el('dt', '', m.label);
+      if (m.hint) dt.append(el('small', '', m.hint));
+      dl.append(dt, el('dd', '', num(m.value)));
+    }
+    return dl;
+  }
+
+  function card(title, list, extra) {
+    const c = el('div', 'card svc');
+    const top = el('div', 'top');
+    top.append(el('h3', '', title));
+    if (extra && extra.status) top.append(el('span', 'status ' + extra.status, extra.status));
+    c.append(top);
+    if (extra && extra.role) c.append(el('p', 'role', extra.role));
+    if (extra && extra.plan) c.append(el('p', 'plan', extra.plan));
+    if (list && list.length) c.append(metrics(list));
+    if (extra && extra.note) c.append(el('p', 'note', extra.note));
+    if (extra && extra.link) {
+      const a = el('a', 'open', 'Open dashboard ↗');
+      a.href = extra.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      c.append(a);
+    }
+    return c;
+  }
+
+  function render(d) {
+    $('stamp').textContent = 'Updated ' + when(d.generatedAt);
+    const h = d.headline || {};
+    const tiles = $('tiles');
+    tiles.replaceChildren();
+    const tile = (n, label, alert) => {
+      const t = el('div', 'tile' + (alert ? ' alert' : ''));
+      t.append(el('div', 'n', num(n)), el('div', 'l', label));
+      tiles.append(t);
+    };
+    tile(h.users, 'Users');
+    tile(h.newUsers7d, 'New this week');
+    tile(h.active7d, 'Active this week');
+    tile(h.contentReportsOpen, 'Content reports open', h.contentReportsOpen > 0);
+    tile(h.issueReportsOpen, 'Issue reports open', h.issueReportsOpen > 0);
+
+    const convoy = $('convoy');
+    convoy.replaceChildren();
+    const c = d.convoy;
+    if (!c) {
+      convoy.append(card('Waiting for migration 0088', [], {
+        note: 'Users and open reports above are counted already. Run supabase/migrations/0088_admin_stats.sql in the SQL editor for sign-ups, activity, database and storage size.',
+      }));
+    } else {
+      const a = c.accounts || {}, act = c.active || {}, r = c.reports || {}, x = c.activity || {};
+      convoy.append(card('Accounts', [
+        { label: 'People', value: a.total },
+        { label: 'New today', value: a.new_1d },
+        { label: 'New this week', value: a.new_7d },
+        { label: 'New in 30 days', value: a.new_30d },
+        { label: 'Active today', value: act.d1 },
+        { label: 'Active this week', value: act.d7 },
+        { label: 'Active in 30 days', value: act.d30 },
+      ]));
+      convoy.append(card('Reports', [
+        { label: 'Content reports open', value: r.content_open, hint: r.oldest_open_at ? 'oldest ' + when(r.oldest_open_at) : undefined },
+        { label: 'Content reports this week', value: r.content_7d },
+        { label: 'Content reports, all time', value: r.content_total },
+        { label: 'Issue reports open', value: r.issues_open },
+        { label: 'Issue reports, all time', value: r.issues_total },
+      ], { note: 'Answer content reports within 24 hours: Settings → Developer → Content Reports.' }));
+      convoy.append(card('Activity', [
+        { label: 'Runs', value: x.runs, hint: num(x.runs_7d) + ' this week · ' + num(x.runs_live) + ' live now' },
+        { label: 'Posts', value: x.posts, hint: num(x.posts_7d) + ' this week' },
+        { label: 'Comments', value: x.comments },
+        { label: 'Messages', value: x.messages, hint: num(x.messages_7d) + ' this week' },
+        { label: 'Crews', value: x.crews },
+        { label: 'Cars', value: x.cars },
+        { label: 'Routes', value: x.routes },
+        { label: 'Friendships', value: x.friendships },
+      ]));
+    }
+
+    const services = $('services');
+    services.replaceChildren();
+    for (const s of d.services || []) services.append(card(s.name, s.metrics, s));
+
+    const secrets = $('secrets');
+    secrets.replaceChildren();
+    for (const s of d.secrets || []) secrets.append(el('span', 'chip ' + (s.set ? 'set' : 'missing'), s.name));
+
+    const also = $('also');
+    also.replaceChildren();
+    for (const s of d.static || []) {
+      const li = el('li');
+      const a = el('a', '', s.name);
+      a.href = s.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      li.append(a, document.createTextNode(' — ' + s.role));
+      also.append(li);
+    }
+  }
+
+  async function load() {
+    const token = session.get();
+    if (!token) return showLogin();
+    $('refresh').disabled = true;
+    const { status, data } = await call({ action: 'stats' }, token);
+    $('refresh').disabled = false;
+    if (status === 401) { session.set(''); return showLogin('Your session ended. Sign in again.', true); }
+    $('login').hidden = true;
+    $('dash').hidden = false;
+    $('signout').hidden = false;
+    const banner = $('banner');
+    if (status !== 200) {
+      banner.hidden = false;
+      banner.textContent = data.error || 'The server answered ' + status + '.';
+      return;
+    }
+    banner.hidden = true;
+    render(data);
+  }
+
+  $('login-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const form = ev.currentTarget;
+    const username = form.username.value.trim();
+    const password = form.password.value;
+    if (!username || !password) { $('login-error').textContent = 'Enter the username and the password.'; return; }
+    $('signin').disabled = true;
+    $('login-error').textContent = '';
+    $('login-error').className = 'error';
+    const { status, data } = await call({ action: 'login', username, password });
+    $('signin').disabled = false;
+    form.password.value = '';
+    if (status === 200 && data.token) {
+      session.set(data.token);
+      form.reset();
+      return load();
+    }
+    $('login-error').textContent = data.error || (status === 0 ? 'Could not reach the server.' : 'Sign-in failed (' + status + ').');
+  });
+  $('refresh').addEventListener('click', load);
+  $('signout').addEventListener('click', () => { session.set(''); showLogin('Signed out.', true); });
+  load();
+})();
+</script>
+</body>
+</html>
