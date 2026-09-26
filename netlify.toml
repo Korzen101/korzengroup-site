@@ -1,0 +1,15 @@
+# Netlify serves korzengroup.com from Korzen101/korzengroup-site (2026-09-26).
+# The repo holds the site already built by ConvoyExpo's
+# site/build-korzengroup.mjs, so there is nothing for Netlify to build.
+[build]
+  publish = "."
+
+# What a <meta> Content-Security-Policy cannot say: no other site may frame
+# these pages. Each page's own policy, hashed at build, still applies with it.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "frame-ancestors 'none'"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
