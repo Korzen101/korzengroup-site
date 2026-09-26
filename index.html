@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-hF9Dk9hj6oX+kV5QUsCxgEeTLF7J1vWPp97sTAL/42s=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-TnDJz+RtN4DeWEsAK/EiSaKM6bFsptpONgYdR1RBhIk='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-hx4HDVEmi9O3TjiTrUFJXYre+1kdcKDUGH21FKPp7E4=' 'sha256-FNzJZDHG6iOkdtGtLUBuKkHK88d/eRuo376lCjtUXy8=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-dZAkUePLPypPjw2sfCxJiF32giDHon1x3uZq1jMTW48='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC: Chris Korzen, software engineer and the creator of Convoy.">
@@ -116,7 +116,9 @@ html.motion .brand { opacity: 0; }
 
 /* ── the stage: pinned while the runway scrolls past it ─────────────────── */
 .stage { position: relative; }
-html.motion .stage { height: 220vh; }
+/* 200vh, not 220: with the car's exit stretched to the end of the pin there
+   is no dead black left for the extra 20 to hold. */
+html.motion .stage { height: 200vh; }
 /* Black, and its own group: the grain and the smear blend against this black,
    so where nothing is lit they add nothing at all. */
 .pin {
@@ -162,7 +164,11 @@ html.motion .stage { height: 220vh; }
 @media (max-width: 700px) { .title { top: 10%; font-size: clamp(22px, 7.4vw, 44px); } }
 
 /* ── the profile ─────────────────────────────────────────────────────────── */
-.about { position: relative; padding: clamp(96px, 16vh, 180px) clamp(16px, 5vw, 64px) clamp(80px, 12vh, 140px); background: radial-gradient(900px 480px at 78% 8%, rgba(150,160,180,.07), rgba(0,0,0,0) 70%), #000; }
+/* Plain black, and close under the hero (2026-09-26: "reduce the black area
+   between the first and second pages … you can see where the second page
+   starts"). A faint glow used to sit at its top-right, and the section's top
+   edge cut it off in a visible line. */
+.about { position: relative; padding: clamp(64px, 9vh, 110px) clamp(16px, 5vw, 64px) clamp(80px, 12vh, 140px); background: #000; }
 .about-in { width: min(1080px, 100%); margin: 0 auto; }
 .eyebrow { margin: 0 0 30px; font-size: 12px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); }
 .profile { display: grid; grid-template-columns: auto 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
@@ -219,10 +225,14 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
    by design. The night side faces the words, so they sit over city lights and
    not over daylight. The section is a screen tall at least, so the globe has
    the room. Reduced motion, no JavaScript or no WebGL: the still, at rest. */
-.about { min-height: 100vh; min-height: 100svh; display: grid; align-content: center; }
+/* A screen tall for the globe, the words at its top: centred, they sat under
+   a screen's worth of black. */
+.about { min-height: 100vh; min-height: 100svh; }
 .earth { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: clip; clip-path: inset(0); }
 .earth-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
-.globe { --gd: min(1160px, 118vh, 100vw); position: absolute; width: var(--gd); height: var(--gd); left: calc(76% - var(--gd) / 2); top: calc(54% - var(--gd) / 2); }
+/* Never taller than its pin: a canvas poking above the section's top was cut
+   there, halo and all, in a straight line. */
+.globe { --gd: min(1160px, 104vh, 100vw); position: absolute; width: var(--gd); height: var(--gd); left: calc(76% - var(--gd) / 2); top: calc(56% - var(--gd) / 2); }
 .globe picture, .globe img, .globe canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .globe canvas { opacity: 0; transition: opacity .6s; }
 .globe.live canvas { opacity: 1; }
@@ -234,7 +244,7 @@ html.earth-on .globe { opacity: 0; will-change: transform, opacity; }
 .about-in { position: relative; z-index: 1; }
 /* Glass over the planet: the cards blur what is behind them. */
 .project { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
-@media (max-width: 720px) { .globe { --gd: 150vw; left: calc(70% - var(--gd) / 2); top: calc(30% - var(--gd) / 2); } }
+@media (max-width: 720px) { .globe { --gd: 150vw; left: calc(70% - var(--gd) / 2); top: max(0px, calc(36% - var(--gd) / 2)); } }
 html.js .reveal { opacity: 0; transform: translateY(26px); filter: blur(8px); transition: opacity 1s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter 1s cubic-bezier(.2,.7,.1,1); }
 html.js .reveal.in { opacity: 1; transform: none; filter: none; }
 html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-delay: .2s; } html.js .reveal.d3 { transition-delay: .3s; }
@@ -453,7 +463,8 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
     });
 
     // The car pulls away: slow, then gone, past the right of the screen.
-    var pc = clamp((p - 0.12) / 0.68), e = pc * pc * pc;
+    // Gone just as the pin lets go (it was gone at 0.8, then a fifth of the runway was black).
+    var pc = clamp((p - 0.12) / 0.86), e = pc * pc * pc;
     var X = e * 1.15 * vw, Y = e * 0.05 * vh, S = 1 + 0.18 * e;
     var fade = 1 - clamp((pc - 0.88) / 0.12);
     car.style.transform = 'translate3d(' + X.toFixed(1) + 'px,' + Y.toFixed(1) + 'px,0) scale(' + S.toFixed(4) + ')';
@@ -500,9 +511,12 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
   by a sun behind and to the right, the night map's city lights where the sun
   is not, a blue rim of atmosphere and a thin halo round the limb.
 
-  It rises and turns in as the section arrives (the turn is the scroll's), then
-  keeps turning slowly, the way the Earth does, while it is on screen, and
-  stops drawing when it is not. Reduced motion: the still, at rest, and no
+  It rises, grows and turns in as the section scrolls in (the turn is the
+  scroll's), and keeps the spin when the scrolling stops: "animate in as you
+  scroll and then retain its spinning once the content is reached"
+  (2026-09-26). A scroll's speed carries on as momentum and settles, over a
+  second or two, into a steady turn every two minutes, while it is on screen.
+  It stops drawing when it is not. Reduced motion: the still, at rest, and no
   script at all. No WebGL: the still rises in without turning.
 */
 (function () {
@@ -514,8 +528,10 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
 
   var RAD = Math.PI / 180;
   var REST = -68 * RAD;   // the Americas at night, the Atlantic, Africa in daylight
-  var TURN = 70 * RAD;    // how far it turns while the section arrives
-  var SPIN = 1 * RAD;     // then a turn every six minutes: alive, never busy behind the words
+  var TURN = 110 * RAD;   // how far it turns while the section scrolls in
+  var CRUISE = 3 * RAD;   // the spin it keeps once the content is reached: a turn every two minutes
+  var CARRY = 1.6;        // seconds for a scroll's extra spin to settle back into CRUISE
+  var FASTEST = 40 * RAD; // however hard the flick
   var SCALE = 1.22;       // the canvas's half-width in radii: room for the halo
   var clamp = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
   var ease = function (t) { return 1 - Math.pow(1 - t, 3); };
@@ -567,7 +583,8 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
       '    col = 1.0 - exp(-col * 1.05);',
       '  }',
       '  vec2 o = r > 0.0 ? p / r : vec2(0.0);',
-      '  float halo = r > 1.0 ? exp(-(r - 1.0) * 24.0) * (0.015 + 0.85 * pow(smoothstep(-0.5, 0.7, dot(o, uSun.xy)), 1.5)) : 0.0;',
+      // To nothing before the canvas's own edge (1.22): cut there, the faintest glow shows as a box on black.
+      '  float halo = r > 1.0 ? exp(-(r - 1.0) * 24.0) * (0.015 + 0.85 * pow(smoothstep(-0.5, 0.7, dot(o, uSun.xy)), 1.5)) * (1.0 - smoothstep(1.10, 1.20, r)) : 0.0;',
       '  vec3 rgb = col * body + (1.0 - exp(-halo * RIM * 1.05)) * (1.0 - body);',
       '  gl_FragColor = vec4(pow(rgb, vec3(1.0 / 2.2)), max(body, clamp(halo * 1.4, 0.0, 1.0)));',
       '}'
@@ -640,23 +657,28 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
     return ease(clamp((vh - r.top) / (vh * 0.85)));
   }
 
-  var visible = false, loading = false, raf = 0, t0 = 0, last = 0, lastE = -1;
+  var visible = false, loading = false, raf = 0, last = 0, lastE = -1, then = 0, spin = 0, carry = 0;
   function queue() { if (!raf && visible) raf = requestAnimationFrame(frame); }
   function frame(now) {
     raf = 0;
-    if (!visible) return;
-    if (!t0) t0 = now;
+    if (!visible) { then = 0; return; }
+    var dt = then ? Math.min(0.1, (now - then) / 1000) : 0;
+    then = now;
     var e = arrival();
     if (e !== lastE) {
       globe.style.opacity = e.toFixed(3);
-      globe.style.transform = 'translate3d(0,' + ((1 - e) * 16).toFixed(2) + 'vh,0) scale(' + (0.84 + 0.16 * e).toFixed(4) + ')';
+      globe.style.transform = 'translate3d(0,' + ((1 - e) * 24).toFixed(2) + 'vh,0) scale(' + (0.78 + 0.22 * e).toFixed(4) + ')';
+      // The speed the scroll is turning it at becomes spin it keeps when the scrolling stops.
+      if (lastE >= 0 && dt > 0) carry = Math.min(FASTEST, Math.max(carry, (Math.abs(e - lastE) * TURN) / dt));
     }
-    // Scrolling draws every frame; turning on its own, thirty a second is plenty.
-    if (prog && maps === 2 && (e !== lastE || now - last > 33)) {
+    spin += (CRUISE + carry) * dt;
+    carry *= Math.exp(-dt / CARRY);
+    // Scrolling or coasting draws every frame; cruising, thirty a second is plenty.
+    if (prog && maps === 2 && (e !== lastE || carry > RAD || now - last > 33)) {
       var want = Math.min(2048, Math.round(globe.offsetWidth * Math.min(window.devicePixelRatio || 1, 1.75)));
       if (want !== px && want > 0) { px = canvas.width = canvas.height = want; gl.viewport(0, 0, px, px); }
       gl.uniform1f(U.uPx, 2 * SCALE / px);
-      gl.uniform1f(U.uRot, REST + (1 - e) * TURN - ((now - t0) / 1000) * SPIN);
+      gl.uniform1f(U.uRot, REST + (1 - e) * TURN - spin);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       last = now;
