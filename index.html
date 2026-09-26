@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-hF9Dk9hj6oX+kV5QUsCxgEeTLF7J1vWPp97sTAL/42s=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-blL6oDjg1IGG/vjpr4966+CUaV7QS2b+IyZfQFJGtdA='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-hF9Dk9hj6oX+kV5QUsCxgEeTLF7J1vWPp97sTAL/42s=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-TnDJz+RtN4DeWEsAK/EiSaKM6bFsptpONgYdR1RBhIk='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC: Chris Korzen, software engineer and the creator of Convoy.">
@@ -193,7 +193,10 @@ a.project:hover { border-color: rgba(242,243,245,.34); transform: translateY(-2p
 /* Publix's own round mark (Wikimedia Commons, "Publix Retail Logo.png", public domain as a text logo), at Chris's request. */
 .project img.mark { border-radius: 50%; }
 .glyph { width: 56px; height: 56px; border-radius: 14px; flex: none; display: grid; place-items: center; border: 1px solid var(--line); background: linear-gradient(160deg, #272b33, #101216); }
-.glyph svg { width: 26px; height: 26px; fill: none; stroke: #d9dce2; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Investing's mark: Chris's own logo (2026-09-26), gold on black as he sent it,
+   recoloured to Convoy's red with the black made transparent, on the same tile.
+   After .project img, which would otherwise make it a 56px rounded tile. */
+.glyph img { width: 38px; height: 38px; border-radius: 0; }
 .project strong { display: block; font-size: 18px; }
 .project span { display: block; color: var(--muted); font-size: 14px; line-height: 1.45; }
 .project .go { margin-left: auto; color: var(--ink-2); font-size: 18px; }
@@ -342,7 +345,7 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
           <div><strong>Publix</strong><span>Software Engineer</span></div>
         </div>
         <div class="project reveal d3">
-          <div class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div>
+          <div class="glyph" aria-hidden="true"><picture><source type="image/webp" srcset="/img/investing.webp"><img src="/img/investing.png" width="38" height="38" alt=""></picture></div>
           <div><strong>Investing</strong><span>Managing a $100K+ stock portfolio</span></div>
         </div>
       </div>
