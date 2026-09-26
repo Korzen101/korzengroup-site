@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-uwsZj1kuVYQlm911zOEav31yrHIlJJAB/aD+TuEvmo0='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-ZXv4dSswbUkeZt1dk7Vvwuqu/eb73FaWkYVhdp3jet4=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-YHyiEybL9+cZdjAzLpYX0/6FevBWFk8ViLwXarNS7MY='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC: Chris Korzen, software engineer and the creator of Convoy.">
@@ -126,10 +126,16 @@ html.motion .stage { height: 220vh; }
 @media (max-width: 700px) { .pin { --W: 125vw; } }
 /* The photo's box, centred; the car, its smear and the title all share it. */
 .frame { position: absolute; width: var(--W); height: var(--H); left: calc(50% - var(--W) / 2); top: calc(50% - var(--H) / 2); }
-/* Feathered across here, and down on the picture inside: nested masks multiply.
-   The photo's own background is black, so the feathering leaves no edge at all. */
-.car, .smear { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%); will-change: transform, opacity; }
-.car picture, .smear picture { display: block; width: 100%; height: 100%; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 74%, rgba(0,0,0,.5) 87%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 74%, rgba(0,0,0,.5) 87%, transparent 100%); }
+/* One oval, centred under the car, fading along a smooth curve (2026-09-26: "I
+   can still see where the car image ends near the black background"). The old
+   masks ran straight across and straight down, each made of straight lines:
+   the floor's haze ran out at the photo's sides in a visible edge, and the eye
+   picked out every corner of the ramps as a line. This follows the pool of
+   light on the floor instead: whole out to 66% of the way to the oval, then a
+   smootherstep to nothing in ten stops, so no line shows anywhere and every
+   corner of the box is black. The car's nose and tail keep 97% of their light. */
+.car, .smear { -webkit-mask-image: radial-gradient(ellipse 52% 46% at 50% 56%, #000 66%, rgba(0,0,0,.991) 69.4%, rgba(0,0,0,.942) 72.8%, rgba(0,0,0,.837) 76.2%, rgba(0,0,0,.683) 79.6%, rgba(0,0,0,.5) 83%, rgba(0,0,0,.317) 86.4%, rgba(0,0,0,.163) 89.8%, rgba(0,0,0,.058) 93.2%, rgba(0,0,0,.009) 96.6%, transparent 100%); mask-image: radial-gradient(ellipse 52% 46% at 50% 56%, #000 66%, rgba(0,0,0,.991) 69.4%, rgba(0,0,0,.942) 72.8%, rgba(0,0,0,.837) 76.2%, rgba(0,0,0,.683) 79.6%, rgba(0,0,0,.5) 83%, rgba(0,0,0,.317) 86.4%, rgba(0,0,0,.163) 89.8%, rgba(0,0,0,.058) 93.2%, rgba(0,0,0,.009) 96.6%, transparent 100%); will-change: transform, opacity; }
+.car picture, .smear picture { display: block; width: 100%; height: 100%; }
 .car img, .smear img { display: block; width: 100%; height: 100%; }
 /* Over the car, adding light only: the rims and headlights, blurred and
    dragged out behind it — a smear, never a second car. */
@@ -170,6 +176,10 @@ html.motion .stage { height: 220vh; }
 .role { margin: 0 0 24px; font-size: clamp(16px, 1.6vw, 19px); color: var(--ink-2); letter-spacing: .02em; }
 .bio p { margin: 0 0 16px; max-width: 58ch; font-size: clamp(16px, 1.4vw, 18px); line-height: 1.7; color: var(--ink-2); }
 .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+/* Three flags, his ancestry: small, one height, each at its own proportions. */
+.flags { display: flex; align-items: center; gap: 10px; margin: 4px 0 22px; padding: 0; list-style: none; }
+.flags li { line-height: 0; }
+.flags svg { display: block; height: 18px; width: auto; border-radius: 2px; box-shadow: 0 0 0 1px rgba(242,243,245,.16), 0 4px 14px rgba(0,0,0,.45); }
 .link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.04); text-decoration: none; font-weight: 600; font-size: 15px; color: var(--ink); transition: background .2s, border-color .2s; }
 .link:hover { background: rgba(255,255,255,.09); border-color: rgba(242,243,245,.34); }
 .link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -193,6 +203,32 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
   .profile { grid-template-columns: 1fr; }
   .portrait { width: 128px; }
 }
+
+/* ── the Earth behind the profile ──────────────────────────────────────────
+   "The background should be the planet earth that rotates/animates in when
+   you scroll down" (2026-09-26). NASA's Blue Marble by day and Black Marble by
+   night (both public domain), drawn on a sphere by the script at the end: it
+   rises and turns as the section arrives, then keeps turning slowly while it
+   is on screen. Pinned while the profile scrolls over it, and clipped to the
+   section with overflow: clip, which (unlike hidden) is no scroll container,
+   so the sticky pin still works, and which (unlike clip-path alone, found in
+   Edge) keeps the globe from widening the page: it hangs past the right edge
+   by design. The night side faces the words, so they sit over city lights and
+   not over daylight. The section is a screen tall at least, so the globe has
+   the room. Reduced motion, no JavaScript or no WebGL: the still, at rest. */
+.about { min-height: 100vh; min-height: 100svh; display: grid; align-content: center; }
+.earth { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: clip; clip-path: inset(0); }
+.earth-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+.globe { --gd: min(1160px, 118vh, 100vw); position: absolute; width: var(--gd); height: var(--gd); left: calc(76% - var(--gd) / 2); top: calc(54% - var(--gd) / 2); }
+.globe picture, .globe img, .globe canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.globe canvas { opacity: 0; transition: opacity .6s; }
+.globe.live canvas { opacity: 1; }
+.globe.live img { opacity: 0; transition: opacity .6s; }
+html.earth .globe { opacity: 0; will-change: transform, opacity; }
+.about-in { position: relative; z-index: 1; }
+/* Glass over the planet: the cards blur what is behind them. */
+.project { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+@media (max-width: 720px) { .globe { --gd: 150vw; left: calc(70% - var(--gd) / 2); top: calc(30% - var(--gd) / 2); } }
 html.js .reveal { opacity: 0; transform: translateY(26px); filter: blur(8px); transition: opacity 1s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter 1s cubic-bezier(.2,.7,.1,1); }
 html.js .reveal.in { opacity: 1; transform: none; filter: none; }
 html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-delay: .2s; } html.js .reveal.d3 { transition-delay: .3s; }
@@ -249,6 +285,18 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
   </section>
 
   <section class="about" id="about" aria-labelledby="about-name">
+    <!-- The Earth: NASA Visible Earth, "Blue Marble" (land, ocean, ice) and "Black Marble 2016", both public domain. -->
+    <div class="earth" aria-hidden="true">
+      <div class="earth-pin">
+        <div class="globe">
+          <picture>
+            <source type="image/webp" srcset="/img/earth-still.webp">
+            <img src="/img/earth-still.jpg" width="1000" height="1000" alt="" loading="lazy" decoding="async">
+          </picture>
+          <canvas></canvas>
+        </div>
+      </div>
+    </div>
     <div class="about-in">
       <p class="eyebrow reveal">About</p>
       <div class="profile">
@@ -260,9 +308,15 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
         </div>
         <div class="bio">
           <h2 id="about-name" class="reveal d1">Chris Korzen</h2>
-          <p class="role reveal d1">Korzen LLC · Creator of Convoy</p>
+          <p class="role reveal d1">Korzen LLC</p>
           <div class="reveal d2">
-            <p>Chris makes Convoy, the app for people who love to drive, and love to drive together: one route for the whole run, every car on the map, and a voice channel that keeps the group talking.</p>
+            <p>Born and raised in Key West. Currently located in Tampa. Actively investing in future technologies. Developing an application to allow car enthusiasts to set waypoints and communicate while on a drive.</p>
+            <!-- His ancestry (2026-09-26): each flag at its own proportions, the same height. -->
+            <ul class="flags" aria-label="Ancestry">
+              <li><svg viewBox="0 0 7410 3900" width="34" height="18" role="img" aria-label="United States"><title>United States</title><rect width="7410" height="3900" fill="#b22234"/><path d="M0 450H7410M0 1050H7410M0 1650H7410M0 2250H7410M0 2850H7410M0 3450H7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path fill="#fff" d="M246,90 273,173 360,173 289,225 316,308 246,256 175,308 202,225 131,173 219,173zM737,90 764,173 851,173 781,225 808,308 737,256 666,308 693,225 623,173 710,173zM1228,90 1255,173 1343,173 1272,225 1299,308 1228,256 1158,308 1185,225 1114,173 1202,173zM1720,90 1747,173 1834,173 1764,225 1791,308 1720,256 1649,308 1676,225 1606,173 1693,173zM2211,90 2238,173 2326,173 2255,225 2282,308 2211,256 2141,308 2168,225 2097,173 2184,173zM2703,90 2730,173 2817,173 2746,225 2773,308 2703,256 2632,308 2659,225 2588,173 2676,173zM491,301 518,384 606,384 535,435 562,518 491,467 421,518 448,435 377,384 464,384zM983,301 1010,384 1097,384 1026,435 1053,518 983,467 912,518 939,435 869,384 956,384zM1474,301 1501,384 1588,384 1518,435 1545,518 1474,467 1404,518 1431,435 1360,384 1447,384zM1966,301 1993,384 2080,384 2009,435 2036,518 1966,467 1895,518 1922,435 1851,384 1939,384zM2457,301 2484,384 2571,384 2501,435 2528,518 2457,467 2386,518 2413,435 2343,384 2430,384zM246,512 273,595 360,595 289,646 316,729 246,678 175,729 202,646 131,595 219,595zM737,512 764,595 851,595 781,646 808,729 737,678 666,729 693,646 623,595 710,595zM1228,512 1255,595 1343,595 1272,646 1299,729 1228,678 1158,729 1185,646 1114,595 1202,595zM1720,512 1747,595 1834,595 1764,646 1791,729 1720,678 1649,729 1676,646 1606,595 1693,595zM2211,512 2238,595 2326,595 2255,646 2282,729 2211,678 2141,729 2168,646 2097,595 2184,595zM2703,512 2730,595 2817,595 2746,646 2773,729 2703,678 2632,729 2659,646 2588,595 2676,595zM491,722 518,805 606,805 535,857 562,940 491,888 421,940 448,857 377,805 464,805zM983,722 1010,805 1097,805 1026,857 1053,940 983,888 912,940 939,857 869,805 956,805zM1474,722 1501,805 1588,805 1518,857 1545,940 1474,888 1404,940 1431,857 1360,805 1447,805zM1966,722 1993,805 2080,805 2009,857 2036,940 1966,888 1895,940 1922,857 1851,805 1939,805zM2457,722 2484,805 2571,805 2501,857 2528,940 2457,888 2386,940 2413,857 2343,805 2430,805zM246,933 273,1016 360,1016 289,1067 316,1150 246,1099 175,1150 202,1067 131,1016 219,1016zM737,933 764,1016 851,1016 781,1067 808,1150 737,1099 666,1150 693,1067 623,1016 710,1016zM1228,933 1255,1016 1343,1016 1272,1067 1299,1150 1228,1099 1158,1150 1185,1067 1114,1016 1202,1016zM1720,933 1747,1016 1834,1016 1764,1067 1791,1150 1720,1099 1649,1150 1676,1067 1606,1016 1693,1016zM2211,933 2238,1016 2326,1016 2255,1067 2282,1150 2211,1099 2141,1150 2168,1067 2097,1016 2184,1016zM2703,933 2730,1016 2817,1016 2746,1067 2773,1150 2703,1099 2632,1150 2659,1067 2588,1016 2676,1016zM491,1143 518,1226 606,1226 535,1278 562,1361 491,1309 421,1361 448,1278 377,1226 464,1226zM983,1143 1010,1226 1097,1226 1026,1278 1053,1361 983,1309 912,1361 939,1278 869,1226 956,1226zM1474,1143 1501,1226 1588,1226 1518,1278 1545,1361 1474,1309 1404,1361 1431,1278 1360,1226 1447,1226zM1966,1143 1993,1226 2080,1226 2009,1278 2036,1361 1966,1309 1895,1361 1922,1278 1851,1226 1939,1226zM2457,1143 2484,1226 2571,1226 2501,1278 2528,1361 2457,1309 2386,1361 2413,1278 2343,1226 2430,1226zM246,1354 273,1437 360,1437 289,1488 316,1571 246,1520 175,1571 202,1488 131,1437 219,1437zM737,1354 764,1437 851,1437 781,1488 808,1571 737,1520 666,1571 693,1488 623,1437 710,1437zM1228,1354 1255,1437 1343,1437 1272,1488 1299,1571 1228,1520 1158,1571 1185,1488 1114,1437 1202,1437zM1720,1354 1747,1437 1834,1437 1764,1488 1791,1571 1720,1520 1649,1571 1676,1488 1606,1437 1693,1437zM2211,1354 2238,1437 2326,1437 2255,1488 2282,1571 2211,1520 2141,1571 2168,1488 2097,1437 2184,1437zM2703,1354 2730,1437 2817,1437 2746,1488 2773,1571 2703,1520 2632,1571 2659,1488 2588,1437 2676,1437zM491,1565 518,1648 606,1648 535,1699 562,1782 491,1731 421,1782 448,1699 377,1648 464,1648zM983,1565 1010,1648 1097,1648 1026,1699 1053,1782 983,1731 912,1782 939,1699 869,1648 956,1648zM1474,1565 1501,1648 1588,1648 1518,1699 1545,1782 1474,1731 1404,1782 1431,1699 1360,1648 1447,1648zM1966,1565 1993,1648 2080,1648 2009,1699 2036,1782 1966,1731 1895,1782 1922,1699 1851,1648 1939,1648zM2457,1565 2484,1648 2571,1648 2501,1699 2528,1782 2457,1731 2386,1782 2413,1699 2343,1648 2430,1648zM246,1775 273,1858 360,1858 289,1910 316,1993 246,1941 175,1993 202,1910 131,1858 219,1858zM737,1775 764,1858 851,1858 781,1910 808,1993 737,1941 666,1993 693,1910 623,1858 710,1858zM1228,1775 1255,1858 1343,1858 1272,1910 1299,1993 1228,1941 1158,1993 1185,1910 1114,1858 1202,1858zM1720,1775 1747,1858 1834,1858 1764,1910 1791,1993 1720,1941 1649,1993 1676,1910 1606,1858 1693,1858zM2211,1775 2238,1858 2326,1858 2255,1910 2282,1993 2211,1941 2141,1993 2168,1910 2097,1858 2184,1858zM2703,1775 2730,1858 2817,1858 2746,1910 2773,1993 2703,1941 2632,1993 2659,1910 2588,1858 2676,1858z"/></svg></li>
+              <li><svg viewBox="0 0 16 10" width="29" height="18" role="img" aria-label="Poland"><title>Poland</title><rect width="16" height="10" fill="#dc143c"/><rect width="16" height="5" fill="#fff"/></svg></li>
+              <li><svg viewBox="0 0 900 600" width="27" height="18" role="img" aria-label="Slovakia"><title>Slovakia</title><rect width="900" height="600" fill="#ee1c25"/><rect width="900" height="400" fill="#0b4ea2"/><rect width="900" height="200" fill="#fff"/><path fill="#fff" d="M132 141H372V300Q372 420 252 456Q132 420 132 300Z"/><path fill="#ee1c25" d="M146 155H358V300Q358 408 252 441Q146 408 146 300Z"/><path fill="#fff" d="M237 186H267V225H312V253H267V284H337V314H267V356H237V314H167V284H237V253H192V225H237Z"/><path fill="#0b4ea2" d="M149 380Q178 346 207 372Q228 330 252 330Q276 330 297 372Q326 346 355 380Q340 420 252 441Q164 420 149 380Z"/></svg></li>
+            </ul>
           </div>
           <div class="links reveal d3">
             <a class="link" href="https://www.linkedin.com/in/ckorzen/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
@@ -431,6 +485,198 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
   // The font arriving changes every letter's width.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
   addEventListener('load', remeasure);
+})();
+</script>
+<script>
+/*
+  The Earth behind the profile. One quad, and per pixel a sphere: where the
+  pixel lands on it, which longitude and latitude that is, NASA's day map lit
+  by a sun behind and to the right, the night map's city lights where the sun
+  is not, a blue rim of atmosphere and a thin halo round the limb.
+
+  It rises and turns in as the section arrives (the turn is the scroll's), then
+  keeps turning slowly, the way the Earth does, while it is on screen, and
+  stops drawing when it is not. Reduced motion: the still, at rest, and no
+  script at all. No WebGL: the still rises in without turning.
+*/
+(function () {
+  var about = document.getElementById('about');
+  var globe = about && about.querySelector('.globe');
+  if (!globe || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  document.documentElement.classList.add('earth');
+  var canvas = globe.querySelector('canvas');
+
+  var RAD = Math.PI / 180;
+  var REST = -68 * RAD;   // the Americas at night, the Atlantic, Africa in daylight
+  var TURN = 70 * RAD;    // how far it turns while the section arrives
+  var SPIN = 1 * RAD;     // then a turn every six minutes: alive, never busy behind the words
+  var SCALE = 1.22;       // the canvas's half-width in radii: room for the halo
+  var clamp = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+  var ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+
+  var gl = null;
+  try { gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'low-power' }); } catch (e) { gl = null; }
+  var prog = null, U = {}, px = 0, maps = 0, deriv = null;
+
+  if (gl) {
+    deriv = gl.getExtension('OES_standard_derivatives');
+    var VS = 'attribute vec2 a;uniform float uScale;varying vec2 p;void main(){p=a*uScale;gl_Position=vec4(a,0.,1.);}';
+    var FS = [
+      deriv ? '#extension GL_OES_standard_derivatives : enable\n#define DERIV 1' : '',
+      '#ifdef GL_FRAGMENT_PRECISION_HIGH',
+      'precision highp float;',
+      '#else',
+      'precision mediump float;',
+      '#endif',
+      'varying vec2 p;',
+      'uniform sampler2D uDay, uNight;',
+      'uniform float uRot, uTilt, uRoll, uPx;',
+      'uniform vec3 uSun;',
+      'const vec3 LIGHTS = vec3(1.0, 0.64, 0.32);',
+      'const vec3 RIM = vec3(0.30, 0.56, 1.0);',
+      'const float PI = 3.14159265;',
+      'vec3 lin(vec3 c) { return pow(c, vec3(2.2)); }',
+      'void main() {',
+      '  float r = length(p);',
+      '  float z = sqrt(max(1.0 - r * r, 0.0));',
+      '  float ndl = dot(vec3(p, z), uSun);',
+      '  float body = clamp((1.0 - r) / uPx + 0.5, 0.0, 1.0);',
+      '  vec3 col = vec3(0.0);',
+      '  if (body > 0.0) {',
+      '    vec2 q2 = vec2(p.x * cos(uRoll) - p.y * sin(uRoll), p.x * sin(uRoll) + p.y * cos(uRoll));',
+      '    vec3 q = vec3(q2.x, q2.y * cos(uTilt) + z * sin(uTilt), -q2.y * sin(uTilt) + z * cos(uTilt));',
+      '    float lon = atan(q.x, q.z) + uRot;',
+      '    float u = fract(lon / (2.0 * PI) + 0.5);',
+      '#ifdef DERIV',
+      // The map's seam, a half turn away: whichever of the two is smooth here (Tarini).
+      '    float u2 = fract(lon / (2.0 * PI)) - 0.5;',
+      '    if (fwidth(u2) < fwidth(u)) u = u2;',
+      '#endif',
+      '    vec2 uv = vec2(u, 0.5 - asin(clamp(q.y, -1.0, 1.0)) / PI);',
+      '    vec3 day = lin(texture2D(uDay, uv).rgb);',
+      '    float night = lin(texture2D(uNight, uv).rgb).r;',
+      '    col = day * 1.30 * pow(max(ndl, 0.0), 0.85);',
+      '    col += LIGHTS * pow(night, 1.15) * 3.0 * (1.0 - smoothstep(-0.18, 0.10, ndl));',
+      '    col += RIM * pow(1.0 - z, 2.6) * (0.03 + 1.30 * smoothstep(-0.45, 0.55, ndl));',
+      '    col = 1.0 - exp(-col * 1.05);',
+      '  }',
+      '  vec2 o = r > 0.0 ? p / r : vec2(0.0);',
+      '  float halo = r > 1.0 ? exp(-(r - 1.0) * 24.0) * (0.015 + 0.85 * pow(smoothstep(-0.5, 0.7, dot(o, uSun.xy)), 1.5)) : 0.0;',
+      '  vec3 rgb = col * body + (1.0 - exp(-halo * RIM * 1.05)) * (1.0 - body);',
+      '  gl_FragColor = vec4(pow(rgb, vec3(1.0 / 2.2)), max(body, clamp(halo * 1.4, 0.0, 1.0)));',
+      '}'
+    ].join('\n');
+    var shader = function (type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+    };
+    var vs = shader(gl.VERTEX_SHADER, VS), fs = shader(gl.FRAGMENT_SHADER, FS);
+    if (vs && fs) {
+      prog = gl.createProgram();
+      gl.attachShader(prog, vs);
+      gl.attachShader(prog, fs);
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) prog = null;
+    }
+    if (prog) {
+      gl.useProgram(prog);
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      var loc = gl.getAttribLocation(prog, 'a');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      ['uScale', 'uRot', 'uTilt', 'uRoll', 'uPx', 'uSun', 'uDay', 'uNight'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+      var sun = [0.86, 0.30, -0.06], sl = Math.sqrt(sun[0] * sun[0] + sun[1] * sun[1] + sun[2] * sun[2]);
+      gl.uniform1f(U.uScale, SCALE);
+      gl.uniform1f(U.uTilt, 20 * RAD);
+      gl.uniform1f(U.uRoll, -16 * RAD);
+      gl.uniform3f(U.uSun, sun[0] / sl, sun[1] / sl, sun[2] / sl);
+      gl.uniform1i(U.uDay, 0);
+      gl.uniform1i(U.uNight, 1);
+      gl.clearColor(0, 0, 0, 0);
+    }
+    canvas.addEventListener('webglcontextlost', function (e) { e.preventDefault(); prog = null; globe.classList.remove('live'); });
+  }
+
+  // The maps, WebP where it decodes and JPEG where it does not; mipmapped when
+  // the seam can be dodged, which is what mipmaps need at the date line.
+  function texture(unit, name) {
+    var img = new Image();
+    img.onload = function () {
+      if (!prog) return;
+      var t = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      if (deriv) {
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        var an = gl.getExtension('EXT_texture_filter_anisotropic') || gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic');
+        if (an) gl.texParameterf(gl.TEXTURE_2D, an.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(4, gl.getParameter(an.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+      } else {
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
+      maps++;
+      queue();
+    };
+    img.onerror = function () { if (/\.webp$/.test(img.src)) img.src = '/img/' + name + '.jpg'; };
+    img.src = '/img/' + name + '.webp';
+  }
+
+  // 0 as the section's top reaches the bottom of the screen, 1 near the top.
+  function arrival() {
+    var r = about.getBoundingClientRect(), vh = window.innerHeight || 1;
+    return ease(clamp((vh - r.top) / (vh * 0.85)));
+  }
+
+  var visible = false, loading = false, raf = 0, t0 = 0, last = 0, lastE = -1;
+  function queue() { if (!raf && visible) raf = requestAnimationFrame(frame); }
+  function frame(now) {
+    raf = 0;
+    if (!visible) return;
+    if (!t0) t0 = now;
+    var e = arrival();
+    if (e !== lastE) {
+      globe.style.opacity = e.toFixed(3);
+      globe.style.transform = 'translate3d(0,' + ((1 - e) * 16).toFixed(2) + 'vh,0) scale(' + (0.84 + 0.16 * e).toFixed(4) + ')';
+    }
+    // Scrolling draws every frame; turning on its own, thirty a second is plenty.
+    if (prog && maps === 2 && (e !== lastE || now - last > 33)) {
+      var want = Math.min(2048, Math.round(globe.offsetWidth * Math.min(window.devicePixelRatio || 1, 1.75)));
+      if (want !== px && want > 0) { px = canvas.width = canvas.height = want; gl.viewport(0, 0, px, px); }
+      gl.uniform1f(U.uPx, 2 * SCALE / px);
+      gl.uniform1f(U.uRot, REST + (1 - e) * TURN - ((now - t0) / 1000) * SPIN);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      last = now;
+      if (!globe.classList.contains('live')) globe.classList.add('live');
+    }
+    lastE = e;
+    queue();
+  }
+
+  function start() {
+    if (!loading && prog) { loading = true; texture(0, 'earth-day'); texture(1, 'earth-night'); }
+    visible = true;
+    queue();
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) start();
+      else visible = false;
+    }, { rootMargin: '25% 0px' }).observe(about);
+  } else {
+    start();
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) visible = false;
+    else if (about.getBoundingClientRect().top < (window.innerHeight || 0) && about.getBoundingClientRect().bottom > 0) start();
+  });
 })();
 </script>
 <script>
