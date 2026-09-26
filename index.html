@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-ZXv4dSswbUkeZt1dk7Vvwuqu/eb73FaWkYVhdp3jet4=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-YHyiEybL9+cZdjAzLpYX0/6FevBWFk8ViLwXarNS7MY='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-hF9Dk9hj6oX+kV5QUsCxgEeTLF7J1vWPp97sTAL/42s=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-blL6oDjg1IGG/vjpr4966+CUaV7QS2b+IyZfQFJGtdA='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC: Chris Korzen, software engineer and the creator of Convoy.">
@@ -224,7 +224,10 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
 .globe canvas { opacity: 0; transition: opacity .6s; }
 .globe.live canvas { opacity: 1; }
 .globe.live img { opacity: 0; transition: opacity .6s; }
-html.earth .globe { opacity: 0; will-change: transform, opacity; }
+/* The page's flag is earth-on, never earth: .earth is the layer, and the flag
+   named after it gave <html> the layer's rules (absolute, pointer-events none,
+   overflow clip), so nobody could scroll or click the page (2026-09-26). */
+html.earth-on .globe { opacity: 0; will-change: transform, opacity; }
 .about-in { position: relative; z-index: 1; }
 /* Glass over the planet: the cards blur what is behind them. */
 .project { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
@@ -503,7 +506,7 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
   var about = document.getElementById('about');
   var globe = about && about.querySelector('.globe');
   if (!globe || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-  document.documentElement.classList.add('earth');
+  document.documentElement.classList.add('earth-on');
   var canvas = globe.querySelector('canvas');
 
   var RAD = Math.PI / 180;
