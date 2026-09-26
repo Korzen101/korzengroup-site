@@ -4,12 +4,64 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-HzuSOkMhYTbDMksfsUwl9tB/w6SWlc8E8dcCIYlTjrk='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-8NeJtJeWNKZsOkMy+vPGIk4kwOBnHP+rGUmk+njURaA=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-uwsZj1kuVYQlm911zOEav31yrHIlJJAB/aD+TuEvmo0='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
-<meta name="description" content="Korzen LLC, and Chris Korzen, who makes Convoy.">
+<meta name="description" content="Korzen LLC: Chris Korzen, software engineer and the creator of Convoy.">
 <link rel="canonical" href="https://korzengroup.com/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- The card a shared link shows (LinkedIn, iMessage, Slack, X). The image goes
+     over http as well until GitHub's certificate is issued; http then redirects. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Korzen LLC">
+<meta property="og:title" content="Korzen LLC">
+<meta property="og:description" content="Chris Korzen, software engineer and the creator of Convoy.">
+<meta property="og:url" content="https://korzengroup.com/">
+<meta property="og:image" content="http://korzengroup.com/img/og-card.jpg">
+<meta property="og:image:secure_url" content="https://korzengroup.com/img/og-card.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="KORZEN LLC over a black supercar in low light">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Korzen LLC">
+<meta name="twitter:description" content="Chris Korzen, software engineer and the creator of Convoy.">
+<meta name="twitter:image" content="https://korzengroup.com/img/og-card.jpg">
+<!-- Who and what this is, for search engines: data, never run. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://korzengroup.com/#organization",
+      "name": "Korzen LLC",
+      "url": "https://korzengroup.com/",
+      "logo": "https://korzengroup.com/apple-touch-icon.png"
+    },
+    {
+      "@type": "Person",
+      "@id": "https://korzengroup.com/#chris",
+      "name": "Chris Korzen",
+      "url": "https://korzengroup.com/#about",
+      "image": "https://korzengroup.com/img/chris-korzen.jpg",
+      "jobTitle": "Software Engineer",
+      "worksFor": { "@type": "Organization", "name": "Publix Super Markets" },
+      "sameAs": ["https://www.linkedin.com/in/ckorzen/"]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Convoy",
+      "url": "https://convoy.korzengroup.com/",
+      "operatingSystem": "iOS",
+      "applicationCategory": "TravelApplication",
+      "author": { "@id": "https://korzengroup.com/#chris" }
+    }
+  ]
+}
+</script>
 <link rel="preload" as="image" href="/img/supercar-hq-1672.webp" imagesrcset="/img/supercar-hq-960.webp 960w, /img/supercar-hq-1672.webp 1672w" imagesizes="(max-width: 700px) 125vw, min(1672px, 100vw)">
 <meta name="theme-color" content="#000000">
 <script>
@@ -117,6 +169,10 @@ html.motion .stage { height: 220vh; }
 .about h2 { margin: 0 0 14px; font-size: clamp(40px, 7vw, 84px); line-height: .98; letter-spacing: -.02em; font-weight: 800; background: var(--silver); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .role { margin: 0 0 24px; font-size: clamp(16px, 1.6vw, 19px); color: var(--ink-2); letter-spacing: .02em; }
 .bio p { margin: 0 0 16px; max-width: 58ch; font-size: clamp(16px, 1.4vw, 18px); line-height: 1.7; color: var(--ink-2); }
+.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.04); text-decoration: none; font-weight: 600; font-size: 15px; color: var(--ink); transition: background .2s, border-color .2s; }
+.link:hover { background: rgba(255,255,255,.09); border-color: rgba(242,243,245,.34); }
+.link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .rule { height: 1px; margin: clamp(56px, 9vh, 96px) 0 28px; background: linear-gradient(to right, var(--line), rgba(242,243,245,0)); }
 .work { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
 .project { display: flex; gap: 18px; align-items: center; padding: 20px 22px; border-radius: 20px; text-decoration: none; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.01)); transition: border-color .25s, transform .25s, background .25s; }
@@ -207,6 +263,9 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
           <p class="role reveal d1">Korzen LLC · Creator of Convoy</p>
           <div class="reveal d2">
             <p>Chris makes Convoy, the app for people who love to drive, and love to drive together: one route for the whole run, every car on the map, and a voice channel that keeps the group talking.</p>
+          </div>
+          <div class="links reveal d3">
+            <a class="link" href="https://www.linkedin.com/in/ckorzen/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
           </div>
         </div>
       </div>
