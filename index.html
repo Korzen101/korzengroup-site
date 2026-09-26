@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-hx4HDVEmi9O3TjiTrUFJXYre+1kdcKDUGH21FKPp7E4=' 'sha256-FNzJZDHG6iOkdtGtLUBuKkHK88d/eRuo376lCjtUXy8=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-8UjK5Jz7W8bA84fuHGgubaJbRqBDkjwQDv5qdvwcmUI='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-hx4HDVEmi9O3TjiTrUFJXYre+1kdcKDUGH21FKPp7E4=' 'sha256-nZAzl+uFvc0N+fKEEQCD4SZSEp+C9IQlN4YgcX8TDko=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-AUCnYGYaYcJ31t31GngwE9spZdpZgR+Leh/oDhx7YDs='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC: Chris Korzen, software engineer and the creator of Convoy.">
@@ -227,12 +227,17 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
    the room. Reduced motion, no JavaScript or no WebGL: the still, at rest. */
 /* A screen tall for the globe, the words at its top: centred, they sat under
    a screen's worth of black. */
-.about { min-height: 100vh; min-height: 100svh; }
+/* Less the footer and a little more: the page ends with "About" clear of the
+   header, not under it (2026-09-26: "the website scrolls two notches too far"). */
+.about { min-height: calc(100vh - 150px); min-height: calc(100svh - 150px); }
 .earth { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: clip; clip-path: inset(0); }
-.earth-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+/* Never taller than the section, and a size container, so the globe below is
+   sized to what the section can show: a section shorter than a screen would
+   otherwise cut the globe off in a line above the footer. */
+.earth-pin { position: sticky; top: 0; height: 100vh; height: min(100vh, 100%); height: min(100svh, 100%); container-type: size; }
 /* Never taller than its pin: a canvas poking above the section's top was cut
    there, halo and all, in a straight line. */
-.globe { --gd: min(1160px, 104vh, 100vw); position: absolute; width: var(--gd); height: var(--gd); left: calc(76% - var(--gd) / 2); top: calc(56% - var(--gd) / 2); }
+.globe { --gd: min(1160px, 96vh, 100vw); position: absolute; width: var(--gd); height: var(--gd); left: calc(76% - var(--gd) / 2); top: calc(50% - var(--gd) / 2); }
 .globe picture, .globe img, .globe canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .globe canvas { opacity: 0; transition: opacity .6s; }
 .globe.live canvas { opacity: 1; }
@@ -245,6 +250,12 @@ html.earth-on .globe { opacity: 0; will-change: transform, opacity; }
 /* Glass over the planet: the cards blur what is behind them. */
 .project { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 @media (max-width: 720px) { .globe { --gd: 150vw; left: calc(70% - var(--gd) / 2); top: max(0px, calc(36% - var(--gd) / 2)); } }
+/* Sized to its pin wherever the browser has container units (all current
+   ones): 96% of the pin's height at most, centred, so it always fits it. */
+@supports (height: 1cqh) {
+  .globe { --gd: min(1160px, 96cqh, 100cqw); }
+  @media (max-width: 720px) { .globe { --gd: min(150cqw, 96cqh); } }
+}
 html.js .reveal { opacity: 0; transform: translateY(26px); filter: blur(8px); transition: opacity 1s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter 1s cubic-bezier(.2,.7,.1,1); }
 html.js .reveal.in { opacity: 1; transform: none; filter: none; }
 html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-delay: .2s; } html.js .reveal.d3 { transition-delay: .3s; }
@@ -528,13 +539,13 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
 
   var RAD = Math.PI / 180;
   var REST = -68 * RAD;   // the Americas at night, the Atlantic, Africa in daylight
-  var TURN = 110 * RAD;   // how far it turns while the section scrolls in
+  var TURN = 180 * RAD;   // how far it turns while the section scrolls in: half a turn
   var CRUISE = 3 * RAD;   // the spin it keeps once the content is reached: a turn every two minutes
   var CARRY = 1.6;        // seconds for a scroll's extra spin to settle back into CRUISE
   var FASTEST = 40 * RAD; // however hard the flick
   var SCALE = 1.22;       // the canvas's half-width in radii: room for the halo
   var clamp = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
-  var ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  var inOut = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 
   var gl = null;
   try { gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'low-power' }); } catch (e) { gl = null; }
@@ -651,10 +662,21 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
     img.src = '/img/' + name + '.webp';
   }
 
-  // 0 as the section's top reaches the bottom of the screen, 1 near the top.
+  /*
+    0 as the section's top reaches the bottom of the screen, 1 as the page
+    reaches the content: the section's top at the top of the screen, or the
+    bottom of the page if that comes first (it does, since the page ends with
+    "About" clear of the header). Eased in and out, so the change is spread
+    over the part you can see. It used to be eased out and done by the time
+    the section was half in, so the globe had arrived while it was still
+    below the screen ("I don't see the earth animation", 2026-09-26).
+  */
   function arrival() {
-    var r = about.getBoundingClientRect(), vh = window.innerHeight || 1;
-    return ease(clamp((vh - r.top) / (vh * 0.85)));
+    var vh = window.innerHeight || 1;
+    var at = about.getBoundingClientRect().top + window.pageYOffset;
+    var start = at - vh;
+    var end = Math.min(at, document.documentElement.scrollHeight - vh);
+    return inOut(clamp((window.pageYOffset - start) / Math.max(1, end - start)));
   }
 
   var visible = false, loading = false, raf = 0, last = 0, lastE = -1, then = 0, spin = 0, carry = 0;
@@ -666,8 +688,9 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
     then = now;
     var e = arrival();
     if (e !== lastE) {
-      globe.style.opacity = e.toFixed(3);
-      globe.style.transform = 'translate3d(0,' + ((1 - e) * 24).toFixed(2) + 'vh,0) scale(' + (0.78 + 0.22 * e).toFixed(4) + ')';
+      // Rising from further down than the page brings it, and growing: it comes in faster than the words.
+      globe.style.opacity = clamp(e * 2.5).toFixed(3);
+      globe.style.transform = 'translate3d(0,' + ((1 - e) * 36).toFixed(2) + 'vh,0) scale(' + (0.6 + 0.4 * e).toFixed(4) + ')';
       // The speed the scroll is turning it at becomes spin it keeps when the scrolling stops.
       if (lastE >= 0 && dt > 0) carry = Math.min(FASTEST, Math.max(carry, (Math.abs(e - lastE) * TURN) / dt));
     }
