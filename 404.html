@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-PmpDRuPHIoHupNw6j0IqBqAeSRlnJnsaJ8kObksMOE0='; style-src 'sha256-d6wnnnz7ayV+kk7Y5YHU9uFdeNH1TTuf8JkVlduw9JI='; img-src 'self' https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-kA+ekV69yi9zXY9GpLbaXEo7NkPGj65C3QBoulMxnJ0='; style-src 'sha256-d6wnnnz7ayV+kk7Y5YHU9uFdeNH1TTuf8JkVlduw9JI='; img-src 'self' https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Not found · Korzen LLC</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -21,12 +21,14 @@ a { color: #f2f3f5; }
 <main><h1>Not found</h1><p><a href="/">Korzen LLC</a></p></main>
 <script>
 /* Until GitHub's "Enforce HTTPS" is on, send visitors to https the moment the
-   certificate works: a picture fetched over https that loads proves it does. */
+   certificate works: a picture fetched over https that loads proves it does,
+   for this host, so this host is where they go (www since 2026-09-26; the bare
+   domain's certificate is GitHub's to issue). */
 (function () {
   if (window.top !== window.self) { try { window.top.location.replace(window.location.href); } catch (e) {} }
   if (location.protocol !== 'http:' || !/(^|\.)korzengroup\.com$/.test(location.hostname)) return;
   var probe = new Image();
-  probe.onload = function () { location.replace('https://korzengroup.com' + location.pathname + location.search + location.hash); };
+  probe.onload = function () { location.replace('https://' + location.hostname + location.pathname + location.search + location.hash); };
   probe.src = 'https://' + location.hostname + '/favicon.svg?https-check=' + Date.now();
 })();
 </script>

@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-0yg4Ahup2ovJP8yFW7UYKgh+mC7QBw6b05fZf6BnCWg=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-o6j2B+wMidtmEF9MHNq4ZO5QfdhbhDRlfrWTn0xkBH0='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-0yg4Ahup2ovJP8yFW7UYKgh+mC7QBw6b05fZf6BnCWg=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-o6j2B+wMidtmEF9MHNq4ZO5QfdhbhDRlfrWTn0xkBH0='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -896,11 +896,13 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
 </script>
 <script>
 /* Until GitHub's "Enforce HTTPS" is on, send visitors to https the moment the
-   certificate works: a picture fetched over https that loads proves it does. */
+   certificate works: a picture fetched over https that loads proves it does,
+   for this host, so this host is where they go (www since 2026-09-26; the bare
+   domain's certificate is GitHub's to issue). */
 (function () {
   if (location.protocol !== 'http:' || !/(^|\.)korzengroup\.com$/.test(location.hostname)) return;
   var probe = new Image();
-  probe.onload = function () { location.replace('https://korzengroup.com' + location.pathname + location.search + location.hash); };
+  probe.onload = function () { location.replace('https://' + location.hostname + location.pathname + location.search + location.hash); };
   probe.src = 'https://' + location.hostname + '/favicon.svg?https-check=' + Date.now();
 })();
 </script>

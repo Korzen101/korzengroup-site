@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-hx4HDVEmi9O3TjiTrUFJXYre+1kdcKDUGH21FKPp7E4=' 'sha256-nZAzl+uFvc0N+fKEEQCD4SZSEp+C9IQlN4YgcX8TDko=' 'sha256-o2SMDsX5QvG0mR7fqQJ1aSvUtZoYvBKQLeczQ8yfmmg='; style-src 'sha256-AUCnYGYaYcJ31t31GngwE9spZdpZgR+Leh/oDhx7YDs='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-hx4HDVEmi9O3TjiTrUFJXYre+1kdcKDUGH21FKPp7E4=' 'sha256-nZAzl+uFvc0N+fKEEQCD4SZSEp+C9IQlN4YgcX8TDko=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-AUCnYGYaYcJ31t31GngwE9spZdpZgR+Leh/oDhx7YDs='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC: Chris Korzen, software engineer and the creator of Convoy.">
@@ -734,11 +734,13 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
 </script>
 <script>
 /* Until GitHub's "Enforce HTTPS" is on, send visitors to https the moment the
-   certificate works: a picture fetched over https that loads proves it does. */
+   certificate works: a picture fetched over https that loads proves it does,
+   for this host, so this host is where they go (www since 2026-09-26; the bare
+   domain's certificate is GitHub's to issue). */
 (function () {
   if (location.protocol !== 'http:' || !/(^|\.)korzengroup\.com$/.test(location.hostname)) return;
   var probe = new Image();
-  probe.onload = function () { location.replace('https://korzengroup.com' + location.pathname + location.search + location.hash); };
+  probe.onload = function () { location.replace('https://' + location.hostname + location.pathname + location.search + location.hash); };
   probe.src = 'https://' + location.hostname + '/favicon.svg?https-check=' + Date.now();
 })();
 </script>
