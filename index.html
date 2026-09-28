@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Only this page's own code runs: the build replaces the inline allowance below with the SHA-256 of each inline block. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-hx4HDVEmi9O3TjiTrUFJXYre+1kdcKDUGH21FKPp7E4=' 'sha256-nZAzl+uFvc0N+fKEEQCD4SZSEp+C9IQlN4YgcX8TDko=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-AUCnYGYaYcJ31t31GngwE9spZdpZgR+Leh/oDhx7YDs='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pGhV3J9BJcyqhUv66Ng2yJW14oDOJTumrwkX2MzVfAQ=' 'sha256-hx4HDVEmi9O3TjiTrUFJXYre+1kdcKDUGH21FKPp7E4=' 'sha256-nZAzl+uFvc0N+fKEEQCD4SZSEp+C9IQlN4YgcX8TDko=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-XQF2Cidgjy87y8O0KbeM7wCfKKG5SHpmkJ/+iG+uSog='; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Korzen LLC</title>
 <meta name="description" content="Korzen LLC: Chris Korzen, software engineer and the creator of Convoy.">
@@ -105,13 +105,19 @@ header { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex;
 header a { pointer-events: auto; }
 .brand { text-decoration: none; font-weight: 800; letter-spacing: .32em; font-size: 13px; color: var(--ink); }
 html.motion .brand { opacity: 0; }
-.admin {
-  margin-left: auto; text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase;
+/* The two doors, top right: Dashboard (2026-09-28), then Admin in its corner. */
+.doors { margin-left: auto; display: flex; gap: 10px; }
+.pill {
+  text-decoration: none; font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase;
   padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.04);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: background .2s, border-color .2s;
 }
-.admin:hover { background: rgba(255,255,255,.1); border-color: rgba(242,243,245,.34); }
-.admin:focus-visible, .brand:focus-visible, .cue:focus-visible, .project:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.pill:hover { background: rgba(255,255,255,.1); border-color: rgba(242,243,245,.34); }
+.pill:focus-visible, .brand:focus-visible, .cue:focus-visible, .project:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (max-width: 420px) {
+  .doors { gap: 8px; }
+  .pill { padding: 8px 12px; font-size: 13px; letter-spacing: .06em; }
+}
 
 /* ── the stage: pinned while the runway scrolls past it ─────────────────── */
 .stage { position: relative; }
@@ -278,7 +284,10 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
 <body>
 <header>
   <a class="brand" href="#top" aria-label="Korzen LLC, back to the top">KORZEN</a>
-  <a class="admin" href="/admin/">Admin</a>
+  <nav class="doors" aria-label="Sign in">
+    <a class="pill" href="/dashboard/">Dashboard</a>
+    <a class="pill" href="/admin/">Admin</a>
+  </nav>
 </header>
 <main>
   <section class="stage" id="top" aria-label="Korzen LLC">
@@ -376,7 +385,7 @@ html.js .reveal.d1 { transition-delay: .1s; } html.js .reveal.d2 { transition-de
 </main>
 <footer>
   <span>© 2026 Korzen LLC</span>
-  <a href="/admin/">Admin</a>
+  <span class="doors"><a href="/dashboard/">Dashboard</a><a href="/admin/">Admin</a></span>
 </footer>
 <script>
 /*

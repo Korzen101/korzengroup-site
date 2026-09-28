@@ -1,4 +1,5 @@
 User-agent: *
 Disallow: /admin/
+Disallow: /dashboard/
 
 Sitemap: https://korzengroup.com/sitemap.xml

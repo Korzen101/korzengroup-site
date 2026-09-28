@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!--
+  The Korzen dashboard (2026-09-28): "another page that I will use for
+  multiple purposes", starting with the firearms collection.
+
+  Nothing secret lives on this page. It signs in to the dashboard Edge Function
+  (ConvoyExpo/supabase/functions/dashboard) with an email, a password and a
+  code sent to Convoy on the owner's phone, keeps the session in this tab
+  only, and draws what that function returns. Every value is set as text,
+  never as markup. The policy below lets it talk to that function and nothing
+  else.
+-->
+<!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AaRPD6ka9RIg3oBsmnzjGCNttLZfytFKgzKuiwLVQWo=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-ZpfiChlL3AQMDqcIFqqHKjmmUhvKrlyzWpwdyyeAZbc='; font-src 'self'; img-src 'self' data:; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<title>Dashboard · Korzen LLC</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#07080a">
+<style>
+@font-face { font-family: Archivo; src: url(/archivo.woff) format('woff'); font-weight: 100 900; font-display: swap; }
+:root {
+  color-scheme: dark;
+  --bg: #07080a; --panel: #101215; --panel-2: #16191d; --raise: #1c2025; --line: rgba(242,243,245,.08); --line-2: rgba(242,243,245,.14);
+  --ink: #f2f3f5; --ink-2: rgba(242,243,245,.72); --muted: rgba(242,243,245,.5);
+  --focus: rgba(57,135,229,.6); --critical: #d03b3b;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0; min-height: 100vh; color: var(--ink);
+  background: radial-gradient(1200px 520px at 50% -140px, #17202c 0%, rgba(23,32,44,0) 70%), var(--bg);
+  font: 15px/1.5 Archivo, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;
+}
+a { color: var(--ink); }
+button, input, select { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 3.5vw, 36px); }
+
+/* ── chrome ─────────────────────────────────────────────────────────────── */
+header.top { position: sticky; top: 0; z-index: 5; background: rgba(7,8,10,.72); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 18px; min-height: 60px; }
+.brand { color: var(--ink); text-decoration: none; font-weight: 800; letter-spacing: .3em; font-size: 13px; margin-right: 6px; }
+.tabs { display: flex; gap: 4px; flex: 1; }
+.tab { border: 0; background: none; padding: 8px 14px; border-radius: 10px; color: var(--muted); font-weight: 600; cursor: pointer; }
+.tab:hover { color: var(--ink); background: rgba(255,255,255,.04); }
+.tab[aria-selected="true"] { color: var(--ink); background: var(--raise); }
+.btn { border: 1px solid var(--line-2); background: rgba(255,255,255,.03); border-radius: 10px; padding: 8px 14px; font-weight: 600; cursor: pointer; font-size: 14px; }
+.btn:hover { background: rgba(255,255,255,.08); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.primary { background: var(--ink); color: #0b0c0e; border-color: var(--ink); }
+.btn.danger { border-color: rgba(208,59,59,.55); color: #ff8f8f; }
+.btn.danger:hover { background: rgba(208,59,59,.12); }
+.btn.small { padding: 5px 10px; font-size: 13px; border-radius: 8px; }
+.btn:focus-visible, .tab:focus-visible, .sort:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+main { padding: 24px 0 72px; }
+.titlebar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.titlebar h1 { margin: 0; font-size: clamp(26px, 3.6vw, 36px); letter-spacing: -.01em; }
+.titlebar .sub { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.titlebar .actions { display: flex; gap: 8px; }
+.card { background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)), var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+.banner { background: rgba(208,59,59,.1); border: 1px solid rgba(208,59,59,.4); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
+.muted { color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+/* ── the list ───────────────────────────────────────────────────────────── */
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.toolbar .search { flex: 1 1 260px; }
+.input, .select { width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--panel-2); font-size: 15px; }
+.select { width: auto; min-width: 150px; padding-right: 32px; }
+.input:focus, .select:focus { outline: 2px solid var(--focus); outline-offset: 1px; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 0 12px 10px; border-bottom: 1px solid var(--line-2); }
+td { padding: 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+td.name { font-weight: 700; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+th.num { text-align: right; }
+td.act { text-align: right; white-space: nowrap; }
+td.act .btn + .btn { margin-left: 6px; }
+.sort { border: 0; background: none; padding: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.sort:hover { color: var(--ink); }
+.sort .dir { display: inline-block; width: 1em; }
+.foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 13px; margin-top: 14px; font-variant-numeric: tabular-nums; }
+.empty { color: var(--muted); padding: 22px; text-align: center; border: 1px dashed var(--line-2); border-radius: 14px; }
+.confirm { color: #ff8f8f; font-size: 13px; margin-right: 6px; }
+
+/* ── the editor ─────────────────────────────────────────────────────────── */
+#editor { margin-bottom: 16px; }
+#editor h2 { margin: 0 0 16px; font-size: 18px; }
+.fields { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; }
+label { display: block; font-size: 13px; color: var(--muted); }
+label .input { margin-top: 6px; }
+.row { display: flex; gap: 8px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+.error { color: #ff8f8f; min-height: 1.5em; margin: 10px 0 0; font-size: 14px; }
+.error.info { color: var(--muted); }
+
+/* ── sign-in ────────────────────────────────────────────────────────────── */
+#login { min-height: calc(100vh - 160px); display: grid; place-items: center; }
+#login .card { width: min(380px, 100%); }
+#login h1 { margin: 0 0 20px; font-size: 22px; letter-spacing: .14em; text-transform: uppercase; }
+#login label { margin-bottom: 14px; }
+#signin, #verify { width: 100%; margin-top: 6px; padding: 12px 14px; }
+#restart { margin-top: 12px; }
+.note { color: var(--ink-2); font-size: 14px; margin: 0 0 14px; }
+
+@media (max-width: 720px) {
+  .fields { grid-template-columns: 1fr 1fr; }
+  .fields label:first-child { grid-column: 1 / -1; }
+}
+/* A phone: each row becomes a card, each value under its column's name. */
+@media (max-width: 640px) {
+  header.top .wrap { gap: 8px; }
+  .brand { letter-spacing: .2em; font-size: 12px; }
+  .select { flex: 1 1 140px; }
+  thead { display: none; }
+  table, tbody, tr, td { display: block; }
+  tr { border: 1px solid var(--line); border-radius: 14px; padding: 6px 4px; margin-bottom: 10px; background: var(--panel-2); }
+  td { border: 0; padding: 6px 12px; display: flex; justify-content: space-between; gap: 12px; text-align: right; }
+  td::before { content: attr(data-label); color: var(--muted); font-size: 13px; text-align: left; }
+  td.name { font-size: 16px; }
+  td.act::before { content: ""; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/">KORZEN</a>
+  <nav class="tabs" id="tabs" role="tablist" hidden>
+    <button class="tab" role="tab" id="tab-collection" aria-selected="true" type="button">Collection</button>
+  </nav>
+  <button class="btn small" id="signout" type="button" hidden>Sign out</button>
+</div></header>
+
+<main class="wrap">
+  <section id="login" hidden>
+    <div class="card">
+      <h1>Dashboard</h1>
+      <form id="login-form" novalidate>
+        <label>Email<input class="input" name="email" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+        <label>Password<input class="input" name="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn primary" type="submit" id="signin">Sign in</button>
+        <p class="error" id="login-error" role="alert"></p>
+      </form>
+      <!-- The second step: a code sent to Convoy on the owner's phone. -->
+      <form id="code-form" novalidate hidden>
+        <p class="note" id="code-note">A code is on its way to Convoy on your phone.</p>
+        <label>Code from your phone<input class="input" name="code" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" spellcheck="false" required></label>
+        <button class="btn primary" type="submit" id="verify">Verify</button>
+        <button class="btn small" type="button" id="restart">Start over</button>
+        <p class="error" id="code-error" role="alert"></p>
+      </form>
+    </div>
+  </section>
+
+  <div id="app" hidden>
+    <section id="collection" role="tabpanel" aria-labelledby="tab-collection">
+      <div class="titlebar">
+        <div><h1>Collection</h1><div class="sub" id="summary" aria-live="polite"></div></div>
+        <div class="actions">
+          <button class="btn" id="refresh" type="button">Refresh</button>
+          <button class="btn primary" id="add" type="button">Add</button>
+        </div>
+      </div>
+      <div class="banner" id="banner" hidden></div>
+
+      <form class="card" id="editor" novalidate hidden>
+        <h2 id="editor-title">Add a firearm</h2>
+        <div class="fields">
+          <label>Name (make and model)<input class="input" name="name" maxlength="120" autocomplete="off" required></label>
+          <label>Type<input class="input" name="type" maxlength="40" list="types" autocomplete="off" required></label>
+          <label>Caliber<input class="input" name="caliber" maxlength="40" list="calibers" autocomplete="off" required></label>
+          <label>Price ($)<input class="input" name="price" inputmode="decimal" autocomplete="off" placeholder="Optional"></label>
+        </div>
+        <datalist id="types"></datalist>
+        <datalist id="calibers"></datalist>
+        <div class="row">
+          <button class="btn primary" type="submit" id="save">Save</button>
+          <button class="btn" type="button" id="cancel">Cancel</button>
+        </div>
+        <p class="error" id="editor-error" role="alert"></p>
+      </form>
+
+      <div class="card">
+        <div class="toolbar">
+          <input class="input search" id="search" type="search" placeholder="Search name, type or caliber" autocomplete="off" spellcheck="false" aria-label="Search">
+          <select class="select" id="filter-type" aria-label="Type"></select>
+          <select class="select" id="filter-caliber" aria-label="Caliber"></select>
+          <button class="btn" id="clear" type="button" hidden>Clear</button>
+        </div>
+        <table id="table">
+          <thead><tr>
+            <th scope="col" aria-sort="ascending" data-key="name"><button class="sort" type="button" data-key="name">Name <span class="dir" aria-hidden="true">↑</span></button></th>
+            <th scope="col" aria-sort="none" data-key="type"><button class="sort" type="button" data-key="type">Type <span class="dir" aria-hidden="true"></span></button></th>
+            <th scope="col" aria-sort="none" data-key="caliber"><button class="sort" type="button" data-key="caliber">Caliber <span class="dir" aria-hidden="true"></span></button></th>
+            <th scope="col" class="num" aria-sort="none" data-key="price"><button class="sort" type="button" data-key="price">Price <span class="dir" aria-hidden="true"></span></button></th>
+            <th scope="col"><span class="sr">Actions</span></th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty" hidden></div>
+        <div class="foot"><span id="shown"></span><span id="shown-value"></span></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  /*
+    Never inside somebody else's page: a framed copy of a signed-in page could
+    be clicked through by a page laid over it. Netlify also sends
+    frame-ancestors 'none', so this is the second lock, not the only one.
+  */
+  if (window.top !== window.self) {
+    document.body.replaceChildren();
+    try { window.top.location.replace(window.location.href); } catch (e) {}
+    return;
+  }
+  const API = 'https://tmhditmqlunnebzullwt.supabase.co/functions/v1/dashboard';
+  const KEY = 'korzen.dashboard.session';
+  const $ = (id) => document.getElementById(id);
+  const session = {
+    get() { try { return sessionStorage.getItem(KEY) || ''; } catch { return ''; } },
+    set(v) { try { if (v) sessionStorage.setItem(KEY, v); else sessionStorage.removeItem(KEY); } catch {} },
+  };
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = String(text);
+    return e;
+  };
+  const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+  const price = (v) => (v === null || v === undefined || v === '' || !Number.isFinite(Number(v)) ? '—' : money.format(Number(v)));
+  const plural = (n, one, many) => n.toLocaleString() + ' ' + (n === 1 ? one : many);
+
+  async function call(body) {
+    const token = session.get();
+    try {
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}),
+        body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401 && body.action !== 'login' && body.action !== 'login_code') { session.set(''); showLogin('Your session ended. Sign in again.', true); }
+      return { status: res.status, data };
+    } catch {
+      return { status: 0, data: { error: 'Could not reach the server. Check the connection and try again.' } };
+    }
+  }
+
+  // ── sign-in ──────────────────────────────────────────────────────────────
+  // The challenge from the password step, held only here until the code is in.
+  let challenge = '';
+  function showPasswordStep() {
+    challenge = '';
+    $('code-form').hidden = true; $('login-form').hidden = false;
+  }
+  function showCodeStep(phones, minutes) {
+    $('login-form').hidden = true; $('code-form').hidden = false;
+    $('code-note').textContent = 'We sent a code to Convoy on your phone' + (phones > 1 ? ' (' + phones + ' phones)' : '') + '. It expires in ' + minutes + ' minutes.';
+    $('code-error').textContent = '';
+    $('code').value = '';
+    $('code').focus();
+  }
+  function showLogin(message, info) {
+    $('app').hidden = true; $('tabs').hidden = true; $('signout').hidden = true;
+    $('login').hidden = false;
+    showPasswordStep();
+    $('login-error').textContent = message || '';
+    $('login-error').className = 'error' + (info ? ' info' : '');
+    items = [];
+    const e = document.querySelector('#login-form input[name=email]');
+    if (e && !e.value) e.focus();
+  }
+  function showApp() {
+    $('login').hidden = true; $('app').hidden = false; $('tabs').hidden = false; $('signout').hidden = false;
+  }
+  function signedIn(token) {
+    session.set(token); showPasswordStep(); $('login-form').reset(); showApp(); return load();
+  }
+  $('login-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const form = ev.currentTarget;
+    const email = form.email.value.trim();
+    const password = form.password.value;
+    if (!email || !password) { $('login-error').textContent = 'Enter the email and the password.'; return; }
+    $('signin').disabled = true;
+    $('login-error').textContent = ''; $('login-error').className = 'error';
+    const { status, data } = await call({ action: 'login', email, password });
+    $('signin').disabled = false;
+    form.password.value = '';
+    if (status === 200 && data.step === 'code' && data.challenge) { challenge = data.challenge; return showCodeStep(data.phones || 1, data.minutes || 5); }
+    if (status === 200 && data.token) return signedIn(data.token);
+    $('login-error').textContent = data.error || (status === 0 ? 'Could not reach the server.' : 'Sign-in failed (' + status + ').');
+  });
+  $('code-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const code = $('code').value.replace(/\D/g, '');
+    if (code.length !== 6) { $('code-error').textContent = 'The code is six digits.'; return; }
+    $('verify').disabled = true;
+    $('code-error').textContent = '';
+    const { status, data } = await call({ action: 'login_code', challenge, code });
+    $('verify').disabled = false;
+    if (status === 200 && data.token) return signedIn(data.token);
+    $('code-error').textContent = data.error || (status === 0 ? 'Could not reach the server.' : 'That did not work (' + status + ').');
+  });
+  $('restart').addEventListener('click', () => { showPasswordStep(); $('login-error').textContent = ''; });
+  $('signout').addEventListener('click', () => { session.set(''); showLogin('Signed out.', true); });
+
+  // ── the collection ───────────────────────────────────────────────────────
+  let items = [];
+  let sortKey = 'name';
+  let sortDir = 1;
+  let confirming = '';
+  const TYPES = ['Pistol', 'Revolver', 'Rifle', 'Shotgun', 'Carbine'];
+  const CALIBERS = ['9mm', '.380 ACP', '.40 S&W', '.45 ACP', '.22 LR', '.38 Special', '.357 Magnum', '10mm', '5.56 NATO', '.223 Rem', '.308 Win', '6.5 Creedmoor', '7.62x39', '12 gauge', '20 gauge'];
+  const lower = (s) => String(s || '').toLocaleLowerCase();
+  const distinct = (values) => {
+    const seen = new Map();
+    for (const v of values) { const k = lower(v).trim(); if (k && !seen.has(k)) seen.set(k, String(v).trim()); }
+    return [...seen.values()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+  };
+
+  function banner(message) {
+    $('banner').textContent = message || '';
+    $('banner').hidden = !message;
+  }
+
+  async function load() {
+    banner('');
+    $('refresh').disabled = true;
+    const { status, data } = await call({ action: 'firearms' });
+    $('refresh').disabled = false;
+    if (status !== 200) { if (status !== 401) banner(data.error || 'Could not load the collection.'); return; }
+    items = Array.isArray(data.firearms) ? data.firearms : [];
+    render();
+  }
+
+  function fillSelect(select, label, values) {
+    const keep = select.value;
+    select.replaceChildren();
+    const all = el('option', '', 'All ' + label); all.value = ''; select.append(all);
+    for (const v of values) { const o = el('option', '', v); o.value = v; select.append(o); }
+    select.value = values.includes(keep) ? keep : '';
+  }
+  function fillList(list, values) {
+    list.replaceChildren(...values.map((v) => { const o = document.createElement('option'); o.value = v; return o; }));
+  }
+
+  function visible() {
+    const words = lower($('search').value).split(/\s+/).filter(Boolean);
+    const type = $('filter-type').value;
+    const caliber = $('filter-caliber').value;
+    const shown = items.filter((f) => {
+      if (type && lower(f.type) !== lower(type)) return false;
+      if (caliber && lower(f.caliber) !== lower(caliber)) return false;
+      const hay = lower(f.name + ' ' + f.type + ' ' + f.caliber);
+      return words.every((w) => hay.includes(w));
+    });
+    const key = sortKey;
+    shown.sort((a, b) => {
+      if (key === 'price') {
+        const x = a.price === null ? -1 : Number(a.price); const y = b.price === null ? -1 : Number(b.price);
+        return (x - y) * sortDir;
+      }
+      return String(a[key] || '').localeCompare(String(b[key] || ''), undefined, { numeric: true, sensitivity: 'base' }) * sortDir;
+    });
+    return shown;
+  }
+
+  function render() {
+    const types = distinct(items.map((f) => f.type));
+    const calibers = distinct(items.map((f) => f.caliber));
+    fillSelect($('filter-type'), 'types', types);
+    fillSelect($('filter-caliber'), 'calibers', calibers);
+    fillList($('types'), distinct(TYPES.concat(types)));
+    fillList($('calibers'), distinct(CALIBERS.concat(calibers)));
+
+    const total = items.reduce((s, f) => s + (f.price === null ? 0 : Number(f.price) || 0), 0);
+    $('summary').textContent = plural(items.length, 'firearm', 'firearms') + ' · ' + money.format(total);
+
+    for (const th of document.querySelectorAll('th[data-key]')) {
+      const on = th.dataset.key === sortKey;
+      th.setAttribute('aria-sort', on ? (sortDir > 0 ? 'ascending' : 'descending') : 'none');
+      th.querySelector('.dir').textContent = on ? (sortDir > 0 ? '↑' : '↓') : '';
+    }
+
+    const shown = visible();
+    const rows = shown.map((f) => {
+      const tr = document.createElement('tr');
+      const td = (cls, label, text) => { const c = el('td', cls, text); c.dataset.label = label; return c; };
+      tr.append(td('name', 'Name', f.name), td('', 'Type', f.type), td('', 'Caliber', f.caliber), td('num', 'Price', price(f.price)));
+      const act = td('act', '', '');
+      if (confirming === f.id) {
+        act.append(el('span', 'confirm', 'Delete?'));
+        const yes = el('button', 'btn small danger', 'Delete'); yes.type = 'button'; yes.addEventListener('click', () => remove(f));
+        const no = el('button', 'btn small', 'Keep'); no.type = 'button'; no.addEventListener('click', () => { confirming = ''; render(); });
+        act.append(yes, no);
+      } else {
+        const edit = el('button', 'btn small', 'Edit'); edit.type = 'button'; edit.addEventListener('click', () => openEditor(f));
+        const del = el('button', 'btn small danger', 'Delete'); del.type = 'button'; del.addEventListener('click', () => { confirming = f.id; render(); });
+        act.append(edit, del);
+      }
+      tr.append(act);
+      return tr;
+    });
+    $('rows').replaceChildren(...rows);
+    $('table').hidden = shown.length === 0;
+    const filtered = $('search').value.trim() || $('filter-type').value || $('filter-caliber').value;
+    $('clear').hidden = !filtered;
+    $('empty').hidden = shown.length !== 0;
+    $('empty').textContent = items.length ? 'Nothing matches that search.' : 'Nothing here yet. Add the first one.';
+    const shownValue = shown.reduce((s, f) => s + (f.price === null ? 0 : Number(f.price) || 0), 0);
+    $('shown').textContent = filtered ? 'Showing ' + shown.length + ' of ' + items.length : plural(items.length, 'firearm', 'firearms');
+    $('shown-value').textContent = shown.length ? money.format(shownValue) + (filtered ? ' shown' : ' in all') : '';
+  }
+
+  for (const b of document.querySelectorAll('.sort')) {
+    b.addEventListener('click', () => {
+      const key = b.dataset.key;
+      if (sortKey === key) sortDir = -sortDir; else { sortKey = key; sortDir = key === 'price' ? -1 : 1; }
+      render();
+    });
+  }
+  $('search').addEventListener('input', render);
+  $('filter-type').addEventListener('change', render);
+  $('filter-caliber').addEventListener('change', render);
+  $('clear').addEventListener('click', () => { $('search').value = ''; $('filter-type').value = ''; $('filter-caliber').value = ''; render(); $('search').focus(); });
+  $('refresh').addEventListener('click', load);
+
+  // ── adding and editing ───────────────────────────────────────────────────
+  let editing = '';
+  // By name through elements, never form.name: that is the form's own name attribute.
+  const field = (n) => $('editor').elements.namedItem(n);
+  function openEditor(f) {
+    editing = f ? f.id : '';
+    const form = $('editor');
+    form.reset();
+    $('editor-title').textContent = f ? 'Edit ' + f.name : 'Add a firearm';
+    if (f) {
+      field('name').value = f.name; field('type').value = f.type; field('caliber').value = f.caliber;
+      field('price').value = f.price === null || f.price === undefined ? '' : String(f.price);
+    }
+    $('editor-error').textContent = '';
+    form.hidden = false;
+    field('name').focus();
+    form.scrollIntoView({ block: 'nearest' });
+  }
+  function closeEditor() { editing = ''; $('editor').hidden = true; $('editor-error').textContent = ''; }
+  $('add').addEventListener('click', () => openEditor(null));
+  $('cancel').addEventListener('click', closeEditor);
+  $('editor').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const firearm = { name: field('name').value.trim(), type: field('type').value.trim(), caliber: field('caliber').value.trim() };
+    const raw = field('price').value.replace(/[$,\s]/g, '');
+    if (!firearm.name || !firearm.type || !firearm.caliber) { $('editor-error').textContent = 'Name, type and caliber are all needed.'; return; }
+    if (raw && !(Number.isFinite(Number(raw)) && Number(raw) >= 0)) { $('editor-error').textContent = 'The price is a number of dollars, or left empty.'; return; }
+    firearm.price = raw ? Number(raw) : null;
+    if (editing) firearm.id = editing;
+    $('save').disabled = true;
+    $('editor-error').textContent = '';
+    const { status, data } = await call({ action: 'firearm_save', firearm });
+    $('save').disabled = false;
+    if (status !== 200 || !data.firearm) { $('editor-error').textContent = data.error || 'Could not save it (' + status + ').'; return; }
+    const i = items.findIndex((x) => x.id === data.firearm.id);
+    if (i >= 0) items[i] = data.firearm; else items.push(data.firearm);
+    closeEditor();
+    render();
+  });
+
+  async function remove(f) {
+    const { status, data } = await call({ action: 'firearm_delete', id: f.id });
+    confirming = '';
+    if (status === 200 || status === 404) items = items.filter((x) => x.id !== f.id);
+    else banner(data.error || 'Could not delete it.');
+    render();
+  }
+
+  // ── start ────────────────────────────────────────────────────────────────
+  if (session.get()) { showApp(); load(); } else showLogin();
+})();
+</script>
+<script>
+/* Until the host sends http to https itself, send visitors there the moment the
+   certificate works: a picture fetched over https that loads proves it does,
+   for this host, so this host is where they go. */
+(function () {
+  if (location.protocol !== 'http:' || !/(^|\.)korzengroup\.com$/.test(location.hostname)) return;
+  var probe = new Image();
+  probe.onload = function () { location.replace('https://' + location.hostname + location.pathname + location.search + location.hash); };
+  probe.src = 'https://' + location.hostname + '/favicon.svg?https-check=' + Date.now();
+})();
+</script>
+</body>
+</html>
