@@ -17,7 +17,7 @@
   else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AaRPD6ka9RIg3oBsmnzjGCNttLZfytFKgzKuiwLVQWo=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-ZpfiChlL3AQMDqcIFqqHKjmmUhvKrlyzWpwdyyeAZbc='; font-src 'self'; img-src 'self' data:; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AaRPD6ka9RIg3oBsmnzjGCNttLZfytFKgzKuiwLVQWo=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-huzdCa4zAR6SYUBJ1K0NGJCsuYbzkx/CroST66SsVUo='; font-src 'self'; img-src 'self' data:; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Dashboard · Korzen LLC</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -124,7 +124,8 @@ label .input { margin-top: 6px; }
   td { border: 0; padding: 6px 12px; display: flex; justify-content: space-between; gap: 12px; text-align: right; }
   td::before { content: attr(data-label); color: var(--muted); font-size: 13px; text-align: left; }
   td.name { font-size: 16px; }
-  td.act::before { content: ""; }
+  td.act { justify-content: flex-end; }
+  td.act::before { display: none; }
 }
 </style>
 </head>
