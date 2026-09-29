@@ -18,7 +18,7 @@
   else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7fkzS+xqVqFSYVV27fh28jXB6C+80JQcO7YelulS3gI=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-JcEbhzixQSlLGvA+7um7605lb6V/k0J+0jsJcH5JLYw='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7fkzS+xqVqFSYVV27fh28jXB6C+80JQcO7YelulS3gI=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-o4QUpmc1ecK0PTvjSSxzLeQstbpMi5IuwED9nbzed7w='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <!-- img-src names the Supabase host for the collection's pictures: private, each shown through a signed link the function makes for an hour. data: is a picture chosen but not yet saved. -->
 <title>Dashboard · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -107,7 +107,8 @@ td.pic { width: 92px; padding-right: 0; }
 .thumb.none { background: var(--panel-2); border: 1px dashed var(--line-2); }
 .thumb.big { width: 176px; height: 104px; border-radius: 14px; }
 .pval { display: inline-flex; flex-direction: column; align-items: flex-end; }
-.pnote { font-size: 12px; color: var(--muted); font-weight: 500; }
+/* A note wraps in its own column rather than widening it: .num keeps the price on one line. */
+.pnote { font-size: 12px; color: var(--muted); font-weight: 500; white-space: normal; max-width: 26ch; text-align: right; line-height: 1.35; }
 .photo-field { display: flex; gap: 16px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
 .photo-field .controls { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .photo-field .credit { color: var(--muted); font-size: 12px; margin: 0; max-width: 46ch; }
