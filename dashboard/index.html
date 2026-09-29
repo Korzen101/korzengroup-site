@@ -7,7 +7,8 @@
 <meta name="referrer" content="no-referrer">
 <!--
   The Korzen dashboard (2026-09-28): "another page that I will use for
-  multiple purposes", starting with the firearms collection.
+  multiple purposes", starting with the firearms collection. Net Worth came
+  second (2026-09-29), and the collection's pictures with it.
 
   Nothing secret lives on this page. It signs in to the dashboard Edge Function
   (ConvoyExpo/supabase/functions/dashboard) with an email, a password and a
@@ -17,9 +18,11 @@
   else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AaRPD6ka9RIg3oBsmnzjGCNttLZfytFKgzKuiwLVQWo=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-huzdCa4zAR6SYUBJ1K0NGJCsuYbzkx/CroST66SsVUo='; font-src 'self'; img-src 'self' data:; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7fkzS+xqVqFSYVV27fh28jXB6C+80JQcO7YelulS3gI=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-JcEbhzixQSlLGvA+7um7605lb6V/k0J+0jsJcH5JLYw='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<!-- img-src names the Supabase host for the collection's pictures: private, each shown through a signed link the function makes for an hour. data: is a picture chosen but not yet saved. -->
 <title>Dashboard · Korzen LLC</title>
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#07080a">
 <style>
@@ -47,7 +50,7 @@ header.top { position: sticky; top: 0; z-index: 5; background: rgba(7,8,10,.72);
 header.top .wrap { display: flex; align-items: center; gap: 18px; min-height: 60px; }
 .brand { color: var(--ink); text-decoration: none; font-weight: 800; letter-spacing: .3em; font-size: 13px; margin-right: 6px; }
 .tabs { display: flex; gap: 4px; flex: 1; }
-.tab { border: 0; background: none; padding: 8px 14px; border-radius: 10px; color: var(--muted); font-weight: 600; cursor: pointer; }
+.tab { border: 0; background: none; padding: 8px 14px; border-radius: 10px; color: var(--muted); font-weight: 600; cursor: pointer; white-space: nowrap; }
 .tab:hover { color: var(--ink); background: rgba(255,255,255,.04); }
 .tab[aria-selected="true"] { color: var(--ink); background: var(--raise); }
 .btn { border: 1px solid var(--line-2); background: rgba(255,255,255,.03); border-radius: 10px; padding: 8px 14px; font-weight: 600; cursor: pointer; font-size: 14px; }
@@ -58,7 +61,13 @@ header.top .wrap { display: flex; align-items: center; gap: 18px; min-height: 60
 .btn.danger:hover { background: rgba(208,59,59,.12); }
 .btn.small { padding: 5px 10px; font-size: 13px; border-radius: 8px; }
 .btn:focus-visible, .tab:focus-visible, .sort:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-main { padding: 24px 0 72px; }
+/*
+  Room under the bar before the page starts ("It's too crowded", 2026-09-29).
+  main.wrap, not main: .wrap's padding is a class and outranked the element
+  rule, so the 24px this used to say never applied and the title sat right
+  under the bar.
+*/
+main.wrap { padding-top: clamp(40px, 5vw, 56px); padding-bottom: 72px; }
 .titlebar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
 .titlebar h1 { margin: 0; font-size: clamp(26px, 3.6vw, 36px); letter-spacing: -.01em; }
 .titlebar .sub { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -90,6 +99,43 @@ td.act .btn + .btn { margin-left: 6px; }
 .empty { color: var(--muted); padding: 22px; text-align: center; border: 1px dashed var(--line-2); border-radius: 14px; }
 .confirm { color: #ff8f8f; font-size: 13px; margin-right: 6px; }
 
+/* ── pictures ───────────────────────────────────────────────────────────── */
+/* A light tile, so a photo on white and a cut-out on nothing look alike. */
+td.pic { width: 92px; padding-right: 0; }
+.thumb { width: 80px; height: 48px; border-radius: 10px; background: #dfe3e8; display: grid; place-items: center; overflow: hidden; }
+.thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.thumb.none { background: var(--panel-2); border: 1px dashed var(--line-2); }
+.thumb.big { width: 176px; height: 104px; border-radius: 14px; }
+.pval { display: inline-flex; flex-direction: column; align-items: flex-end; }
+.pnote { font-size: 12px; color: var(--muted); font-weight: 500; }
+.photo-field { display: flex; gap: 16px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+.photo-field .controls { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.photo-field .credit { color: var(--muted); font-size: 12px; margin: 0; max-width: 46ch; }
+label.file { display: inline-block; color: var(--ink); cursor: pointer; }
+label.file:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ── net worth ──────────────────────────────────────────────────────────── */
+.stats { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.stat .label { color: var(--muted); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+.stat .big { font-size: clamp(30px, 4.2vw, 42px); font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; margin-top: 4px; }
+.stat .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 8px; }
+.stat .delta { color: var(--ink-2); font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.chart-card { margin-bottom: 16px; }
+.chart-card h2, .list-card h2 { margin: 0 0 12px; font-size: 16px; display: flex; justify-content: space-between; gap: 12px; }
+.list-card h2 .muted { font-weight: 600; font-variant-numeric: tabular-nums; }
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: 200px; overflow: visible; }
+.chart .tip { position: absolute; top: 0; pointer-events: none; background: var(--raise); border: 1px solid var(--line-2); border-radius: 10px; padding: 6px 10px; font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.chart .tip b { display: block; font-size: 15px; }
+/* One above the other, full width: side by side, names and notes wrapped in half the room. */
+.grid2 { display: grid; gap: 16px; }
+.fields.nw { grid-template-columns: 1fr 2fr 1fr 1fr; }
+label.wide { margin-top: 12px; }
+/* A name and its note stay one block, stacked, in a table cell and in a phone's card alike. */
+.stack { display: inline-flex; flex-direction: column; }
+td .sub-line { display: block; color: var(--muted); font-size: 12px; font-weight: 500; }
+tr.derived td { color: var(--ink-2); }
+
 /* ── the editor ─────────────────────────────────────────────────────────── */
 #editor { margin-bottom: 16px; }
 #editor h2 { margin: 0 0 16px; font-size: 18px; }
@@ -109,14 +155,20 @@ label .input { margin-top: 6px; }
 #restart { margin-top: 12px; }
 .note { color: var(--ink-2); font-size: 14px; margin: 0 0 14px; }
 
+@media (max-width: 860px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stats .stat:first-child { grid-column: 1 / -1; }
+}
 @media (max-width: 720px) {
-  .fields { grid-template-columns: 1fr 1fr; }
+  .fields, .fields.nw { grid-template-columns: 1fr 1fr; }
   .fields label:first-child { grid-column: 1 / -1; }
 }
 /* A phone: each row becomes a card, each value under its column's name. */
 @media (max-width: 640px) {
   header.top .wrap { gap: 8px; }
-  .brand { letter-spacing: .2em; font-size: 12px; }
+  .brand { letter-spacing: .2em; font-size: 12px; margin-right: 0; }
+  .tabs { gap: 2px; }
+  .tab { padding: 8px 10px; }
   .select { flex: 1 1 140px; }
   thead { display: none; }
   table, tbody, tr, td { display: block; }
@@ -126,6 +178,9 @@ label .input { margin-top: 6px; }
   td.name { font-size: 16px; }
   td.act { justify-content: flex-end; }
   td.act::before { display: none; }
+  td.pic { width: auto; padding-right: 12px; }
+  td.pic::before { display: none; }
+  td.pic .thumb { width: 100%; height: 120px; }
 }
 </style>
 </head>
@@ -133,7 +188,8 @@ label .input { margin-top: 6px; }
 <header class="top"><div class="wrap">
   <a class="brand" href="/">KORZEN</a>
   <nav class="tabs" id="tabs" role="tablist" hidden>
-    <button class="tab" role="tab" id="tab-collection" aria-selected="true" type="button">Collection</button>
+    <button class="tab" role="tab" id="tab-collection" aria-selected="true" aria-controls="collection" type="button">Collection</button>
+    <button class="tab" role="tab" id="tab-networth" aria-selected="false" aria-controls="networth" tabindex="-1" type="button">Net Worth</button>
   </nav>
   <button class="btn small" id="signout" type="button" hidden>Sign out</button>
 </div></header>
@@ -178,6 +234,16 @@ label .input { margin-top: 6px; }
           <label>Caliber<input class="input" name="caliber" maxlength="40" list="calibers" autocomplete="off" required></label>
           <label>Price ($)<input class="input" name="price" inputmode="decimal" autocomplete="off" placeholder="Optional"></label>
         </div>
+        <div class="photo-field">
+          <div class="thumb big none" id="photo-preview"></div>
+          <div class="controls">
+            <div>
+              <label class="btn small file">Choose a picture<input class="sr" type="file" id="photo-file" accept="image/jpeg,image/png,image/webp"></label>
+              <button class="btn small" type="button" id="photo-remove" hidden>Remove picture</button>
+            </div>
+            <p class="credit" id="photo-credit"></p>
+          </div>
+        </div>
         <datalist id="types"></datalist>
         <datalist id="calibers"></datalist>
         <div class="row">
@@ -196,6 +262,7 @@ label .input { margin-top: 6px; }
         </div>
         <table id="table">
           <thead><tr>
+            <th scope="col"><span class="sr">Picture</span></th>
             <th scope="col" aria-sort="ascending" data-key="name"><button class="sort" type="button" data-key="name">Name <span class="dir" aria-hidden="true">↑</span></button></th>
             <th scope="col" aria-sort="none" data-key="type"><button class="sort" type="button" data-key="type">Type <span class="dir" aria-hidden="true"></span></button></th>
             <th scope="col" aria-sort="none" data-key="caliber"><button class="sort" type="button" data-key="caliber">Caliber <span class="dir" aria-hidden="true"></span></button></th>
@@ -206,6 +273,70 @@ label .input { margin-top: 6px; }
         </table>
         <div class="empty" id="empty" hidden></div>
         <div class="foot"><span id="shown"></span><span id="shown-value"></span></div>
+      </div>
+    </section>
+
+    <!--
+      Net Worth (2026-09-29): "where I can calculate my net worth and keep
+      track of assets". What he owns less what he owes, the collection
+      counted among what he owns, and a line a day of how that moves.
+    -->
+    <section id="networth" role="tabpanel" aria-labelledby="tab-networth" hidden>
+      <div class="titlebar">
+        <div><h1>Net Worth</h1><div class="sub" id="nw-sub" aria-live="polite"></div></div>
+        <div class="actions">
+          <button class="btn" id="nw-refresh" type="button">Refresh</button>
+          <button class="btn primary" id="nw-add" type="button">Add</button>
+        </div>
+      </div>
+      <div class="banner" id="nw-banner" hidden></div>
+
+      <div class="stats">
+        <div class="card stat"><div class="label">Net worth</div><div class="big" id="nw-total">—</div><div class="delta" id="nw-delta"></div></div>
+        <div class="card stat"><div class="label">Assets</div><div class="value" id="nw-assets">—</div></div>
+        <div class="card stat"><div class="label">Liabilities</div><div class="value" id="nw-liabilities">—</div></div>
+      </div>
+
+      <div class="card chart-card">
+        <h2>Over time</h2>
+        <div class="chart" id="nw-chart"></div>
+        <p class="muted" id="nw-chart-note"></p>
+      </div>
+
+      <form class="card" id="nw-editor" novalidate hidden>
+        <h2 id="nw-editor-title">Add to your net worth</h2>
+        <div class="fields nw">
+          <label>Kind<select class="input" name="side"><option value="asset">Asset (you own it)</option><option value="liability">Liability (you owe it)</option></select></label>
+          <label>Name<input class="input" name="name" maxlength="120" autocomplete="off" required></label>
+          <label>Category<input class="input" name="category" maxlength="40" list="nw-categories" autocomplete="off" required></label>
+          <label>Value ($)<input class="input" name="value" inputmode="decimal" autocomplete="off" required></label>
+        </div>
+        <label class="wide">Note<input class="input" name="note" maxlength="300" autocomplete="off" placeholder="Optional"></label>
+        <datalist id="nw-categories"></datalist>
+        <div class="row">
+          <button class="btn primary" type="submit" id="nw-save">Save</button>
+          <button class="btn" type="button" id="nw-cancel">Cancel</button>
+        </div>
+        <p class="error" id="nw-error" role="alert"></p>
+      </form>
+
+      <div class="grid2">
+        <div class="card list-card">
+          <h2>Assets <span class="muted" id="nw-assets-sum"></span></h2>
+          <table id="nw-assets-table">
+            <thead><tr><th scope="col">Name</th><th scope="col">Category</th><th scope="col" class="num">Value</th><th scope="col"><span class="sr">Actions</span></th></tr></thead>
+            <tbody id="nw-assets-rows"></tbody>
+          </table>
+          <div class="empty" id="nw-assets-empty" hidden>Nothing yet. Add cash, investments, a house or a car.</div>
+        </div>
+        <div class="card list-card">
+          <h2>Liabilities <span class="muted" id="nw-liabilities-sum"></span></h2>
+          <table id="nw-liabilities-table">
+            <thead><tr><th scope="col">Name</th><th scope="col">Category</th><th scope="col" class="num">Value</th><th scope="col"><span class="sr">Actions</span></th></tr></thead>
+            <tbody id="nw-liabilities-rows"></tbody>
+          </table>
+          <div class="empty" id="nw-liabilities-empty" hidden>Nothing owed. Add a mortgage, a car loan or a card balance.</div>
+        </div>
       </div>
     </section>
   </div>
@@ -277,11 +408,14 @@ label .input { margin-top: 6px; }
     $('login-error').textContent = message || '';
     $('login-error').className = 'error' + (info ? ' info' : '');
     items = [];
+    nwLoaded = false;
+    nw = { items: [], history: [], collection: { count: 0, total: 0 }, today: '' };
     const e = document.querySelector('#login-form input[name=email]');
     if (e && !e.value) e.focus();
   }
   function showApp() {
     $('login').hidden = true; $('app').hidden = false; $('tabs').hidden = false; $('signout').hidden = false;
+    showTab(location.hash === '#networth' ? 'networth' : 'collection');
   }
   function signedIn(token) {
     session.set(token); showPasswordStep(); $('login-form').reset(); showApp(); return load();
@@ -397,7 +531,21 @@ label .input { margin-top: 6px; }
     const rows = shown.map((f) => {
       const tr = document.createElement('tr');
       const td = (cls, label, text) => { const c = el('td', cls, text); c.dataset.label = label; return c; };
-      tr.append(td('name', 'Name', f.name), td('', 'Type', f.type), td('', 'Caliber', f.caliber), td('num', 'Price', price(f.price)));
+      const pic = td('pic', '', '');
+      const tile = el('div', 'thumb' + (f.photo_url ? '' : ' none'));
+      if (f.photo_url) {
+        const img = document.createElement('img');
+        img.src = f.photo_url; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+        if (f.photo_credit) img.title = 'Photo: ' + f.photo_credit;
+        tile.append(img);
+      }
+      pic.append(tile);
+      // The price, and under it where it came from ("Estimate …", "GunBroker …"), if anywhere.
+      const cost = td('num', 'Price', '');
+      const pv = el('span', 'pval', price(f.price));
+      if (f.price_note) pv.append(el('span', 'pnote', f.price_note));
+      cost.append(pv);
+      tr.append(pic, td('name', 'Name', f.name), td('', 'Type', f.type), td('', 'Caliber', f.caliber), cost);
       const act = td('act', '', '');
       if (confirming === f.id) {
         act.append(el('span', 'confirm', 'Delete?'));
@@ -449,12 +597,70 @@ label .input { margin-top: 6px; }
       field('name').value = f.name; field('type').value = f.type; field('caliber').value = f.caliber;
       field('price').value = f.price === null || f.price === undefined ? '' : String(f.price);
     }
+    photoChoice = null;
+    photoWas = f && f.photo_url ? f.photo_url : null;
+    drawPhoto(photoWas, f && f.photo_credit);
     $('editor-error').textContent = '';
     form.hidden = false;
     field('name').focus();
     form.scrollIntoView({ block: 'nearest' });
   }
-  function closeEditor() { editing = ''; $('editor').hidden = true; $('editor-error').textContent = ''; }
+  function closeEditor() { editing = ''; photoChoice = null; $('editor').hidden = true; $('editor-error').textContent = ''; }
+
+  // ── a picture ────────────────────────────────────────────────────────────
+  // What Save does with the picture: null leaves it, 'remove' takes it off, { type, data } puts a new one on.
+  let photoChoice = null;
+  let photoWas = null;
+  function drawPhoto(src, credit) {
+    const box = $('photo-preview');
+    box.replaceChildren();
+    box.className = 'thumb big' + (src ? '' : ' none');
+    if (src) { const img = document.createElement('img'); img.src = src; img.alt = ''; box.append(img); }
+    $('photo-credit').textContent = credit ? 'Photo: ' + credit : '';
+    $('photo-remove').hidden = !src;
+  }
+  /*
+    Made smaller before it leaves: 1600 on the long side is plenty for a tile
+    and a closer look, and keeps it well under the 2 MB the function takes.
+    WebP where the browser writes it, which keeps a cut-out's transparency;
+    otherwise PNG for a PNG and JPEG for the rest.
+  */
+  async function shrink(file) {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const encode = (type, quality) => new Promise((done) => canvas.toBlob(done, type, quality));
+    let blob = await encode('image/webp', 0.86);
+    if (!blob || blob.type !== 'image/webp') blob = await encode(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.88);
+    if (!blob) throw new Error('read');
+    if (blob.size > 2 * 1024 * 1024) throw new Error('big');
+    const data = await new Promise((done, fail) => {
+      const reader = new FileReader();
+      reader.onload = () => done(String(reader.result).split(',')[1] || '');
+      reader.onerror = () => fail(new Error('read'));
+      reader.readAsDataURL(blob);
+    });
+    return { type: blob.type, data };
+  }
+  $('photo-file').addEventListener('change', async () => {
+    const input = $('photo-file');
+    const file = input.files && input.files[0];
+    input.value = '';
+    if (!file) return;
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { $('editor-error').textContent = 'Choose a JPEG, PNG or WebP picture.'; return; }
+    $('editor-error').textContent = '';
+    try {
+      photoChoice = await shrink(file);
+    } catch (e) {
+      $('editor-error').textContent = e && e.message === 'big' ? 'That picture is too large even made smaller. Try another.' : 'That picture could not be read.';
+      return;
+    }
+    drawPhoto('data:' + photoChoice.type + ';base64,' + photoChoice.data, '');
+  });
+  $('photo-remove').addEventListener('click', () => { photoChoice = photoWas ? 'remove' : null; drawPhoto(null, ''); });
   $('add').addEventListener('click', () => openEditor(null));
   $('cancel').addEventListener('click', closeEditor);
   $('editor').addEventListener('submit', async (ev) => {
@@ -470,8 +676,28 @@ label .input { margin-top: 6px; }
     const { status, data } = await call({ action: 'firearm_save', firearm });
     $('save').disabled = false;
     if (status !== 200 || !data.firearm) { $('editor-error').textContent = data.error || 'Could not save it (' + status + ').'; return; }
-    const i = items.findIndex((x) => x.id === data.firearm.id);
-    if (i >= 0) items[i] = data.firearm; else items.push(data.firearm);
+    let saved = data.firearm;
+    let photoError = '';
+    if (photoChoice && photoChoice !== 'remove') {
+      $('save').disabled = true;
+      const up = await call({ action: 'firearm_photo', id: saved.id, photo: photoChoice.data, type: photoChoice.type });
+      $('save').disabled = false;
+      if (up.status === 200 && up.data.firearm) saved = up.data.firearm; else photoError = up.data.error || 'the picture did not save.';
+    } else if (photoChoice === 'remove') {
+      const off = await call({ action: 'firearm_photo_delete', id: saved.id });
+      if (off.status === 200 && off.data.firearm) saved = off.data.firearm; else photoError = off.data.error || 'the picture was not removed.';
+    }
+    const i = items.findIndex((x) => x.id === saved.id);
+    if (i >= 0) items[i] = saved; else items.push(saved);
+    nwLoaded = false;
+    if (photoError) {
+      // The details are saved; say so, and leave the editor on this one to try the picture again.
+      editing = saved.id;
+      $('editor-title').textContent = 'Edit ' + saved.name;
+      $('editor-error').textContent = 'Saved, but ' + photoError.charAt(0).toLowerCase() + photoError.slice(1);
+      render();
+      return;
+    }
     closeEditor();
     render();
   });
@@ -479,9 +705,285 @@ label .input { margin-top: 6px; }
   async function remove(f) {
     const { status, data } = await call({ action: 'firearm_delete', id: f.id });
     confirming = '';
-    if (status === 200 || status === 404) items = items.filter((x) => x.id !== f.id);
+    if (status === 200 || status === 404) { items = items.filter((x) => x.id !== f.id); nwLoaded = false; }
     else banner(data.error || 'Could not delete it.');
     render();
+  }
+
+  // ── tabs ─────────────────────────────────────────────────────────────────
+  // The open tab is in the address as a bare #networth, so a reload keeps it.
+  const PANELS = ['collection', 'networth'];
+  let tabNow = 'collection';
+  function showTab(name, focus) {
+    tabNow = PANELS.includes(name) ? name : 'collection';
+    for (const p of PANELS) {
+      const on = p === tabNow;
+      const tab = $('tab-' + p);
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;
+      $(p).hidden = !on;
+      if (on && focus) tab.focus();
+    }
+    try { history.replaceState(null, '', tabNow === 'networth' ? '#networth' : location.pathname + location.search); } catch {}
+    if (tabNow === 'networth') { if (!nwLoaded) loadNetWorth(); else renderNetWorth(); }
+  }
+  for (const p of PANELS) $('tab-' + p).addEventListener('click', () => showTab(p));
+  $('tabs').addEventListener('keydown', (ev) => {
+    if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+    const i = PANELS.indexOf(tabNow);
+    showTab(PANELS[(i + (ev.key === 'ArrowRight' ? 1 : PANELS.length - 1)) % PANELS.length], true);
+    ev.preventDefault();
+  });
+
+  // ── net worth ────────────────────────────────────────────────────────────
+  /*
+    What he owns less what he owes. The collection is among what he owns: the
+    function adds its total, so a price changed there changes this too, and
+    it is shown here as a line of its own that opens the Collection rather
+    than a copy that could drift from it. Every day the page is opened or
+    something changes, the function keeps that day's totals, and the chart
+    draws them.
+  */
+  let nwLoaded = false;
+  let nw = { items: [], history: [], collection: { count: 0, total: 0 }, today: '' };
+  let nwEditing = '';
+  let nwConfirming = '';
+  const ASSET_CATEGORIES = ['Cash', 'Checking', 'Savings', 'Brokerage', 'Retirement', 'Crypto', 'Real estate', 'Vehicles', 'Collectibles', 'Business', 'Other'];
+  const LIABILITY_CATEGORIES = ['Mortgage', 'Auto loan', 'Credit card', 'Student loan', 'Personal loan', 'Other'];
+  const nwField = (n) => $('nw-editor').elements.namedItem(n);
+  const num = (v) => Number(v) || 0;
+  const worth = (v) => (v < 0 ? '−' : '') + money.format(Math.abs(v));
+  const compact = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 });
+  const onDay = (d) => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const shortDay = (d) => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  function nwBanner(message) {
+    $('nw-banner').textContent = message || '';
+    $('nw-banner').hidden = !message;
+  }
+
+  async function loadNetWorth() {
+    nwBanner('');
+    $('nw-refresh').disabled = true;
+    const { status, data } = await call({ action: 'net_worth' });
+    $('nw-refresh').disabled = false;
+    if (status !== 200) {
+      if (status !== 401) nwBanner(status === 400 && /unknown action/.test(String(data.error)) ? 'Net Worth is still being set up. Try again in a few minutes.' : data.error || 'Could not load your net worth.');
+      return;
+    }
+    nwLoaded = true;
+    nw = {
+      items: Array.isArray(data.items) ? data.items : [],
+      history: Array.isArray(data.history) ? data.history : [],
+      collection: data.collection || { count: 0, total: 0 },
+      today: data.today || '',
+    };
+    renderNetWorth();
+  }
+
+  function totals() {
+    let assets = num(nw.collection.total);
+    let liabilities = 0;
+    for (const i of nw.items) { if (i.side === 'asset') assets += num(i.value); else liabilities += num(i.value); }
+    return { assets, liabilities, net: assets - liabilities };
+  }
+
+  function renderNetWorth() {
+    const t = totals();
+    $('nw-total').textContent = worth(t.net);
+    $('nw-assets').textContent = money.format(t.assets);
+    $('nw-liabilities').textContent = money.format(t.liabilities);
+    $('nw-sub').textContent = nw.today ? 'As of ' + onDay(nw.today) : '';
+    const first = nw.history[0];
+    if (nw.history.length >= 2 && first) {
+      const change = t.net - (num(first.assets) - num(first.liabilities));
+      $('nw-delta').textContent = (change < 0 ? '−' : '+') + money.format(Math.abs(change)) + ' since ' + onDay(first.day);
+    } else {
+      $('nw-delta').textContent = '';
+    }
+    drawList('asset', t.assets);
+    drawList('liability', t.liabilities);
+    drawChart();
+  }
+
+  function drawList(side, total) {
+    const key = side === 'asset' ? 'assets' : 'liabilities';
+    const rows = [];
+    if (side === 'asset' && nw.collection.count > 0) {
+      const tr = document.createElement('tr');
+      tr.className = 'derived';
+      const name = el('td', 'name', ''); name.dataset.label = 'Name';
+      const what = el('span', 'stack', 'Firearms collection');
+      what.append(el('span', 'sub-line', plural(nw.collection.count, 'firearm', 'firearms') + ' · from Collection'));
+      name.append(what);
+      const cat = el('td', '', 'Collectibles'); cat.dataset.label = 'Category';
+      const val = el('td', 'num', money.format(num(nw.collection.total))); val.dataset.label = 'Value';
+      const act = el('td', 'act', '');
+      const open = el('button', 'btn small', 'Open'); open.type = 'button';
+      open.addEventListener('click', () => showTab('collection', true));
+      act.append(open);
+      tr.append(name, cat, val, act);
+      rows.push(tr);
+    }
+    const mine = nw.items
+      .filter((i) => i.side === side)
+      .sort((a, b) => a.category.localeCompare(b.category, undefined, { sensitivity: 'base' }) || a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+    for (const i of mine) {
+      const tr = document.createElement('tr');
+      const name = el('td', 'name', ''); name.dataset.label = 'Name';
+      const what = el('span', 'stack', i.name);
+      if (i.note) what.append(el('span', 'sub-line', i.note));
+      name.append(what);
+      const cat = el('td', '', i.category); cat.dataset.label = 'Category';
+      const val = el('td', 'num', money.format(num(i.value))); val.dataset.label = 'Value';
+      const act = el('td', 'act', '');
+      if (nwConfirming === i.id) {
+        act.append(el('span', 'confirm', 'Delete?'));
+        const yes = el('button', 'btn small danger', 'Delete'); yes.type = 'button'; yes.addEventListener('click', () => nwRemove(i));
+        const no = el('button', 'btn small', 'Keep'); no.type = 'button'; no.addEventListener('click', () => { nwConfirming = ''; renderNetWorth(); });
+        act.append(yes, no);
+      } else {
+        const edit = el('button', 'btn small', 'Edit'); edit.type = 'button'; edit.addEventListener('click', () => openNwEditor(i));
+        const del = el('button', 'btn small danger', 'Delete'); del.type = 'button'; del.addEventListener('click', () => { nwConfirming = i.id; renderNetWorth(); });
+        act.append(edit, del);
+      }
+      tr.append(name, cat, val, act);
+      rows.push(tr);
+    }
+    $('nw-' + key + '-rows').replaceChildren(...rows);
+    $('nw-' + key + '-table').hidden = rows.length === 0;
+    $('nw-' + key + '-empty').hidden = rows.length !== 0;
+    $('nw-' + key + '-sum').textContent = rows.length ? money.format(total) : '';
+  }
+
+  /** Round numbers across the range, four or so: $130K, $140K rather than $131,217. */
+  function niceTicks(lo, hi) {
+    const raw = (hi - lo) / 4;
+    const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= raw) || 10 * mag;
+    const ticks = [];
+    for (let v = Math.ceil(lo / step) * step; v <= hi + step * 1e-9; v += step) ticks.push(Math.round(v * 100) / 100);
+    return ticks;
+  }
+
+  /*
+    One line, net worth by day. Drawn to the card's own width, 2px, a dot on
+    the latest day, the grid faint, a label on each end. Hover or touch shows
+    the day and the figure.
+  */
+  function drawChart() {
+    const box = $('nw-chart');
+    box.replaceChildren();
+    const pts = nw.history.map((h) => ({ day: h.day, t: Date.parse(h.day + 'T12:00:00Z'), net: num(h.assets) - num(h.liabilities) }));
+    if (!pts.length) { $('nw-chart-note').textContent = 'The line starts the first day this page is open.'; return; }
+    $('nw-chart-note').textContent = pts.length === 1 ? 'One day so far. Every day you open this page or change something adds a point.' : '';
+    const W = Math.max(280, box.clientWidth || 640);
+    const H = 200;
+    const pad = { l: 60, r: 14, t: 12, b: 26 };
+    const x0 = pts[0].t;
+    const x1 = pts[pts.length - 1].t;
+    let lo = Math.min(...pts.map((p) => p.net));
+    let hi = Math.max(...pts.map((p) => p.net));
+    if (lo === hi) { const d = Math.max(100, Math.abs(hi) * 0.05); lo -= d; hi += d; }
+    const room = (hi - lo) * 0.08; lo -= room; hi += room;
+    const X = (t) => (x1 === x0 ? pad.l + (W - pad.l - pad.r) / 2 : pad.l + ((t - x0) / (x1 - x0)) * (W - pad.l - pad.r));
+    const Y = (v) => pad.t + (1 - (v - lo) / (hi - lo)) * (H - pad.t - pad.b);
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'Net worth by day, ' + pts.length + (pts.length === 1 ? ' day: ' : ' days, from ') + worth(pts[0].net) + (pts.length > 1 ? ' to ' + worth(pts[pts.length - 1].net) : ''));
+    const add = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, String(attrs[k])); svg.append(e); return e; };
+    for (const v of niceTicks(lo, hi)) {
+      const y = Y(v);
+      add('line', { x1: pad.l, x2: W - pad.r, y1: y, y2: y, stroke: 'rgba(242,243,245,.08)', 'stroke-width': 1 });
+      const label = add('text', { x: pad.l - 8, y: y + 4, 'text-anchor': 'end', fill: 'rgba(242,243,245,.5)', 'font-size': 11 });
+      label.textContent = (v < 0 ? '−' : '') + compact.format(Math.abs(v));
+    }
+    const dayLabel = (p, anchor) => { const e = add('text', { x: X(p.t), y: H - 6, 'text-anchor': anchor, fill: 'rgba(242,243,245,.5)', 'font-size': 11 }); e.textContent = shortDay(p.day); };
+    dayLabel(pts[0], pts.length === 1 ? 'middle' : 'start');
+    if (pts.length > 1) {
+      dayLabel(pts[pts.length - 1], 'end');
+      add('path', { d: pts.map((p, i) => (i ? 'L' : 'M') + X(p.t).toFixed(1) + ' ' + Y(p.net).toFixed(1)).join(' '), fill: 'none', stroke: '#3987e5', 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+    }
+    const last = pts[pts.length - 1];
+    add('circle', { cx: X(last.t), cy: Y(last.net), r: 4.5, fill: '#3987e5', stroke: '#101215', 'stroke-width': 2 });
+    const guide = add('line', { y1: pad.t, y2: H - pad.b, stroke: 'rgba(242,243,245,.25)', 'stroke-width': 1, visibility: 'hidden' });
+    const dot = add('circle', { r: 5, fill: '#3987e5', stroke: '#101215', 'stroke-width': 2, visibility: 'hidden' });
+    const hit = add('rect', { x: 0, y: 0, width: W, height: H, fill: 'transparent' });
+    const tip = el('div', 'tip');
+    tip.hidden = true;
+    const point = (clientX) => {
+      const r = svg.getBoundingClientRect();
+      const x = (clientX - r.left) * (W / r.width);
+      let best = pts[0];
+      for (const p of pts) if (Math.abs(X(p.t) - x) < Math.abs(X(best.t) - x)) best = p;
+      const px = X(best.t);
+      guide.setAttribute('x1', String(px)); guide.setAttribute('x2', String(px)); guide.setAttribute('visibility', 'visible');
+      dot.setAttribute('cx', String(px)); dot.setAttribute('cy', String(Y(best.net))); dot.setAttribute('visibility', 'visible');
+      tip.replaceChildren(el('b', '', worth(best.net)), document.createTextNode(onDay(best.day)));
+      tip.hidden = false;
+      const left = px * (r.width / W) - tip.offsetWidth / 2;
+      tip.style.left = Math.min(Math.max(left, 0), r.width - tip.offsetWidth) + 'px';
+    };
+    hit.addEventListener('pointermove', (e) => point(e.clientX));
+    hit.addEventListener('pointerdown', (e) => point(e.clientX));
+    hit.addEventListener('pointerleave', () => { guide.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); tip.hidden = true; });
+    box.append(svg, tip);
+  }
+  let resizing = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizing);
+    resizing = setTimeout(() => { if (tabNow === 'networth' && nwLoaded) drawChart(); }, 150);
+  });
+
+  function fillCategories() {
+    const side = nwField('side').value;
+    const own = nw.items.filter((i) => i.side === side).map((i) => i.category);
+    fillList($('nw-categories'), distinct((side === 'asset' ? ASSET_CATEGORIES : LIABILITY_CATEGORIES).concat(own)));
+  }
+  function openNwEditor(item) {
+    nwEditing = item ? item.id : '';
+    $('nw-editor').reset();
+    $('nw-editor-title').textContent = item ? 'Edit ' + item.name : 'Add to your net worth';
+    nwField('side').value = item ? item.side : 'asset';
+    if (item) {
+      nwField('name').value = item.name; nwField('category').value = item.category;
+      nwField('value').value = String(item.value); nwField('note').value = item.note || '';
+    }
+    fillCategories();
+    $('nw-error').textContent = '';
+    $('nw-editor').hidden = false;
+    nwField('name').focus();
+    $('nw-editor').scrollIntoView({ block: 'nearest' });
+  }
+  function closeNwEditor() { nwEditing = ''; $('nw-editor').hidden = true; $('nw-error').textContent = ''; }
+  nwField('side').addEventListener('change', fillCategories);
+  $('nw-add').addEventListener('click', () => openNwEditor(null));
+  $('nw-cancel').addEventListener('click', closeNwEditor);
+  $('nw-refresh').addEventListener('click', loadNetWorth);
+  $('nw-editor').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const item = { side: nwField('side').value, name: nwField('name').value.trim(), category: nwField('category').value.trim(), note: nwField('note').value.trim() || null };
+    const raw = nwField('value').value.replace(/[$,\s]/g, '');
+    if (!item.name || !item.category) { $('nw-error').textContent = 'A name and a category are both needed.'; return; }
+    if (!raw || !(Number.isFinite(Number(raw)) && Number(raw) >= 0)) { $('nw-error').textContent = 'The value is a number of dollars, 0 or more.'; return; }
+    item.value = Number(raw);
+    if (nwEditing) item.id = nwEditing;
+    $('nw-save').disabled = true;
+    $('nw-error').textContent = '';
+    const { status, data } = await call({ action: 'net_worth_save', item });
+    $('nw-save').disabled = false;
+    if (status !== 200 || !data.item) { $('nw-error').textContent = data.error || 'Could not save it (' + status + ').'; return; }
+    closeNwEditor();
+    await loadNetWorth();
+  });
+  async function nwRemove(item) {
+    const { status, data } = await call({ action: 'net_worth_delete', id: item.id });
+    nwConfirming = '';
+    if (status === 200 || status === 404) return loadNetWorth();
+    nwBanner(data.error || 'Could not delete it.');
+    renderNetWorth();
   }
 
   // ── start ────────────────────────────────────────────────────────────────
