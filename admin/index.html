@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-0yg4Ahup2ovJP8yFW7UYKgh+mC7QBw6b05fZf6BnCWg=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-o6j2B+wMidtmEF9MHNq4ZO5QfdhbhDRlfrWTn0xkBH0='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Z46ejfSxhjwD4wrBDokmVYLv637NM9nf4Y7nFpRkCqs=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-YhoUgyxizVEthEDBIubBLgoR84VMIyKHznPEZjsdxkk='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -27,6 +27,8 @@
   --ink: #f2f3f5; --ink-2: rgba(242,243,245,.72); --muted: rgba(242,243,245,.5);
   /* The data hue (one series per chart) and its track, stepped for the dark surface. */
   --series: #3987e5; --series-track: rgba(57,135,229,.16);
+  /* The police map's two kinds, validated as a pair against --panel. */
+  --internal: #3987e5; --published: #e0619a;
   /* Status: never colour alone — every use sits beside a word. */
   --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b; --info: #8b97a8;
 }
@@ -76,6 +78,8 @@ h2 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: v
 .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--info); }
 .status.ok::before { background: var(--good); } .status.warn::before { background: var(--warning); }
 .status.error::before { background: var(--critical); } .status.serious::before { background: var(--serious); }
+/* `.error` is also the sign-in form's message (margin, size, colour); a pill keeps its own. */
+.status.error { margin: 0; min-height: 0; font-size: 12px; color: var(--ink-2); }
 
 /* ── the hero and tiles ─────────────────────────────────────────────────── */
 .hero-row { display: grid; grid-template-columns: minmax(280px, 1.4fr) repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
@@ -150,7 +154,8 @@ dd { margin: 0; text-align: right; font-weight: 600; white-space: nowrap; font-v
 .item .when { margin-left: auto; color: var(--muted); font-size: 12px; }
 .quote { border-left: 3px solid var(--line-2); padding: 6px 10px; color: var(--ink-2); background: rgba(255,255,255,.02); border-radius: 0 8px 8px 0; white-space: pre-wrap; word-break: break-word; }
 .who { font-size: 13px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; }
-.who button { border: 0; background: none; padding: 0; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-size: 13px; }
+.who button, .kv button { border: 0; background: none; padding: 0; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-size: 13px; text-align: left; }
+.kv button { font-size: 14px; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .empty { color: var(--muted); padding: 18px; text-align: center; border: 1px dashed var(--line-2); border-radius: 14px; }
 .search { display: flex; gap: 8px; }
@@ -171,6 +176,78 @@ dd { margin: 0; text-align: right; font-weight: 600; white-space: nowrap; font-v
 .recover p { margin: 10px 0 0; }
 .recover input { background: var(--panel); }
 .done { border: 1px solid rgba(12,163,12,.45); background: rgba(12,163,12,.1); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; font-size: 14px; }
+
+/* ── the tabs added 2026-10-01 ──────────────────────────────────────────── */
+/* Six tabs do not fit a phone's header: they scroll sideways instead of wrapping. */
+.tabs { overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { white-space: nowrap; flex: none; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.toolbar .grow { flex: 1; min-width: 220px; }
+.pad { padding: 0 16px 14px; }
+.lede { color: var(--ink-2); margin: -6px 0 18px; max-width: 72ch; }
+
+/* ── police: the map ────────────────────────────────────────────────────── */
+.map-card { padding: 0; overflow: hidden; }
+.map-tools { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.map-tools .legend { margin-left: auto; }
+.map { position: relative; height: clamp(320px, 58vh, 580px); background: #0b0e12; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.map.dragging { cursor: grabbing; }
+.map .tiles { position: absolute; inset: 0; }
+/* Light tiles, turned to the page's night: inverted, hue put back, colour taken down. */
+.map .tiles img { position: absolute; width: 256px; height: 256px; max-width: none; filter: invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.55); pointer-events: none; }
+.map svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.map .cell { cursor: pointer; outline: none; }
+.map .cell:hover, .map .cell:focus-visible { filter: brightness(1.35); }
+.map .zoom { position: absolute; right: 12px; top: 12px; display: grid; gap: 6px; z-index: 2; }
+.map .zoom button { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line-2); background: rgba(16,18,21,.9); font-weight: 800; font-size: 17px; cursor: pointer; display: grid; place-items: center; }
+.map .zoom button:hover { background: var(--raise); }
+.map .attrib { position: absolute; right: 8px; bottom: 6px; font-size: 11px; color: var(--ink-2); background: rgba(7,8,10,.72); padding: 2px 7px; border-radius: 6px; z-index: 2; }
+.map .attrib a { color: var(--ink-2); }
+.map .note { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: var(--ink-2); background: rgba(7,8,10,.78); padding: 10px 14px; border-radius: 12px; font-size: 14px; pointer-events: none; text-align: center; max-width: 80%; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.key { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex: none; }
+.key.internal { background: var(--internal); }
+.key.thin { background: transparent; border: 2px solid var(--internal); }
+.key.published { background: var(--published); border-radius: 3px; }
+
+/* ── pills for kinds of thing, never status ─────────────────────────────── */
+.medal { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 2px 9px 2px 7px; border-radius: 999px; background: rgba(255,255,255,.06); color: var(--ink-2); text-transform: capitalize; }
+.medal::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--medal, #9aa3ad); }
+.medal.bronze { --medal: #c08457; } .medal.silver { --medal: #c9d0d9; } .medal.gold { --medal: #e3c26a; }
+
+/* ── achievements ───────────────────────────────────────────────────────── */
+.ach { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(150px, 220px); gap: 14px; align-items: center; }
+@media (max-width: 760px) { .ach { grid-template-columns: auto minmax(0, 1fr); } .ach .earned { grid-column: 1 / -1; } }
+.ach.retired { opacity: .58; }
+.order { display: grid; gap: 4px; }
+.order button { width: 30px; height: 26px; border-radius: 8px; border: 1px solid var(--line-2); background: rgba(255,255,255,.03); cursor: pointer; font-size: 12px; line-height: 1; }
+.order button:disabled { opacity: .3; cursor: default; }
+.ach .nm { font-weight: 800; font-size: 16px; }
+.ach .rule { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.ach .earned .row { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ach .earned .bar { margin-top: 6px; height: 8px; }
+.panel { margin-top: 10px; padding: 14px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--panel-2); display: grid; gap: 12px; }
+.form { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.form label { margin: 0; }
+.form .wide { grid-column: 1 / -1; }
+.form select, .form input, .form textarea { display: block; width: 100%; margin-top: 6px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); font: inherit; font-size: 15px; }
+.form textarea { min-height: 70px; resize: vertical; }
+.form input:focus, .form select:focus, .form textarea:focus { outline: 2px solid rgba(57,135,229,.6); outline-offset: 1px; }
+.form input:disabled, .form select:disabled { opacity: .55; }
+.hint { color: var(--muted); font-size: 13px; margin: 0; }
+.picked { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* ── network ────────────────────────────────────────────────────────────── */
+.big { font-size: 30px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 6px 0 12px; }
+.pair .l { color: var(--muted); font-size: 13px; }
+.rows { display: grid; gap: 8px; font-size: 14px; }
+.rows > div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 7px; }
+.rows > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.rows span:last-child { font-variant-numeric: tabular-nums; color: var(--ink-2); text-align: right; }
+.cols.hours .col { max-width: 18px; }
 
 /* ── sign-in ────────────────────────────────────────────────────────────── */
 #login { min-height: calc(100vh - 160px); display: grid; place-items: center; }
@@ -199,6 +276,10 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
   <nav class="tabs" id="tabs" role="tablist" hidden>
     <button class="tab" role="tab" id="tab-overview" aria-selected="true" type="button">Overview</button>
     <button class="tab" role="tab" id="tab-moderation" aria-selected="false" type="button">Moderation <span class="count" id="modcount" hidden></span></button>
+    <button class="tab" role="tab" id="tab-police" aria-selected="false" type="button">Police</button>
+    <button class="tab" role="tab" id="tab-network" aria-selected="false" type="button">Network</button>
+    <button class="tab" role="tab" id="tab-achievements" aria-selected="false" type="button">Achievements</button>
+    <button class="tab" role="tab" id="tab-community" aria-selected="false" type="button">Posts &amp; Crews</button>
   </nav>
   <button class="btn small" id="signout" type="button" hidden>Sign out</button>
 </div></header>
@@ -289,6 +370,94 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
         <h2>Activity</h2>
         <p class="muted small mb-12">Every sign-in, right or wrong, and every change made from this dashboard, newest first.</p>
         <div class="list" id="activity-list"></div>
+      </div>
+    </section>
+
+    <section id="police" role="tabpanel" aria-labelledby="tab-police" hidden>
+      <p class="lede">Where police are being reported, by riders during runs and by the city open-data feeds the app draws. Cells and counts only: who reported is never shown, and nothing is finer than a day.</p>
+      <div class="hero-row" id="police-tiles"></div>
+      <h2>Hotspots</h2>
+      <div class="card map-card">
+        <div class="map-tools">
+          <div class="seg" id="police-filter" aria-label="Which hotspots">
+            <button type="button" data-f="all" aria-pressed="true">All</button>
+            <button type="button" data-f="internal" aria-pressed="false">Reported in Convoy</button>
+            <button type="button" data-f="external" aria-pressed="false">Published data</button>
+          </div>
+          <div class="seg" id="police-span" aria-label="Reports from the last">
+            <button type="button" data-d="7" aria-pressed="false">7 days</button>
+            <button type="button" data-d="30" aria-pressed="false">30 days</button>
+            <button type="button" data-d="90" aria-pressed="true">90 days</button>
+            <button type="button" data-d="365" aria-pressed="false">1 year</button>
+          </div>
+          <div class="legend">
+            <span><i class="key internal"></i>Reported, shown in the app</span>
+            <span><i class="key thin"></i>Reported, not shown yet</span>
+            <span><i class="key published"></i>Published data</span>
+          </div>
+        </div>
+        <div class="map" id="police-map" role="region" aria-label="Map of police hotspots. Use the plus and minus buttons to zoom, drag to move."></div>
+        <details class="table pad" id="police-cells"><summary>Show the cells as a table</summary><table id="police-table"></table></details>
+      </div>
+      <h2>Reports</h2>
+      <div class="grid g-4" id="police-charts"></div>
+      <h2>Published sources</h2>
+      <div class="grid g-3" id="police-sources"></div>
+    </section>
+
+    <section id="network" role="tabpanel" aria-labelledby="tab-network" hidden>
+      <p class="lede">How the servers are holding up, how voice is connecting, and how people on Convoy are connected to each other.</p>
+      <h2>Traffic and connections</h2>
+      <div class="grid g-4" id="net-traffic"></div>
+      <h2 id="net-voice-h">Voice health</h2>
+      <div class="grid g-4" id="net-voice"></div>
+      <h2>Social network</h2>
+      <div class="hero-row" id="net-social-tiles"></div>
+      <div class="grid g-4 mt-14" id="net-social"></div>
+      <div class="grid g-4 mt-14" id="net-social-more"></div>
+    </section>
+
+    <section id="achievements" role="tabpanel" aria-labelledby="tab-achievements" hidden>
+      <p class="lede">Every achievement in the app, in the order the app shows them. Add one from a stat the app already measures, change the words, hide one, or give one to somebody by hand.</p>
+      <div class="toolbar">
+        <div class="seg" id="ach-filter" aria-label="Which achievements">
+          <button type="button" data-f="all" aria-pressed="true">All</button>
+          <button type="button" data-f="added" aria-pressed="false">Added here</button>
+          <button type="button" data-f="builtin" aria-pressed="false">Built in</button>
+          <button type="button" data-f="hidden" aria-pressed="false">Hidden</button>
+        </div>
+        <button class="btn primary" id="ach-new" type="button">New achievement</button>
+      </div>
+      <div id="ach-editor"></div>
+      <div class="list" id="ach-list"></div>
+    </section>
+
+    <section id="community" role="tabpanel" aria-labelledby="tab-community" hidden>
+      <div class="seg" id="comm-seg">
+        <button type="button" data-view="posts" aria-pressed="true">Posts</button>
+        <button type="button" data-view="crews" aria-pressed="false">Crews</button>
+      </div>
+      <div id="comm-posts">
+        <h2>Posts</h2>
+        <form class="search" id="post-search" novalidate>
+          <input id="post-q" placeholder="Words in a post" autocomplete="off" spellcheck="false" aria-label="Search posts">
+          <button class="btn" type="submit">Search</button>
+        </form>
+        <div class="list mt-12" id="post-list"></div>
+        <button class="btn mt-12" id="post-more" type="button" hidden>Load older posts</button>
+      </div>
+      <div id="comm-crews" hidden>
+        <h2>Crews</h2>
+        <div class="mod-layout">
+          <div>
+            <form class="search" id="crew-search" novalidate>
+              <input id="crew-q" placeholder="Crew name" autocomplete="off" spellcheck="false" aria-label="Search crews">
+              <button class="btn" type="submit">Search</button>
+            </form>
+            <div class="list mt-12" id="crew-list"></div>
+          </div>
+          <div id="crew-detail"><div class="empty">Pick a crew to see who leads it, who is in it and how it is set up.</div></div>
+        </div>
       </div>
     </section>
   </div>
@@ -417,15 +586,30 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
   $('signout').addEventListener('click', () => { session.set(''); showLogin('Signed out.', true); });
 
   // ── tabs ─────────────────────────────────────────────────────────────────
+  /*
+    Six tabs since 2026-10-01. The hash names the one showing, so a refresh or a
+    link lands on it; anything else is the Overview.
+  */
+  const TABS = ['overview', 'moderation', 'police', 'network', 'achievements', 'community'];
+  const LOADERS = {
+    overview: () => loadOverview(),
+    moderation: () => loadModeration(),
+    police: () => loadPolice(),
+    network: () => loadNetwork(),
+    achievements: () => loadAchievements(),
+    community: () => loadCommunity(),
+  };
   function route() {
-    const mod = location.hash === '#moderation';
-    $('tab-overview').setAttribute('aria-selected', String(!mod));
-    $('tab-moderation').setAttribute('aria-selected', String(mod));
-    $('overview').hidden = mod; $('moderation').hidden = !mod;
-    return mod ? loadModeration() : loadOverview();
+    const want = location.hash.slice(1);
+    const tab = TABS.includes(want) ? want : 'overview';
+    for (const t of TABS) {
+      $('tab-' + t).setAttribute('aria-selected', String(t === tab));
+      $(t).hidden = t !== tab;
+    }
+    hideTip();
+    return LOADERS[tab]();
   }
-  $('tab-overview').addEventListener('click', () => { history.replaceState(null, '', '#overview'); route(); });
-  $('tab-moderation').addEventListener('click', () => { history.replaceState(null, '', '#moderation'); route(); });
+  for (const t of TABS) $('tab-' + t).addEventListener('click', () => { history.replaceState(null, '', '#' + t); route(); });
   $('refresh').addEventListener('click', () => route());
 
   function banner(text) { $('banner').hidden = !text; $('banner').textContent = text || ''; }
@@ -655,6 +839,8 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
     sign_in: 'Sign-in', code_sent: 'Code sent to your phone', ban: 'Ban', unban: 'Unban',
     remove_content: 'Content removed', report_status: 'Report marked', issue_status: 'Issue marked',
     set_recovery_email: 'Recovery email added',
+    achievement_save: 'Achievement saved', achievement_hide: 'Achievement hidden or shown',
+    achievement_move: 'Achievement moved', achievement_grant: 'Achievement given', remove_post: 'Post removed',
   };
   async function loadActivity() {
     const list = $('activity-list');
@@ -683,6 +869,9 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
       if (d.verdict) bits.push(d.verdict === 'wrong' ? 'wrong code' : 'expired or used code');
       if (d.phones) bits.push(d.phones + (d.phones === 1 ? ' phone' : ' phones'));
       if (d.second_step === 'off') bits.push('second step switched off');
+      if (d.achievement) bits.push(d.achievement + (d.created ? ' (new)' : ''));
+      if (d.hidden !== undefined) bits.push(d.hidden ? 'hidden from the app' : 'shown again');
+      if (d.dir) bits.push('moved ' + d.dir);
       if (d.error) bits.push(d.error);
       if (e.ip) bits.push('from ' + e.ip);
       if (bits.length) it.append(el('div', 'muted small', bits.join(' · ')));
@@ -887,6 +1076,809 @@ label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 14p
       actions.append(ban);
     }
     card.append(actions);
+    box.append(card);
+  }
+
+  // ── the tabs added 2026-10-01 ────────────────────────────────────────────
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const svgEl = (tag, attrs) => {
+    const e = document.createElementNS(SVG_NS, tag);
+    for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, String(v));
+    return e;
+  };
+  const pct = (part, whole) => (whole ? Math.round((part / whole) * 100) : 0);
+  const shortDay = (iso) => { try { return new Date(String(iso).length === 10 ? iso + 'T12:00:00Z' : iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); } catch { return String(iso); } };
+  const hourLabel = (h) => (h % 12 || 12) + (h < 12 ? ' am' : ' pm');
+  const plural = (n, one, many) => num(n) + ' ' + (n === 1 ? one : many || one + 's');
+  // The two map colours: checked as a pair against this surface (dataviz validator, all checks pass).
+  const INTERNAL = '#3987e5', PUBLISHED = '#e0619a';
+
+  function tileCard(n, label, sub) {
+    const t = el('div', 'card tile');
+    t.append(el('div', 'n', num(n)), el('div', 'l', label));
+    if (sub) t.append(el('div', 'd muted small', sub));
+    return t;
+  }
+  function heroCard(n, label, sub) {
+    const big = el('div', 'card hero');
+    big.append(el('div', 'n', num(n)), el('div', 'l', label));
+    if (sub) big.append(el('div', 'muted small mt-12', sub));
+    return big;
+  }
+  function rowsList(pairs) {
+    const box = el('div', 'rows');
+    for (const [k, v] of pairs) { const r = el('div'); r.append(el('span', '', k), el('span', '', v)); box.append(r); }
+    return box;
+  }
+  function plainCard(title, sub) {
+    const c = el('div', 'card');
+    const head = el('div', 'chart-head');
+    head.append(el('h3', '', title));
+    if (sub) head.append(el('span', 'muted small', sub));
+    c.append(head);
+    return c;
+  }
+
+  /** Columns whose labels are the caller's (hours of the day), otherwise columns() exactly. */
+  function bars(title, labels, values, noun, sub) {
+    const c = el('div', 'card');
+    const total = values.reduce((a, b) => a + b, 0);
+    const head = el('div', 'chart-head');
+    const left = el('div');
+    left.append(el('h3', '', title));
+    if (sub) left.append(el('div', 'muted small', sub));
+    head.append(left, el('div', 'v', num(total)));
+    c.append(head);
+    const max = Math.max(1, ...values);
+    const cols = el('div', 'cols hours');
+    cols.setAttribute('role', 'img');
+    cols.setAttribute('aria-label', title + ': ' + total + ' in all, most in one ' + max);
+    cols.append(el('span', 'ymax', num(max)));
+    values.forEach((v, i) => {
+      const col = el('div', 'col' + (v ? '' : ' zero'));
+      col.tabIndex = 0;
+      col.setAttribute('aria-label', labels[i] + ': ' + v + ' ' + noun);
+      const bar = el('i');
+      bar.style.height = v ? Math.max(4, (v / max) * 100) + '%' : '2px';
+      col.append(bar);
+      const text = [labels[i], v.toLocaleString() + ' ' + noun];
+      col.addEventListener('pointerenter', (e) => showTip(col, text, e.clientX, col.getBoundingClientRect().top));
+      col.addEventListener('pointerleave', hideTip);
+      col.addEventListener('focus', () => showTip(col, text));
+      col.addEventListener('blur', hideTip);
+      cols.append(col);
+    });
+    c.append(cols);
+    const axis = el('div', 'axis');
+    axis.append(el('span', '', labels[0]), el('span', '', labels[Math.floor(labels.length / 2)]), el('span', '', labels[labels.length - 1]));
+    c.append(axis);
+    const det = el('details', 'table');
+    det.append(el('summary', '', 'Show the numbers'));
+    const table = el('table');
+    labels.forEach((l, i) => { const tr = el('tr'); tr.append(el('td', '', l), el('td', '', values[i])); table.append(tr); });
+    det.append(table);
+    c.append(det);
+    return c;
+  }
+
+  // ── police ───────────────────────────────────────────────────────────────
+  const policeView = { filter: 'all', days: 90 };
+  let policeData = null;
+  let policeMap = null;
+  segment('police-filter', 'data-f', (f) => { policeView.filter = f; renderPoliceMap(); });
+  segment('police-span', 'data-d', (d) => { policeView.days = Number(d); loadPolice(); });
+
+  async function loadPolice() {
+    $('refresh').disabled = true;
+    const { status, data } = await call({ action: 'police', days: policeView.days });
+    $('refresh').disabled = false;
+    if (status === 401) return;
+    if (status !== 200) return banner(data.error || 'The server answered ' + status + '.');
+    banner(data.unavailable || '');
+    stamp(new Date().toISOString());
+    policeData = data.unavailable ? null : data;
+    renderPolice();
+  }
+
+  function renderPolice() {
+    const d = policeData;
+    const tiles = $('police-tiles'); tiles.replaceChildren();
+    const charts = $('police-charts'); charts.replaceChildren();
+    const sources = $('police-sources'); sources.replaceChildren();
+    if (d) {
+      const s = d.stats || {};
+      tiles.append(heroCard(s.last30, 'police reports in the last 30 days', num(s.last7) + ' this week · ' + num(s.total) + ' all time' + (s.latest ? ' · latest ' + ago(s.latest) : '')));
+      const shown = d.internal.filter((c) => c.shown).length;
+      tiles.append(
+        tileCard(s.reporters30, 'People reporting', 'in the last 30 days'),
+        tileCard(s.runs30, 'Runs with a report', 'in the last 30 days'),
+        tileCard(d.internal.length, 'Reported cells', shown + ' shown in the app'),
+        tileCard(d.external.length, 'Published cells now', plural(d.sources.filter((x) => x.enabled).length, 'source') + ' switched on'),
+      );
+      if (s.days && s.daily) charts.append(columns('Reports per day', s.days, s.daily, 'reports'));
+      if (s.byHour) charts.append(bars('When reports come in', s.byHour.map((_, h) => hourLabel(h)), s.byHour, 'reports', 'Hour of the day, Eastern time, last 90 days'));
+      for (const src of d.sources) sources.append(sourceCard(src));
+      if (!d.sources.length) sources.append(el('div', 'empty', 'No published sources yet.'));
+    } else {
+      sources.append(el('div', 'empty', 'Nothing to show until the 0096 database update has run.'));
+    }
+    renderPoliceMap();
+  }
+
+  function sourceCard(src) {
+    const c = el('div', 'card svc');
+    const top = el('div', 'top');
+    top.append(el('h3', '', src.name), el('span', 'status ' + (src.enabled ? 'ok' : 'info'), src.enabled ? 'On' : 'Off'));
+    c.append(top, el('p', 'role', src.attribution));
+    c.append(metrics([
+      { label: 'Cells held now', value: src.cells, hint: src.shownCells + ' drawn in the app' },
+      { label: 'Incidents in them', value: src.incidents },
+      { label: 'Last pulled', value: src.lastPulledAt ? ago(src.lastPulledAt) : 'never' },
+      { label: 'Data runs to', value: src.dataThrough ? shortDay(src.dataThrough) : '—' },
+      { label: 'Kept for', value: src.retainHours ? plural(Math.round(src.retainHours), 'hour') : '—' },
+    ]));
+    const FEED = { arcgis: 'ArcGIS', socrata: 'Socrata' };
+    c.append(el('p', 'note', (FEED[src.kind] || cap(src.kind)) + ' feed · ' + cap(src.mode)));
+    return c;
+  }
+
+  function renderPoliceMap() {
+    policeMap = policeMap || slippyMap($('police-map'));
+    const d = policeData;
+    const table = $('police-table'); table.replaceChildren();
+    if (!d) { policeMap.show([], 'The map fills in once the 0096 database update has run.'); return; }
+    const f = policeView.filter;
+    const pts = [];
+    const maxIn = Math.max(1, ...d.internal.map((c) => c.reports));
+    const maxEx = Math.max(1, ...d.external.map((c) => c.reports));
+    if (f !== 'external') {
+      for (const c of d.internal) {
+        const when = shortDay(c.firstDay) + (c.lastDay !== c.firstDay ? ' to ' + shortDay(c.lastDay) : '');
+        pts.push({
+          lat: c.lat, lng: c.lng, color: INTERNAL, hollow: !c.shown, square: false,
+          opacity: 0.3 + 0.5 * Math.sqrt(c.reports / maxIn),
+          tip: [plural(c.reports, 'report'), plural(c.reporters, 'person', 'people') + ' · ' + when + (c.shown ? ' · shown in the app' : ' · not shown yet')],
+          row: ['Reported', c.lat.toFixed(2) + ', ' + c.lng.toFixed(2), c.reports, plural(c.reporters, 'person', 'people'), (c.shown ? 'Shown · ' : 'Not shown · ') + when],
+        });
+      }
+    }
+    if (f !== 'internal') {
+      for (const c of d.external) {
+        pts.push({
+          lat: c.lat, lng: c.lng, color: PUBLISHED, hollow: false, square: true,
+          opacity: 0.3 + 0.5 * Math.sqrt(c.reports / maxEx),
+          tip: [plural(c.reports, 'incident'), c.source + (c.shown ? ' · shown in the app' : ' · not shown')],
+          row: ['Published', c.lat.toFixed(2) + ', ' + c.lng.toFixed(2), c.reports, c.source, (c.shown ? 'Shown · ' : 'Not shown · ') + (c.newest ? 'newest ' + ago(c.newest) : '')],
+        });
+      }
+    }
+    const span = { 7: '7 days', 30: '30 days', 90: '90 days', 365: 'year' }[d.span] || d.span + ' days';
+    const empty = f === 'external' ? 'No published cells are held right now.' : f === 'internal' ? 'No reports in the last ' + span + '.' : 'No hotspots: no reports in the last ' + span + ', and no published cells.';
+    policeMap.show(pts, pts.length ? '' : empty);
+    const head = el('tr');
+    for (const h of ['Kind', 'Cell (lat, lng)', 'Count', 'People or source', 'Status']) head.append(el('td', 'muted', h));
+    table.append(head);
+    for (const p of pts.slice(0, 300)) { const tr = el('tr'); for (const v of p.row) tr.append(el('td', '', v)); table.append(tr); }
+    if (pts.length > 300) { const tr = el('tr'); tr.append(el('td', 'muted', 'and ' + (pts.length - 300) + ' more')); table.append(tr); }
+  }
+
+  /*
+    A small slippy map, written here rather than loaded: this page's policy runs
+    no outside script, and the job is only tiles, shapes and a drag. The tiles
+    are OpenStreetMap's, credited as their licence asks, and each one is
+    requested with this site's origin as the referrer, as their usage policy
+    wants (the page itself sends none).
+  */
+  function slippyMap(host) {
+    const TILE = 256, MIN_Z = 3, MAX_Z = 16;
+    host.replaceChildren();
+    const tiles = el('div', 'tiles');
+    const svg = svgEl('svg', {});
+    const zoomBox = el('div', 'zoom');
+    const button = (text, label) => { const b = el('button', '', text); b.type = 'button'; b.setAttribute('aria-label', label); b.title = label; zoomBox.append(b); return b; };
+    const zin = button('+', 'Zoom in');
+    const zout = button('−', 'Zoom out');
+    const fitAll = button('⤢', 'Show every hotspot');
+    const attrib = el('div', 'attrib');
+    const osm = el('a', '', 'OpenStreetMap');
+    osm.href = 'https://www.openstreetmap.org/copyright'; osm.target = '_blank'; osm.rel = 'noopener noreferrer';
+    attrib.append(document.createTextNode('© '), osm, document.createTextNode(' contributors'));
+    const note = el('div', 'note'); note.hidden = true;
+    host.append(tiles, svg, zoomBox, attrib, note);
+
+    const state = { z: 4, x: 0, y: 0, points: [] };
+    const project = (lat, lng, z) => {
+      const s = TILE * Math.pow(2, z);
+      const sin = Math.sin((Math.max(-85, Math.min(85, lat)) * Math.PI) / 180);
+      return [((lng + 180) / 360) * s, (0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * s];
+    };
+    const size = () => [host.clientWidth || 640, host.clientHeight || 420];
+
+    function draw() {
+      const [w, h] = size();
+      const z = state.z, n = Math.pow(2, z);
+      const left = state.x - w / 2, top = state.y - h / 2;
+      tiles.replaceChildren();
+      const x0 = Math.floor(left / TILE), x1 = Math.floor((left + w) / TILE);
+      const y0 = Math.max(0, Math.floor(top / TILE)), y1 = Math.min(n - 1, Math.floor((top + h) / TILE));
+      for (let tx = x0; tx <= x1; tx++) {
+        for (let ty = y0; ty <= y1; ty++) {
+          const img = el('img');
+          img.alt = ''; img.decoding = 'async'; img.draggable = false; img.referrerPolicy = 'strict-origin';
+          img.src = 'https://tile.openstreetmap.org/' + z + '/' + (((tx % n) + n) % n) + '/' + ty + '.png';
+          img.style.left = Math.round(tx * TILE - left) + 'px';
+          img.style.top = Math.round(ty * TILE - top) + 'px';
+          tiles.append(img);
+        }
+      }
+      svg.replaceChildren();
+      // Metres per pixel at this zoom, so a 0.01° cell draws at its real size, never under 6px.
+      const mpp = (lat) => (156543.03392 * Math.cos((lat * Math.PI) / 180)) / n;
+      for (const p of state.points) {
+        const [px, py] = project(p.lat, p.lng, z);
+        const sx = px - left, sy = py - top;
+        if (sx < -80 || sy < -80 || sx > w + 80 || sy > h + 80) continue;
+        const r = Math.max(6, Math.min(70, 556 / mpp(p.lat)));
+        const shape = p.square
+          ? svgEl('rect', { x: sx - r, y: sy - r, width: r * 2, height: r * 2, rx: Math.min(6, r / 3) })
+          : svgEl('circle', { cx: sx, cy: sy, r });
+        shape.setAttribute('class', 'cell');
+        shape.setAttribute('fill', p.color);
+        shape.setAttribute('fill-opacity', p.hollow ? '0.04' : String(p.opacity));
+        shape.setAttribute('stroke', p.color);
+        shape.setAttribute('stroke-width', p.hollow ? '2' : '1.5');
+        shape.setAttribute('tabindex', '0');
+        shape.setAttribute('role', 'img');
+        shape.setAttribute('aria-label', p.tip.join(', '));
+        shape.addEventListener('pointerenter', (e) => { if (!drag) showTip(shape, p.tip, e.clientX, e.clientY - 8); });
+        shape.addEventListener('pointerleave', hideTip);
+        shape.addEventListener('click', (e) => showTip(shape, p.tip, e.clientX, e.clientY - 8));
+        shape.addEventListener('focus', () => showTip(shape, p.tip));
+        shape.addEventListener('blur', hideTip);
+        svg.append(shape);
+      }
+    }
+
+    function zoomTo(z, ax, ay) {
+      const nz = Math.max(MIN_Z, Math.min(MAX_Z, z));
+      if (nz === state.z) return;
+      const [w, h] = size();
+      const fx = ax === undefined ? w / 2 : ax, fy = ay === undefined ? h / 2 : ay;
+      // The spot under the pointer stays under the pointer.
+      const wx = state.x - w / 2 + fx, wy = state.y - h / 2 + fy;
+      const k = Math.pow(2, nz - state.z);
+      state.x = wx * k - fx + w / 2; state.y = wy * k - fy + h / 2; state.z = nz;
+      hideTip(); draw();
+    }
+
+    function fit() {
+      const pts = state.points;
+      const [w, h] = size();
+      if (!pts.length) { state.z = 4; [state.x, state.y] = project(38, -96, 4); draw(); return; }
+      const bounds = (z) => {
+        const xy = pts.map((p) => project(p.lat, p.lng, z));
+        return [Math.min(...xy.map((q) => q[0])), Math.max(...xy.map((q) => q[0])), Math.min(...xy.map((q) => q[1])), Math.max(...xy.map((q) => q[1]))];
+      };
+      let z = 13;
+      for (; z > MIN_Z; z--) { const b = bounds(z); if (b[1] - b[0] < w - 120 && b[3] - b[2] < h - 120) break; }
+      const b = bounds(z);
+      state.z = z; state.x = (b[0] + b[1]) / 2; state.y = (b[2] + b[3]) / 2;
+      draw();
+    }
+
+    // Drag to move: captured only once it is a drag, so a tap on a shape still reaches it.
+    let drag = null;
+    host.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || (e.target.closest && e.target.closest('.zoom, .attrib'))) return;
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: state.x, sy: state.y, moved: false };
+    });
+    host.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.moved) {
+        if (Math.abs(dx) + Math.abs(dy) < 4) return;
+        drag.moved = true; host.classList.add('dragging'); hideTip();
+        try { host.setPointerCapture(e.pointerId); } catch {}
+      }
+      state.x = drag.sx - dx; state.y = drag.sy - dy; draw();
+    });
+    const end = () => { drag = null; host.classList.remove('dragging'); };
+    host.addEventListener('pointerup', end);
+    host.addEventListener('pointercancel', end);
+    host.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const r = host.getBoundingClientRect();
+      zoomTo(state.z + (e.deltaY < 0 ? 1 : -1), e.clientX - r.left, e.clientY - r.top);
+    }, { passive: false });
+    host.addEventListener('dblclick', (e) => { const r = host.getBoundingClientRect(); zoomTo(state.z + 1, e.clientX - r.left, e.clientY - r.top); });
+    zin.addEventListener('click', () => zoomTo(state.z + 1));
+    zout.addEventListener('click', () => zoomTo(state.z - 1));
+    fitAll.addEventListener('click', fit);
+    addEventListener('resize', () => { if (!host.closest('[hidden]')) draw(); });
+    return {
+      show(points, message) {
+        state.points = points;
+        note.hidden = !message; note.textContent = message || '';
+        fit();
+      },
+    };
+  }
+
+  // ── network ──────────────────────────────────────────────────────────────
+  const ROLE = {
+    authenticator: 'The app, through the API',
+    supabase_admin: 'Supabase itself',
+    postgres: 'Admin and tools',
+    pgbouncer: 'The connection pooler',
+    supabase_storage_admin: 'Photo storage',
+    supabase_auth_admin: 'Sign-in service',
+    supabase_realtime_admin: 'Live updates',
+  };
+
+  async function loadNetwork() {
+    $('refresh').disabled = true;
+    const { status, data } = await call({ action: 'network' });
+    $('refresh').disabled = false;
+    if (status === 401) return;
+    if (status !== 200) return banner(data.error || 'The server answered ' + status + '.');
+    banner(data.unavailable || '');
+    stamp(new Date().toISOString());
+    renderTraffic(data.traffic);
+    renderVoice(data.voice);
+    renderSocial(data.social);
+  }
+
+  function renderTraffic(t) {
+    const box = $('net-traffic'); box.replaceChildren();
+    if (!t || t.error) { box.append(el('div', 'empty', (t && t.error) || 'The traffic numbers did not load. Refresh to try again.')); return; }
+    const flow = plainCard('Database traffic', t.bootAt ? 'since it last started, ' + shortDay(t.bootAt) : '');
+    const pair = el('div', 'pair');
+    const side = (label, v, per) => { const d = el('div'); d.append(el('div', 'big', bytes(v)), el('div', 'l', label + (per ? ' · about ' + bytes(per) + ' a day' : ''))); return d; };
+    pair.append(side('Sent', t.tx, t.perDay && t.perDay.tx), side('Received', t.rx, t.perDay && t.perDay.rx));
+    flow.append(pair);
+    if (t.since) flow.append(el('p', 'muted small', 'Since your last look, ' + ago(t.since.at) + ': ' + bytes(t.since.tx) + ' sent, ' + bytes(t.since.rx) + ' received.'));
+    else if (t.snapshotsReady === false) flow.append(el('p', 'muted small', 'What moved between looks starts once the 0096 database update has run.'));
+    else flow.append(el('p', 'muted small', 'The next look will also say what moved since this one.'));
+    flow.append(el('p', 'muted small', 'The database host\'s own network: the app, sign-ins, live updates and photos all pass through it. Photo downloads are counted on Supabase\'s Usage page.'));
+    const conns = plainCard('Connections', 'right now');
+    const c = t.connections || {};
+    conns.append(meter('Database connections', c.database || 0, Math.max(1, c.limit || 60), (n) => n.toLocaleString()));
+    const roles = Object.entries(c.byRole || {}).sort((a, b) => b[1] - a[1]).map(([k, v]) => [ROLE[k] || k, num(v)]);
+    if (roles.length) conns.append(rowsList(roles));
+    conns.append(el('p', 'muted small mt-12', 'Pooler: ' + num(c.poolActive) + ' active, ' + num(c.poolWaiting) + ' waiting.'));
+    const auth = plainCard('Sign-in service', 'since it last started');
+    const rows = (t.auth || []).map((a) => [a.label, num(a.ok) + ' ok' + (a.refused ? ' · ' + num(a.refused) + ' refused' : '')]);
+    auth.append(rows.length ? rowsList(rows) : el('p', 'muted', 'Nothing counted yet.'));
+    auth.append(el('p', 'muted small mt-12', 'Refused includes wrong passwords and expired sessions, which the app retries on its own.'));
+    box.append(flow, conns, auth);
+  }
+
+  function renderVoice(v) {
+    const box = $('net-voice'); box.replaceChildren();
+    $('net-voice-h').textContent = 'Voice health';
+    if (!v) { box.append(el('div', 'empty', 'Voice health starts once the 0096 database update has run.')); return; }
+    $('net-voice-h').textContent = 'Voice health · last ' + v.span + ' days · from ' + plural(v.sharers, 'person', 'people') + ' sharing logs';
+    if (!v.sharers) { box.append(el('div', 'empty', 'Nobody has log sharing switched on, so there is nothing to count. It is off unless somebody turns it on in Settings.')); return; }
+    box.append(columns('Voice channels joined', v.days, v.joins, 'joins'), columns('Voice warnings and errors', v.days, v.problems, 'problems'));
+    const how = plainCard('How voice connected');
+    const tr = v.transports || {}, relay = v.relay || {}, lk = v.livekit || {};
+    const relayAsked = (relay.fetched || 0) + (relay.failed || 0);
+    how.append(rowsList([
+      ['Live voice (media server)', num(tr.media)],
+      ['Keep the Music (clips)', num(tr.clips)],
+      ['Relay credentials fetched', num(relay.fetched) + (relayAsked ? ' · ' + pct(relay.fetched || 0, relayAsked) + '%' : '')],
+      ['Relay credentials failed', num(relay.failed)],
+      ['Media server disconnects', num(lk.disconnects)],
+      ['Media server token failures', num(lk.tokenFailures)],
+      ...Object.entries(v.platforms || {}).map(([p, n]) => ['Joins on ' + (p === 'ios' ? 'iPhone' : p === 'android' ? 'Android' : cap(p)), num(n)]),
+    ]));
+    const top = plainCard('Most common problems');
+    if ((v.topProblems || []).length) {
+      const list = el('div', 'list');
+      for (const p of v.topProblems) {
+        const it = el('div', 'item');
+        const head = el('div', 'head');
+        head.append(el('span', 'status ' + (p.level === 'error' ? 'error' : 'warn'), p.level === 'error' ? 'Error' : 'Warning'), el('span', 'tag grey', p.category), el('span', 'when', plural(p.count, 'time')));
+        it.append(head, el('div', 'small', p.message));
+        list.append(it);
+      }
+      top.append(list);
+    } else top.append(el('p', 'muted', 'None in this window.'));
+    box.append(how, top);
+  }
+
+  function renderSocial(s) {
+    const tiles = $('net-social-tiles'); tiles.replaceChildren();
+    const box = $('net-social'); box.replaceChildren();
+    const more = $('net-social-more'); more.replaceChildren();
+    if (!s) { box.append(el('div', 'empty', 'The social numbers start once the 0096 database update has run.')); return; }
+    tiles.append(
+      heroCard(s.friendships, 'friendships', 'between ' + plural(s.people, 'person', 'people') + ' · ' + num(s.pending) + ' requests waiting'),
+      tileCard(s.avgFriends, 'Friends per person', 'most anyone has: ' + num(s.mostFriends)),
+      tileCard(pct(s.withFriends, s.people) + '%', 'Have a friend', num(s.withFriends) + ' people'),
+      tileCard(pct(s.inACrew, s.people) + '%', 'In a crew', num(s.inACrew) + ' people'),
+      tileCard(s.alone, 'On their own', 'no friend and no crew'),
+    );
+    if (s.days) {
+      box.append(
+        columns('New friendships', s.days, s.newFriendships || [], 'friendships'),
+        columns('Friend requests sent', s.days, s.requests || [], 'requests'),
+        columns('Crew joins', s.days, s.crewJoins || [], 'joins'),
+      );
+    }
+    const spread = plainCard('Friends per person', 'of everyone');
+    spread.classList.add('hbars');
+    const dg = s.degree || {};
+    [['No friends', dg.none], ['1 or 2', dg.few], ['3 to 5', dg.some], ['6 to 10', dg.many], ['More than 10', dg.lots]]
+      .forEach(([l, v]) => spread.append(meter(l, v || 0, Math.max(1, s.people), (n) => n.toLocaleString(), false, false)));
+    const crewsCard = plainCard('Biggest crews', num(s.crews) + ' crews · ' + num(s.memberships) + ' memberships');
+    const top = (s.topCrews || []).map((c) => [c.name, plural(c.members, 'member')]);
+    crewsCard.append(top.length ? rowsList(top) : el('p', 'muted', 'No crews yet.'));
+    more.append(spread, crewsCard);
+  }
+
+  // ── achievements ─────────────────────────────────────────────────────────
+  let achData = null;
+  let achFilter = 'all';
+  segment('ach-filter', 'data-f', (f) => { achFilter = f; renderAchievements(); });
+  $('ach-new').addEventListener('click', () => openEditor(null));
+
+  async function loadAchievements() {
+    $('refresh').disabled = true;
+    const { status, data } = await call({ action: 'achievements' });
+    $('refresh').disabled = false;
+    if (status === 401) return;
+    if (status !== 200) return banner(data.error || 'The server answered ' + status + '.');
+    banner(data.unavailable || '');
+    stamp(new Date().toISOString());
+    achData = data;
+    renderAchievements();
+  }
+
+  const metricOf = (key) => ((achData && achData.metrics) || []).find((m) => m.key === key);
+  function ruleText(a) {
+    if (a.builtIn) return 'Built in: the app\'s own rule decides it.';
+    const m = metricOf(a.metric);
+    return (m ? m.label : a.metric) + ' reaches ' + Number(a.target).toLocaleString() + (m ? ' ' + m.unit : '') + '.';
+  }
+
+  function renderAchievements() {
+    const list = $('ach-list'); list.replaceChildren();
+    if (!achData) return;
+    if (achData.unavailable) { $('ach-new').disabled = true; list.append(el('div', 'empty', achData.unavailable)); return; }
+    $('ach-new').disabled = false;
+    const all = achData.achievements;
+    const rows = all.filter((a) => (achFilter === 'added' ? !a.builtIn : achFilter === 'builtin' ? a.builtIn : achFilter === 'hidden' ? a.hidden : true));
+    if (!rows.length) {
+      list.append(el('div', 'empty', achFilter === 'added' ? 'Nothing added here yet. New achievement makes one from a stat the app measures.' : achFilter === 'hidden' ? 'Nothing is hidden.' : 'Nothing here.'));
+      return;
+    }
+    for (const a of rows) list.append(achItem(a, all));
+  }
+
+  function achItem(a, all) {
+    const it = el('div', 'item');
+    const row = el('div', 'ach' + (a.hidden ? ' retired' : ''));
+    const order = el('div', 'order');
+    const at = all.indexOf(a);
+    const up = el('button', '', '▲'); up.type = 'button'; up.setAttribute('aria-label', 'Move ' + a.name + ' up'); up.disabled = at <= 0;
+    const down = el('button', '', '▼'); down.type = 'button'; down.setAttribute('aria-label', 'Move ' + a.name + ' down'); down.disabled = at >= all.length - 1;
+    up.addEventListener('click', async () => { if (await act(up, { action: 'achievement_move', id: a.id, dir: 'up' })) loadAchievements(); });
+    down.addEventListener('click', async () => { if (await act(down, { action: 'achievement_move', id: a.id, dir: 'down' })) loadAchievements(); });
+    order.append(up, down);
+    const mid = el('div');
+    const head = el('div', 'head');
+    head.append(el('span', 'nm', a.name), el('span', 'medal ' + a.tier, a.tier));
+    if (a.category) head.append(el('span', 'tag grey', a.category));
+    if (!a.builtIn) head.append(el('span', 'tag', 'Added here'));
+    if (a.hidden) head.append(el('span', 'status info', 'Hidden from the app'));
+    mid.append(head);
+    if (a.description) mid.append(el('div', 'muted small', a.description));
+    mid.append(el('div', 'rule', ruleText(a)));
+    const earned = el('div', 'earned');
+    const share = pct(a.earned, achData.people);
+    const line = el('div', 'row');
+    line.append(el('span', '', plural(a.earned, 'person', 'people') + ' earned it'), el('span', '', (a.earned && share < 1 ? '<1' : share) + '%'));
+    const bar = el('div', 'bar');
+    bar.setAttribute('role', 'meter'); bar.setAttribute('aria-valuemin', '0'); bar.setAttribute('aria-valuemax', String(achData.people || 0)); bar.setAttribute('aria-valuenow', String(a.earned));
+    bar.setAttribute('aria-label', a.name + ': ' + a.earned + ' of ' + (achData.people || 0) + ' people');
+    const fill = el('i'); fill.style.width = Math.min(100, (a.earned / Math.max(1, achData.people)) * 100) + '%'; bar.append(fill);
+    earned.append(line, bar);
+    if (a.started) earned.append(el('div', 'muted small', num(a.started) + ' on the way'));
+    row.append(order, mid, earned);
+    it.append(row);
+
+    const actions = el('div', 'actions');
+    const panel = el('div');
+    const edit = el('button', 'btn small', 'Edit'); edit.type = 'button';
+    edit.addEventListener('click', () => openEditor(a));
+    const vis = el('button', 'btn small', a.hidden ? 'Show in the app' : 'Hide from the app'); vis.type = 'button';
+    vis.addEventListener('click', async () => {
+      const ask = a.hidden ? 'Show "' + a.name + '" in the app again? Everybody who earned it gets it back on their wall.' : 'Hide "' + a.name + '" from the app? It disappears for everybody, earned or not, and stops counting. You can show it again.';
+      if (await act(vis, { action: 'achievement_hide', id: a.id, hidden: !a.hidden }, ask)) loadAchievements();
+    });
+    const who = el('button', 'btn small', 'Who earned it'); who.type = 'button';
+    who.addEventListener('click', () => toggle(panel, who, () => earnersPanel(a)));
+    const give = el('button', 'btn small', 'Give to someone'); give.type = 'button';
+    give.disabled = a.hidden;
+    give.addEventListener('click', () => toggle(panel, give, () => grantPanel(a)));
+    actions.append(edit, vis, who, give);
+    it.append(actions, panel);
+    return it;
+  }
+
+  // One panel under an item; the same button closes it.
+  function toggle(panel, button, build) {
+    if (panel.dataset.by === button.textContent) { panel.replaceChildren(); panel.dataset.by = ''; return; }
+    panel.dataset.by = button.textContent;
+    panel.replaceChildren(build());
+  }
+
+  function earnersPanel(a) {
+    const box = el('div', 'panel');
+    box.append(el('div', 'muted small', 'Loading…'));
+    call({ action: 'achievement_earners', id: a.id }).then(({ status, data }) => {
+      box.replaceChildren();
+      if (status !== 200) { box.append(el('div', 'empty', data.error || 'Could not load them.')); return; }
+      if (!data.people.length) { box.append(el('div', 'muted', 'Nobody has earned it yet.')); return; }
+      box.append(el('div', 'muted small', data.people.length >= 100 ? 'The 100 most recent.' : plural(data.people.length, 'person', 'people') + ', newest first.'));
+      for (const p of data.people) {
+        const r = el('div', 'who');
+        r.append(personButton(p.person), el('span', '', ago(p.earnedAt)));
+        if (p.detail) r.append(el('span', '', p.detail));
+        box.append(r);
+      }
+    });
+    return box;
+  }
+
+  function grantPanel(a) {
+    const box = el('div', 'panel');
+    box.append(el('div', '', 'Give "' + a.name + '" to somebody. They get the badge on their wall and a push, the same as earning it.'));
+    const form = el('form', 'search'); form.noValidate = true;
+    const q = el('input'); q.placeholder = 'Username, handle or name'; q.autocomplete = 'off'; q.spellcheck = false; q.setAttribute('aria-label', 'Find the person');
+    const find = el('button', 'btn', 'Find'); find.type = 'submit';
+    form.append(q, find);
+    const results = el('div', 'list');
+    const picked = el('div', 'picked');
+    let person = null;
+    const note = el('input'); note.placeholder = 'Why, shown with the badge (optional)'; note.maxLength = 120; note.setAttribute('aria-label', 'Why they are getting it');
+    const noteForm = el('div', 'form'); const lab = el('label', 'wide', 'Note'); lab.append(note); noteForm.append(lab);
+    const send = el('button', 'btn primary', 'Give it'); send.type = 'button'; send.disabled = true;
+    const result = el('div');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      results.replaceChildren();
+      const text = q.value.trim();
+      if (text.length < 2) { results.append(el('div', 'empty', 'Type at least two letters.')); return; }
+      const { status, data } = await call({ action: 'user_search', q: text });
+      if (status !== 200) { results.append(el('div', 'empty', data.error || 'Search failed.')); return; }
+      if (!data.users.length) { results.append(el('div', 'empty', 'Nobody matches "' + text + '".')); return; }
+      for (const u of data.users.slice(0, 6)) {
+        const b = el('button', 'person'); b.type = 'button';
+        const t = el('div'); t.append(el('div', 'nm', u.name || 'No name'), el('div', 'un', u.username ? '@' + u.username : ''));
+        b.append(el('div', 'avatar', initial(u)), t);
+        b.addEventListener('click', () => {
+          person = u; results.replaceChildren(); send.disabled = false;
+          picked.replaceChildren(el('span', '', 'Giving it to'), el('strong', '', (u.name || 'No name') + (u.username ? ' (@' + u.username + ')' : '')));
+        });
+        results.append(b);
+      }
+    });
+    send.addEventListener('click', async () => {
+      if (!person) return;
+      const who = person.name || '@' + person.username;
+      if (!confirm('Give "' + a.name + '" to ' + who + '? They get a push about it.')) return;
+      send.disabled = true;
+      const { status, data } = await call({ action: 'achievement_grant', id: a.id, user: person.id, note: note.value.trim() });
+      send.disabled = false;
+      result.replaceChildren(status === 200
+        ? el('div', 'done', data.awarded ? 'Given. ' + who + ' has it now.' : who + ' already had it, so nothing changed.')
+        : el('div', 'banner', data.error || 'That did not work (' + status + ').'));
+      if (status === 200 && data.awarded) loadAchievements();
+    });
+    box.append(form, results, picked, noteForm, send, result);
+    return box;
+  }
+
+  function openEditor(a) {
+    const host = $('ach-editor');
+    host.replaceChildren();
+    const card = el('div', 'card mb-12');
+    const builtIn = !!(a && a.builtIn);
+    const top = el('div', 'chart-head');
+    top.append(el('h3', '', a ? 'Edit "' + a.name + '"' : 'New achievement'));
+    card.append(top);
+    const form = el('form', 'form'); form.noValidate = true;
+    const field = (label, input, wide) => { const l = el('label', wide ? 'wide' : '', label); l.append(input); form.append(l); return input; };
+    const name = field('Name', el('input')); name.maxLength = 40; name.value = a ? a.name : '';
+    const cats = [...new Set(((achData && achData.achievements) || []).map((x) => x.category).filter(Boolean))].sort();
+    const listId = 'ach-cats';
+    const category = field('Category', el('input')); category.maxLength = 24; category.value = a ? a.category : ''; category.setAttribute('list', listId);
+    const dl = el('datalist'); dl.id = listId; for (const c of cats) { const o = el('option'); o.value = c; dl.append(o); } form.append(dl);
+    const tier = field('Tier', el('select'));
+    for (const t of ['bronze', 'silver', 'gold']) { const o = el('option', '', cap(t)); o.value = t; tier.append(o); }
+    tier.value = a ? a.tier : 'bronze';
+    const desc = field('What it is for', el('textarea'), true); desc.maxLength = 160; desc.value = a ? a.description : '';
+    const metric = field('Decided by', el('select'));
+    for (const m of (achData && achData.metrics) || []) { const o = el('option', '', m.label + ' (' + m.unit + ')'); o.value = m.key; metric.append(o); }
+    const target = field('Target', el('input')); target.type = 'number'; target.min = '1'; target.max = '1000000'; target.step = '1';
+    if (builtIn) {
+      const o = el('option', '', 'The app\'s own rule'); o.value = ''; metric.prepend(o); metric.value = '';
+      metric.disabled = true; target.disabled = true; target.value = String(a.target);
+      form.append(el('p', 'hint wide', 'A built-in achievement keeps its rule and target, which live in the app. Its name, words, category and tier can change.'));
+    } else {
+      metric.value = a ? a.metric : 'runs';
+      target.value = a ? String(a.target) : '10';
+      form.append(el('p', 'hint wide', 'Progress rises with the stat and the badge is awarded the moment it reaches the target, with a push. Phones on the update from 2026-10-01 or later award it.'));
+    }
+    const actions = el('div', 'actions wide');
+    const save = el('button', 'btn primary', a ? 'Save' : 'Add it'); save.type = 'submit';
+    const cancel = el('button', 'btn', 'Cancel'); cancel.type = 'button';
+    cancel.addEventListener('click', () => host.replaceChildren());
+    actions.append(save, cancel);
+    const err = el('p', 'error wide'); err.setAttribute('role', 'alert');
+    form.append(actions, err);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      err.textContent = '';
+      const body = { action: 'achievement_save', name: name.value.trim(), description: desc.value.trim(), category: category.value.trim(), tier: tier.value };
+      if (a) body.id = a.id;
+      if (!builtIn) { body.metric = metric.value; body.target = Number(target.value); }
+      if (body.name.length < 2) { err.textContent = 'Give it a name of at least two letters.'; return; }
+      if (!body.category) { err.textContent = 'Pick or type a category.'; return; }
+      if (!builtIn && !(body.target >= 1 && body.target <= 1000000)) { err.textContent = 'The target is a whole number from 1 to 1,000,000.'; return; }
+      save.disabled = true;
+      const { status, data } = await call(body);
+      save.disabled = false;
+      if (status !== 200) { err.textContent = data.error || 'That did not work (' + status + ').'; return; }
+      host.replaceChildren();
+      loadAchievements();
+    });
+    card.append(form);
+    host.append(card);
+    host.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    name.focus();
+  }
+
+  // ── posts and crews ──────────────────────────────────────────────────────
+  let commView = 'posts';
+  let postsNext = null;
+  let postQuery = '';
+  let crewQuery = '';
+  segment('comm-seg', 'data-view', (v) => {
+    commView = v;
+    $('comm-posts').hidden = v !== 'posts';
+    $('comm-crews').hidden = v !== 'crews';
+    loadCommunity();
+  });
+  const loadCommunity = () => (commView === 'posts' ? loadPosts(false) : loadCrews());
+  const POST_KIND = { build: 'Build', drive: 'Drive', event: 'Event', photo: 'Photo', vs: 'VS', convoy: 'Run' };
+  const VISIBILITY = { open: 'Open to all', friends: 'Friends only', invite: 'Invite only' };
+
+  async function loadPosts(more) {
+    const list = $('post-list');
+    if (!more) { list.replaceChildren(el('div', 'empty', 'Loading…')); postsNext = null; $('post-more').hidden = true; }
+    $('refresh').disabled = true;
+    const { status, data } = await call({ action: 'posts', q: postQuery, before: more ? postsNext : undefined });
+    $('refresh').disabled = false;
+    if (status === 401) return;
+    if (!more) list.replaceChildren();
+    if (status !== 200) { list.append(el('div', 'empty', data.error || 'Could not load posts.')); return; }
+    banner(''); stamp(new Date().toISOString());
+    if (!more && !data.posts.length) list.append(el('div', 'empty', postQuery ? 'No post mentions "' + postQuery + '".' : 'No posts yet.'));
+    for (const p of data.posts) list.append(postItem(p));
+    postsNext = data.next;
+    $('post-more').hidden = !postsNext;
+  }
+  $('post-search').addEventListener('submit', (e) => { e.preventDefault(); postQuery = $('post-q').value.trim(); loadPosts(false); });
+  $('post-more').addEventListener('click', () => loadPosts(true));
+
+  function postItem(p) {
+    const it = el('div', 'item');
+    const head = el('div', 'head');
+    head.append(el('span', 'tag', POST_KIND[p.kind] || cap(p.kind)));
+    if (p.car) head.append(el('span', 'tag grey', p.car));
+    if (p.openReports) head.append(el('span', 'status warn', plural(p.openReports, 'open report')));
+    const at = el('span', 'when', ago(p.at)); at.title = when(p.at); head.append(at);
+    it.append(head);
+    const sub = [p.kicker, p.subtitle].filter(Boolean).join(' · ');
+    if (sub) it.append(el('div', 'muted small', sub));
+    if (p.body) it.append(el('div', 'quote', p.body));
+    const who = el('div', 'who');
+    const by = el('span', '', 'By: '); by.append(personButton(p.author));
+    who.append(by, el('span', '', plural(p.likes, 'like') + ' · ' + plural(p.comments, 'comment')));
+    it.append(who);
+    const actions = el('div', 'actions');
+    const panel = el('div');
+    if (p.comments) {
+      const show = el('button', 'btn small', 'Comments'); show.type = 'button';
+      show.addEventListener('click', () => toggle(panel, show, () => commentsPanel(p)));
+      actions.append(show);
+    }
+    const rm = el('button', 'btn small danger', 'Remove post'); rm.type = 'button';
+    rm.addEventListener('click', async () => {
+      if (await act(rm, { action: 'remove_post', id: p.id }, 'Remove this post for everybody? Its comments and likes go with it, and any open reports on it close. This cannot be undone.')) {
+        it.replaceChildren(el('div', 'done', 'Removed. It is gone from every phone.'));
+      }
+    });
+    actions.append(rm);
+    it.append(actions, panel);
+    return it;
+  }
+
+  function commentsPanel(p) {
+    const box = el('div', 'panel');
+    box.append(el('div', 'muted small', 'Loading…'));
+    call({ action: 'post_comments', id: p.id }).then(({ status, data }) => {
+      box.replaceChildren();
+      if (status !== 200) { box.append(el('div', 'empty', data.error || 'Could not load the comments.')); return; }
+      if (!data.comments.length) { box.append(el('div', 'muted', 'No comments.')); return; }
+      for (const c of data.comments) {
+        const r = el('div');
+        const w = el('div', 'who'); w.append(personButton(c.author), el('span', '', ago(c.at)));
+        r.append(w, el('div', 'quote small', c.body));
+        box.append(r);
+      }
+    });
+    return box;
+  }
+
+  async function loadCrews() {
+    const list = $('crew-list');
+    list.replaceChildren(el('div', 'empty', 'Loading…'));
+    $('refresh').disabled = true;
+    const { status, data } = await call({ action: 'crews', q: crewQuery });
+    $('refresh').disabled = false;
+    if (status === 401) return;
+    list.replaceChildren();
+    if (status !== 200) { list.append(el('div', 'empty', data.error || 'Could not load crews.')); return; }
+    banner(''); stamp(new Date().toISOString());
+    if (!data.crews.length) { list.append(el('div', 'empty', crewQuery ? 'No crew is called anything like "' + crewQuery + '".' : 'No crews yet.')); return; }
+    for (const c of data.crews) {
+      const b = el('button', 'person'); b.type = 'button'; b.dataset.id = c.id;
+      const t = el('div');
+      t.append(el('div', 'nm', c.name), el('div', 'un', plural(c.members, 'member') + (c.claimed && c.claimed > c.members ? ' (says ' + num(c.claimed) + ')' : '') + ' · ' + (VISIBILITY[c.visibility] || cap(c.visibility)) + (c.city ? ' · ' + c.city : '')));
+      b.append(el('div', 'avatar', (c.name || '?').trim().charAt(0).toUpperCase()), t);
+      b.addEventListener('click', () => openCrew(c.id));
+      list.append(b);
+    }
+  }
+  $('crew-search').addEventListener('submit', (e) => { e.preventDefault(); crewQuery = $('crew-q').value.trim(); loadCrews(); });
+
+  async function openCrew(id) {
+    for (const x of $('crew-list').querySelectorAll('.person')) x.setAttribute('aria-current', String(x.dataset.id === id));
+    const box = $('crew-detail');
+    box.replaceChildren(el('div', 'empty', 'Loading…'));
+    const { status, data: c } = await call({ action: 'crew', id });
+    box.replaceChildren();
+    if (status !== 200) { box.append(el('div', 'empty', c.error || 'Could not load that crew.')); return; }
+    const card = el('div', 'card');
+    const head = el('div', 'profile-head');
+    const title = el('div');
+    title.append(el('div', 'nm', c.name), el('div', 'muted', [c.focus, c.city].filter(Boolean).join(' · ') || 'No focus or city set'));
+    head.append(el('div', 'avatar big', (c.name || '?').trim().charAt(0).toUpperCase()), title);
+    card.append(head);
+    const tags = el('div', 'actions');
+    tags.append(el('span', 'tag', VISIBILITY[c.visibility] || cap(c.visibility)));
+    if (c.membersInvite && c.visibility !== 'friends') tags.append(el('span', 'tag grey', 'Members can invite'));
+    card.append(tags);
+    if (c.blurb) card.append(el('div', 'quote mt-12', c.blurb));
+    const kv = el('div', 'kv');
+    const pair = (k, v) => kv.append(el('span', '', k), v instanceof Node ? v : el('span', '', v));
+    const lead = el('span'); lead.append(personButton(c.owner));
+    pair('Leader', lead);
+    pair('Started', shortDay(c.at));
+    pair('Members', plural(c.members.length, 'member') + (c.claimed && c.claimed > c.members.length ? ' (the crew says ' + num(c.claimed) + ')' : ''));
+    card.append(kv);
+    const list = el('div', 'list');
+    for (const m of c.members) {
+      const r = el('div', 'who');
+      r.append(personButton(m.person), el('span', '', 'joined ' + ago(m.joinedAt)));
+      list.append(r);
+    }
+    if (!c.members.length) list.append(el('div', 'muted', 'Nobody is in it.'));
+    card.append(el('h2', '', 'Members'), list);
     box.append(card);
   }
 
