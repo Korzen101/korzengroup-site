@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-OpZ90B4Of7m++QBI1JKDDAxz550mKV9sRZ7BFYEBuJo=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-IT8uTpVFls3Ua00cZ1GGI3cAqiVSg96FiQ0pgOJLM4A='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-MvE4CHuUAmxHGx9/WvI/R5LwLNaG7Um3NrzcPvZHI8M=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-IT8uTpVFls3Ua00cZ1GGI3cAqiVSg96FiQ0pgOJLM4A='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -3160,20 +3160,23 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     maint.append(mf);
     box.append(maint);
 
-    const v = value('min_version', { ios: null, android: null, message: '' });
+    const v = value('min_version', { ios: null, android: null, message: '', ios_url: null, android_url: null });
     const minv = setting('Minimum version', 'A phone on an older Convoy is asked to update before it carries on, with a button to the store. Leave a box empty for no minimum.', changed('min_version'));
     minv.append(el('span', 'status ' + (v.ios || v.android ? 'warn' : 'info'), v.ios || v.android ? 'Set' : 'None'));
     const vf = el('form', 'form more'); vf.noValidate = true;
     const li = el('label', '', 'iPhone'); const ios = inputEl({ value: v.ios || '', max: 12, placeholder: 'e.g. 1.4.0' }); li.append(ios);
     const la = el('label', '', 'Android'); const android = inputEl({ value: v.android || '', max: 12, placeholder: 'e.g. 1.4.0' }); la.append(android);
     const lw = el('label', 'wide', 'What they are told'); const vmsg = inputEl({ value: v.message, max: 200, placeholder: 'This version of Convoy is too old. Update to keep going.' }); lw.append(vmsg);
+    // Where the button goes (2026-10-04). Empty, it opens the store app itself, which is all there is until Convoy has a store page.
+    const lui = el('label', 'wide', 'App Store link (optional)'); const iosUrl = inputEl({ value: v.ios_url || '', max: 300, placeholder: 'https://apps.apple.com/app/id…' }); lui.append(iosUrl);
+    const lua = el('label', 'wide', 'Google Play link (optional)'); const androidUrl = inputEl({ value: v.android_url || '', max: 300, placeholder: 'https://play.google.com/store/apps/details?id=com.korzen.convoy' }); lua.append(androidUrl);
     const vrow = el('div', 'actions wide');
     const vsave = el('button', 'btn', 'Save'); vsave.type = 'submit';
     vrow.append(vsave);
-    vf.append(li, la, lw, vrow);
+    vf.append(li, la, lw, lui, lua, vrow);
     vf.addEventListener('submit', async (ev) => {
       ev.preventDefault();
-      const next = { ios: ios.value.trim() || null, android: android.value.trim() || null, message: vmsg.value.trim() };
+      const next = { ios: ios.value.trim() || null, android: android.value.trim() || null, message: vmsg.value.trim(), ios_url: iosUrl.value.trim() || null, android_url: androidUrl.value.trim() || null };
       for (const x of [next.ios, next.android]) if (x && !/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(x)) { toast('A version looks like 1.4.0.', true); return; }
       const raised = (next.ios && next.ios !== v.ios) || (next.android && next.android !== v.android);
       if (raised && !(await ask({ title: 'Set a minimum version?', body: 'Anybody on an older Convoy than ' + [next.ios && next.ios + ' on an iPhone', next.android && next.android + ' on Android'].filter(Boolean).join(' or ') + ' is stopped and asked to update. Check that version is in the store first.', confirm: 'Set it', danger: true }))) return;
