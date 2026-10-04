@@ -18,7 +18,7 @@
   else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fWVebb886CPS4qkgLby2/yUvlQd8dFZ69RrmdJgHR70=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-1lbBD2X/Pg2u2kbFcmyaNcS4FrNezUlZ2VaSeEBbz/Q='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-CTcIAtwouUwLSt2H1KzFs0dXLQof1IF/H0AFjpBX14I=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-spoqnVvLWpHHAI3kEuZrtg1a8NxR3ajFwURso+Ojvng='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <!-- img-src names the Supabase host for the collection's pictures: private, each shown through a signed link the function makes for an hour. data: is a picture chosen but not yet saved. -->
 <title>Dashboard · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -232,6 +232,22 @@ td.amt.in { color: var(--ink); } td.amt.out { color: var(--ink-2); }
 .money-card .error:empty { min-height: 0; margin: 0; }
 @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } .fields.goal-fields { grid-template-columns: 1fr 1fr; } }
 
+/* ── 2026-10-04: a range on the chart, spreadsheets, and pushes ─────────── */
+.chart-head { display: flex; justify-content: space-between; align-items: center; gap: 10px 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.chart-card .chart-head h2 { margin: 0; }
+.chart-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.seg.range button { padding: 5px 11px; font-size: 13px; }
+.push-rows { display: grid; }
+.push-rows > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.push-rows > div:last-child { border-bottom: 0; }
+.push-rows b { font-size: 15px; }
+.push-rows .d { color: var(--muted); font-size: 13px; grid-column: 1; }
+.push-rows .switch { grid-row: 1 / span 2; grid-column: 2; }
+.preview { display: grid; gap: 10px; margin-top: 12px; }
+.preview > div { padding: 12px 14px; border-radius: 14px; background: var(--panel-2); border: 1px solid var(--line); font-size: 14px; }
+.preview b { display: block; margin-bottom: 2px; }
+.preview .why { color: var(--muted); }
+
 /* ── sign-in ────────────────────────────────────────────────────────────── */
 #login { min-height: calc(100vh - 160px); display: grid; place-items: center; }
 #login .card { width: min(380px, 100%); }
@@ -443,6 +459,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
           <select class="select" id="filter-type" aria-label="Type"></select>
           <select class="select" id="filter-caliber" aria-label="Caliber"></select>
           <button class="btn" id="clear" type="button" hidden>Clear</button>
+          <button class="btn" id="col-csv" type="button" title="The rows shown, as a spreadsheet file">Export CSV</button>
         </div>
         <table id="table">
           <thead><tr>
@@ -470,6 +487,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
         <div><h1>Net Worth</h1><div class="sub" id="nw-sub" aria-live="polite"></div></div>
         <div class="actions">
           <button class="btn" id="nw-refresh" type="button" title="Refresh (R)"><span class="ico refresh" aria-hidden="true"></span>Refresh</button>
+          <button class="btn" id="nw-csv" type="button" title="Everything you own and owe, as a spreadsheet file">Export CSV</button>
           <button class="btn primary" id="nw-add" type="button">Add</button>
         </div>
       </div>
@@ -496,7 +514,19 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
       </div>
 
       <div class="card chart-card">
-        <h2>Over time</h2>
+        <div class="chart-head">
+          <h2>Over time</h2>
+          <div class="chart-tools">
+            <div class="seg range" id="nw-range" aria-label="How far back the line goes">
+              <button type="button" data-range="30" aria-pressed="false" aria-label="The last month">1M</button>
+              <button type="button" data-range="91" aria-pressed="false" aria-label="The last three months">3M</button>
+              <button type="button" data-range="182" aria-pressed="false" aria-label="The last six months">6M</button>
+              <button type="button" data-range="365" aria-pressed="false" aria-label="The last year">1Y</button>
+              <button type="button" data-range="0" aria-pressed="true" aria-label="All of it">All</button>
+            </div>
+            <button class="btn small" id="nw-history-csv" type="button" title="A line a day, as a spreadsheet file">CSV</button>
+          </div>
+        </div>
         <div class="chart" id="nw-chart"></div>
         <p class="muted" id="nw-chart-note"></p>
       </div>
@@ -549,6 +579,14 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
           <div class="card money-card"><h2>Where it went <span class="muted" id="mo-cats-sub"></span></h2><div class="cats" id="mo-cats"></div></div>
           <div class="card money-card"><h2>Repeating charges <span class="muted" id="mo-rec-sub"></span></h2><div class="rec" id="mo-rec"></div></div>
         </div>
+        <!-- Pushes to his phone (2026-10-04): "bill reminders and a weekly money summary pushed to your phone". -->
+        <div class="card money-card" id="mo-push">
+          <h2>On your phone</h2>
+          <p class="privacy">Pushed through Convoy, like the sign-in code, so they show on your lock screen. Only your own phones get them, each once.</p>
+          <div class="push-rows" id="mo-push-rows"></div>
+          <div class="row"><button class="btn small" id="mo-push-preview" type="button">What they would say now</button></div>
+          <div id="mo-push-out"></div>
+        </div>
         <div class="card money-card">
           <h2>Cash flow <span class="muted">the last 12 months</span></h2>
           <div class="flow chart" id="mo-flow"></div>
@@ -560,6 +598,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
             <input class="input search" id="mo-q" type="search" placeholder="Search payees and notes" autocomplete="off" spellcheck="false" aria-label="Search transactions">
             <select class="select" id="mo-cat-filter" aria-label="Category"></select>
             <select class="select" id="mo-acct-filter" aria-label="Account"></select>
+            <button class="btn" id="mo-tx-csv" type="button" title="Every transaction that matches, as a spreadsheet file">Export CSV</button>
           </div>
           <table id="mo-tx-table">
             <thead><tr><th scope="col">Date</th><th scope="col">Description</th><th scope="col">Category</th><th scope="col" class="num">Amount</th></tr></thead>
@@ -578,6 +617,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
             <thead><tr><th scope="col">Category</th><th scope="col" class="num">This month</th><th scope="col" class="num">Budget</th><th scope="col">Status</th></tr></thead>
             <tbody id="mo-budget-rows"></tbody>
           </table>
+          <div class="row"><button class="btn small" id="mo-budget-csv" type="button">Export CSV</button></div>
         </div>
       </div>
 
@@ -1185,12 +1225,29 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     the latest day, the grid faint, a label on each end. Hover or touch shows
     the day and the figure.
   */
+  /*
+    How far back the line goes (2026-10-04): a month, three, six, a year, or
+    all of it, counted back from the newest day it has.
+  */
+  let nwRange = 0;
+  $('nw-range').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    nwRange = Number(b.dataset.range) || 0;
+    for (const x of $('nw-range').querySelectorAll('button')) x.setAttribute('aria-pressed', String(x === b));
+    drawChart();
+  });
+
   function drawChart() {
     const box = $('nw-chart');
     box.replaceChildren();
-    const pts = nw.history.map((h) => ({ day: h.day, t: Date.parse(h.day + 'T12:00:00Z'), net: num(h.assets) - num(h.liabilities) }));
-    if (!pts.length) { $('nw-chart-note').textContent = 'The line starts the first day this page is open.'; return; }
-    $('nw-chart-note').textContent = pts.length === 1 ? 'One day so far. Every day you open this page or change something adds a point.' : '';
+    const every = nw.history.map((h) => ({ day: h.day, t: Date.parse(h.day + 'T12:00:00Z'), net: num(h.assets) - num(h.liabilities) }));
+    if (!every.length) { $('nw-chart-note').textContent = 'The line starts the first day this page is open.'; return; }
+    const since = nwRange ? every[every.length - 1].t - nwRange * 86400e3 : -Infinity;
+    const pts = every.filter((p) => p.t >= since);
+    $('nw-chart-note').textContent = every.length === 1
+      ? 'One day so far. Every day you open this page or change something adds a point.'
+      : nwRange && every[0].t > since ? 'The line only goes back to ' + onDay(every[0].day) + '.' : '';
     const W = Math.max(280, box.clientWidth || 640);
     const H = 200;
     const pad = { l: 60, r: 14, t: 12, b: 26 };
@@ -1397,6 +1454,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
 
   // ── spending ─────────────────────────────────────────────────────────────
   function renderSpending() {
+    if (!pushAsked) loadPushes();
     const stats = $('mo-stats');
     stats.replaceChildren();
     if (!mo) { $('mo-cats').replaceChildren(); $('mo-rec').replaceChildren(); $('mo-flow').replaceChildren(); renderTransactions(); return; }
@@ -1565,8 +1623,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     const rows = $('mo-tx-rows');
     rows.replaceChildren();
     const all = (mo && mo.transactions) || [];
-    const q = tx.q.toLowerCase();
-    const list = all.filter((t) => (!tx.cat || t.cat === tx.cat) && (!tx.acct || t.account === tx.acct) && (!q || (t.payee + ' ' + t.description + ' ' + t.memo).toLowerCase().includes(q)));
+    const list = txMatching();
     for (const t of list.slice(0, tx.shown)) rows.append(txRow(t));
     $('mo-tx-table').hidden = !list.length;
     $('mo-tx-empty').hidden = !!list.length;
@@ -1574,6 +1631,12 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     $('mo-tx-more').hidden = list.length <= tx.shown;
     $('mo-tx-count').textContent = list.length ? 'Showing ' + Math.min(tx.shown, list.length).toLocaleString() + ' of ' + plural(list.length, 'transaction', 'transactions') + ' from the last 90 days' : '';
     $('mo-tx-sub').textContent = all.length ? plural(all.length, 'in 90 days', 'in 90 days') : '';
+  }
+
+  /** The transactions the search and the two filters leave, all of them (the table shows a page at a time). */
+  function txMatching() {
+    const q = tx.q.toLowerCase();
+    return ((mo && mo.transactions) || []).filter((t) => (!tx.cat || t.cat === tx.cat) && (!tx.acct || t.account === tx.acct) && (!q || (t.payee + ' ' + t.description + ' ' + t.memo).toLowerCase().includes(q)));
   }
 
   function txRow(t) {
@@ -1868,6 +1931,124 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     }
   }
 
+  // ── spreadsheets (2026-10-04): each list as a CSV file ───────────────────
+  /*
+    "CSV export": what each list holds, as a file on this computer. Every
+    field quoted and its quotes doubled; one a spreadsheet would run as a
+    formula (=, +, -, @ first) starts with an apostrophe and stays text.
+    Numbers stay numbers. Nothing leaves this page.
+  */
+  function csvText(rows) {
+    const cell = (v) => {
+      if (typeof v === 'number') return Number.isFinite(v) ? String(Math.round(v * 100) / 100) : '';
+      let text = v === null || v === undefined ? '' : String(v);
+      if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
+      return '"' + text.replace(/"/g, '""') + '"';
+    };
+    return rows.map((r) => r.map(cell).join(',')).join('\r\n') + '\r\n';
+  }
+  function saveCsv(name, head, rows) {
+    if (!rows.length) { toast('Nothing to save yet.', true); return; }
+    const d = new Date();
+    const stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    // The byte-order mark tells Excel the file is UTF-8, so names keep their accents.
+    const blob = new Blob(['\ufeff' + csvText([head].concat(rows))], { type: 'text/csv;charset=utf-8' });
+    const a = el('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'korzen-' + name + '-' + stamp + '.csv';
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    toast('Saved ' + plural(rows.length, 'row', 'rows') + ' as ' + a.download + '.');
+  }
+  const priceOrBlank = (v) => (v === null || v === undefined || v === '' || !Number.isFinite(Number(v)) ? '' : Number(v));
+  function exportCollection() {
+    saveCsv('collection', ['Name', 'Type', 'Caliber', 'Price', 'Where the price came from'], visible().map((f) => [f.name, f.type, f.caliber, priceOrBlank(f.price), f.price_note || '']));
+  }
+  function exportNetWorth() {
+    const rows = nw.items.map((i) => [i.side === 'asset' ? 'Asset' : 'Liability', i.category, i.name, num(i.value), i.note || '']);
+    if (nw.collection.count > 0) rows.push(['Asset', 'Collection', plural(nw.collection.count, 'firearm', 'firearms'), num(nw.collection.total), 'From Collection']);
+    for (const a of nw.linked) rows.push([a.side === 'asset' ? 'Asset' : 'Liability', KIND[a.kind] || 'Account', [a.institution, a.name].filter(Boolean).join(' '), num(a.value), 'Linked bank']);
+    saveCsv('net-worth', ['Side', 'Category', 'Name', 'Value', 'Note'], rows);
+  }
+  function exportHistory() {
+    saveCsv('net-worth-history', ['Date', 'Assets', 'Liabilities', 'Net worth'], nw.history.map((h) => [h.day, num(h.assets), num(h.liabilities), num(h.assets) - num(h.liabilities)]));
+  }
+  function exportTransactions() {
+    saveCsv('transactions', ['Date', 'Payee', 'Description', 'Category', 'Amount', 'Account', 'Pending'], txMatching().map((t) => [t.posted, t.payee, t.description, t.cat, t.amount, t.accountName, t.pending ? 'Yes' : '']));
+  }
+  const BUDGET_STATE = { ok: 'On track', near: 'Close', pace: 'On pace to go over', over: 'Over' };
+  function exportBudgets() {
+    saveCsv('budgets', ['Category', 'Budget a month', 'Spent this month', 'Left', 'Status'], ((mo && mo.budgets) || []).map((b) => [b.category, b.monthly, b.spent, b.left, BUDGET_STATE[b.state] || b.state]));
+  }
+  $('col-csv').addEventListener('click', exportCollection);
+  $('nw-csv').addEventListener('click', exportNetWorth);
+  $('nw-history-csv').addEventListener('click', exportHistory);
+  $('mo-tx-csv').addEventListener('click', exportTransactions);
+  $('mo-budget-csv').addEventListener('click', exportBudgets);
+
+  // ── pushes to his phone (2026-10-04) ─────────────────────────────────────
+  /*
+    The two pushes the schedule sends each morning (0099), switched here. The
+    preview works them out now and sends nothing.
+  */
+  const PUSHES = [
+    ['reminders', 'Bills coming up', 'Each morning: the repeating charges due in the next two days.'],
+    ['summary', 'Your week in money', 'Monday mornings: what you spent, what came in, the biggest charges, any budget off pace.'],
+  ];
+  let pushSettings = null;
+  let pushAsked = false;
+  async function loadPushes() {
+    pushAsked = true;
+    const { status, data } = await call({ action: 'money_notify_settings' });
+    if (status === 200) pushSettings = data.settings;
+    renderPushes(status === 200 ? '' : data.error || 'Could not load the switches.');
+  }
+  function renderPushes(problem) {
+    const box = $('mo-push-rows');
+    box.replaceChildren();
+    if (problem) { box.append(el('p', 'privacy', problem)); return; }
+    for (const [key, title, detail] of PUSHES) {
+      const row = el('div');
+      const lab = el('label', 'switch');
+      const cb = el('input');
+      cb.type = 'checkbox';
+      cb.checked = !pushSettings || pushSettings[key] !== false;
+      cb.disabled = !pushSettings;
+      const word = el('span', '', cb.checked ? 'On' : 'Off');
+      lab.append(cb, word);
+      cb.setAttribute('aria-label', title);
+      cb.addEventListener('change', async () => {
+        cb.disabled = true;
+        const next = Object.assign({}, pushSettings, { [key]: cb.checked });
+        const { status, data } = await call({ action: 'money_notify_settings', value: next });
+        cb.disabled = false;
+        if (status !== 200) { cb.checked = !cb.checked; toast(data.error || 'Could not change it.', true); return; }
+        pushSettings = data.settings;
+        word.textContent = cb.checked ? 'On' : 'Off';
+        toast(title + (cb.checked ? ' is on.' : ' is off.'));
+      });
+      row.append(el('b', '', title), lab, el('div', 'd', detail));
+      box.append(row);
+    }
+  }
+  $('mo-push-preview').addEventListener('click', async () => {
+    const out = $('mo-push-out');
+    const btn = $('mo-push-preview');
+    btn.disabled = true;
+    out.replaceChildren(el('p', 'privacy', 'Working them out…'));
+    const answers = await Promise.all(PUSHES.map(([kind]) => call({ action: 'money_notify', kind, dry: true })));
+    btn.disabled = false;
+    const box = el('div', 'preview');
+    answers.forEach(({ status, data }, i) => {
+      const d = el('div');
+      if (status !== 200) d.append(el('b', '', PUSHES[i][1]), el('span', 'why', data.error || 'Could not work it out.'));
+      else if (data.text) d.append(el('b', '', data.text.title), document.createTextNode(data.text.body));
+      else d.append(el('b', '', PUSHES[i][1]), el('span', 'why', 'Nothing to send now. ' + (data.why || '')));
+      box.append(d);
+    });
+    out.replaceChildren(box);
+  });
+
   // ── the shell (2026-10-02): notices, the palette and keys ───────────────
   /** A short notice in the corner: what just happened, or why it did not. */
   function toast(text, bad) {
@@ -1896,6 +2077,11 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
       { group: 'Do', label: 'Refresh', keys: 'R', run: () => refreshHere() },
       { group: 'Do', label: 'Keyboard shortcuts', keys: '?', run: () => shortcuts() },
       { group: 'Do', label: 'Sign out', run: () => signOut() },
+      { group: 'Export', label: 'The collection', sub: 'CSV', run: () => { showTab('collection'); exportCollection(); } },
+      { group: 'Export', label: 'Net worth', sub: 'CSV, everything you own and owe', run: () => exportNetWorth() },
+      { group: 'Export', label: 'Net worth over time', sub: 'CSV, a line a day', run: () => exportHistory() },
+      { group: 'Export', label: 'Transactions', sub: 'CSV, the last 90 days', run: () => exportTransactions() },
+      { group: 'Export', label: 'Budgets', sub: 'CSV', run: () => exportBudgets() },
     ];
     const text = q.trim();
     if (text.length < 2) return list;

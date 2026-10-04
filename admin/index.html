@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-mg6kjjwPUbUx07fRUYLxaLzaK2sdXAkUgm4VZvbjyd8=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-IT8uTpVFls3Ua00cZ1GGI3cAqiVSg96FiQ0pgOJLM4A='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-OpZ90B4Of7m++QBI1JKDDAxz550mKV9sRZ7BFYEBuJo=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-IT8uTpVFls3Ua00cZ1GGI3cAqiVSg96FiQ0pgOJLM4A='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -1489,6 +1489,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     housekeeping_run: 'Clean-up run', backup_saved: 'Backup downloaded', support_reply: 'Support reply sent', support_status: 'Support email marked',
     review_reply: 'Review answered', review_reply_delete: 'Review reply deleted', admin_invite: 'Admin invited', admin_accept: 'Invitation accepted',
     admin_update: 'Admin changed', admin_remove: 'Admin removed', passkey_register: 'Passkey added', passkey_delete: 'Passkey removed',
+    money_notify: 'Money push sent', money_notify_settings: 'Money pushes switched',
   };
   async function loadActivity() {
     const list = $('activity-list');
@@ -1503,7 +1504,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       const head = el('div', 'line');
       const what = (DID[e.action] || cap(e.action)) + (e.ok ? '' : e.action === 'sign_in' ? ' refused' : ' failed');
       head.append(el('span', 'status ' + (e.ok ? 'ok' : 'error'), what));
-      head.append(el('span', 'tag grey', e.via === 'service key' ? 'Service key' : e.via === 'sign-in' ? 'Sign-in' : 'Dashboard'));
+      head.append(el('span', 'tag grey', e.via === 'service key' ? 'Service key' : e.via === 'sign-in' ? 'Sign-in' : e.via === 'schedule' ? 'Schedule' : 'Dashboard'));
       const at = el('span', 'when', ago(e.at)); at.title = when(e.at);
       it.append(head, at);
       const d = e.detail || {};
@@ -1533,6 +1534,9 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       if (d.enabled !== undefined) bits.push(d.enabled ? 'switched on' : 'switched off');
       if (d.rows) bits.push(plural(d.rows, 'row'));
       if (d.note) bits.push('Note: ' + d.note);
+      if (d.kind === 'reminders' || d.kind === 'summary') bits.push(d.kind === 'summary' ? 'the week in money' : 'bills coming up');
+      if (typeof d.reminders === 'boolean') bits.push('bills coming up ' + (d.reminders ? 'on' : 'off'));
+      if (typeof d.summary === 'boolean') bits.push('the week in money ' + (d.summary ? 'on' : 'off'));
       if (d.error) bits.push(d.error);
       if (e.ip) bits.push('from ' + e.ip);
       if (bits.length) it.append(el('div', 'more', bits.join(' · ')));
@@ -3666,15 +3670,28 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     $('refresh').disabled = false;
     if (keys.status === 401) return;
     banner(''); stamp(new Date().toISOString());
-    if (alerts) renderAlertsCard(alerts);
+    if (alerts) renderAlertsCard(alerts, jobsR && jobsR.status === 200 ? jobsR.data.schedule || {} : null);
     if (jobsR) { renderHouseCard(jobsR); renderBackupCard(jobsR); }
     renderPasskeys(keys);
     if (admins) renderAdmins(admins);
   }
-  function renderAlertsCard({ status, data }) {
+  function renderAlertsCard({ status, data }, schedule) {
     const c = $('sys-alerts'); c.replaceChildren();
-    c.append(el('h3', '', 'Alerts to your phone'), el('p', 'hint', 'Pushed through Convoy, like the sign-in code: everything new in one push, each thing once. Checked every 15 minutes.'));
+    c.append(el('h3', '', 'Alerts to your phone'), el('p', 'hint', 'Pushed through Convoy, like the sign-in code: everything new in one push, each thing once. Checked every 15 minutes by the database (0099).'));
     if (status !== 200 || data.unavailable) { c.append(el('p', 'muted mt-12', data.unavailable || data.error || 'Could not load the alerts.')); return; }
+    // Whether the schedule is alive: its newest run of each check.
+    if (schedule) {
+      const last = schedule.alerts, full = schedule.alerts_full;
+      const fresh = last && Date.now() - Date.parse(last.at) < 40 * 60e3;
+      const row = el('div', 'actions mt-12');
+      if (!last) row.append(el('span', 'status warn', 'Not running yet'), el('span', 'muted small', 'It starts once the 0099 database update has run.'));
+      else {
+        row.append(el('span', 'status ' + (fresh && last.ok !== false ? 'ok' : 'warn'), fresh ? 'Checked ' + ago(last.at) : 'Last checked ' + ago(last.at)));
+        if (full) row.append(el('span', 'muted small', 'services, plans and crashes ' + ago(full.at)));
+        if (last.ok === false) row.append(el('span', 'muted small', 'the last check failed'));
+      }
+      c.append(row);
+    }
     const settings = Object.assign({}, data.settings || {});
     const list = el('div', 'mt-14');
     for (const [k, [label, detail]] of Object.entries(ALERT_WORDS)) {
