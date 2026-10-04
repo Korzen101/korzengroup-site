@@ -13,3 +13,11 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    # No page here uses the camera, the microphone, location, motion
+    # sensors, payments or USB (2026-10-04, the website review's small
+    # fixes); turned off, a script that got in could not ask for them
+    # either. Passkeys (Admin) and copying (Admin's invitation link) keep
+    # their defaults, which are this site only.
+    Permissions-Policy = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), browsing-topics=()"
+    # Another site's window opened from here (or opening one of these) shares nothing with it.
+    Cross-Origin-Opener-Policy = "same-origin"
