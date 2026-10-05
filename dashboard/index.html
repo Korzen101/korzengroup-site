@@ -18,7 +18,7 @@
   else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-CTcIAtwouUwLSt2H1KzFs0dXLQof1IF/H0AFjpBX14I=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-spoqnVvLWpHHAI3kEuZrtg1a8NxR3ajFwURso+Ojvng='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-cDelD1gcJxEEL4DxquprZGWyS3Tef8m7jBhrD2uSUH8=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-NiGJiwhot6E1yrh1r5mvpJTWwrQo2a6J1jpx7QNH7D8='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <!-- img-src names the Supabase host for the collection's pictures: private, each shown through a signed link the function makes for an hour. data: is a picture chosen but not yet saved. -->
 <title>Dashboard · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -248,6 +248,33 @@ td.amt.in { color: var(--ink); } td.amt.out { color: var(--ink-2); }
 .preview b { display: block; margin-bottom: 2px; }
 .preview .why { color: var(--muted); }
 
+/* ── 2026-10-05: his choices for the pushes, and passkeys ──────────────── */
+.push-rows .d { line-height: 1.9; }
+.push-rows .d .kind-select { margin: 0 2px; padding: 3px 6px; color: var(--ink); }
+.amt { display: inline-flex; align-items: center; margin: 0 2px; padding-left: 8px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel-2); color: var(--ink-2); font-size: 13px; line-height: 1.4; }
+.amt input { width: 84px; border: 0; background: transparent; padding: 3px 8px 3px 2px; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.amt input:focus { outline: none; }
+.amt:focus-within { outline: 2px solid var(--focus); outline-offset: 1px; }
+.push-rows > div.off .d { opacity: .72; }
+.push-rows > div.when { grid-template-columns: minmax(0, 1fr); }
+.preview .ph { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 4px; color: var(--muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+/* Sign-in with a passkey: Admin's look. */
+.or { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12px; margin: 4px 0 14px; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line-2); }
+#passkey-signin { width: 100%; padding: 12px 14px; }
+.ico.key { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='7.5' cy='15.5' r='4.5'/%3E%3Cpath d='m10.7 12.3 9.8-9.8M16 7l3 3M14 9l2 2'/%3E%3C/svg%3E"); }
+.keys-btn { color: var(--ink-2); }
+.pk-list { display: grid; margin: 2px 0 14px; }
+.pk-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.pk-row:last-child { border-bottom: 0; }
+.pk-row b { display: block; overflow-wrap: anywhere; }
+.pk-row .acts { display: flex; gap: 6px; flex: none; }
+.pk-add { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.pk-add label { flex: 1 1 200px; }
+/* The page's .foot is a muted caption; in a sheet it holds a button. */
+.sheet .foot .btn:not(.primary) { color: var(--ink); font-size: 14px; }
+@media (max-width: 640px) { .keys-btn { padding: 7px 10px; } .keys-btn .label { display: none; } }
+
 /* ── sign-in ────────────────────────────────────────────────────────────── */
 #login { min-height: calc(100vh - 160px); display: grid; place-items: center; }
 #login .card { width: min(380px, 100%); }
@@ -390,6 +417,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     <button class="tab" role="tab" id="tab-networth" aria-selected="false" aria-controls="networth" tabindex="-1" type="button">Net Worth</button>
   </nav>
   <button class="btn small find" id="find" type="button" hidden aria-keyshortcuts="Control+K Meta+K"><span class="label">Search</span><kbd class="kbd" id="find-kbd">Ctrl K</kbd></button>
+  <button class="btn small keys-btn" id="passkeys" type="button" hidden aria-label="Passkeys" title="Passkeys"><span class="ico key" aria-hidden="true"></span><span class="label">Passkeys</span></button>
   <button class="btn small" id="signout" type="button" hidden>Sign out</button>
 </div></header>
 <div class="progress" id="progress" aria-hidden="true"></div>
@@ -412,6 +440,12 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
         <button class="btn small" type="button" id="restart">Start over</button>
         <p class="error" id="code-error" role="alert"></p>
       </form>
+      <!-- Both steps at once (2026-10-05): a passkey added from Passkeys at the top, on this computer or a phone. -->
+      <div id="passkey-row" hidden>
+        <div class="or">or</div>
+        <button class="btn" type="button" id="passkey-signin"><span class="ico key" aria-hidden="true"></span>Sign in with a passkey</button>
+        <p class="error" id="passkey-error" role="alert"></p>
+      </div>
     </div>
   </section>
 
@@ -579,10 +613,10 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
           <div class="card money-card"><h2>Where it went <span class="muted" id="mo-cats-sub"></span></h2><div class="cats" id="mo-cats"></div></div>
           <div class="card money-card"><h2>Repeating charges <span class="muted" id="mo-rec-sub"></span></h2><div class="rec" id="mo-rec"></div></div>
         </div>
-        <!-- Pushes to his phone (2026-10-04): "bill reminders and a weekly money summary pushed to your phone". -->
+        <!-- Pushes to his phone (2026-10-04): "bill reminders and a weekly money summary pushed to your phone"; his choices for them (2026-10-05): "Add more customization to this section." -->
         <div class="card money-card" id="mo-push">
           <h2>On your phone</h2>
-          <p class="privacy">Pushed through Convoy, like the sign-in code, so they show on your lock screen. Only your own phones get them, each once.</p>
+          <p class="privacy">Pushed through Convoy, like the sign-in code, so they show on your lock screen. Only your own phones get them, each once. Every choice here is saved as you make it.</p>
           <div class="push-rows" id="mo-push-rows"></div>
           <div class="row"><button class="btn small" id="mo-push-preview" type="button">What they would say now</button></div>
           <div id="mo-push-out"></div>
@@ -696,6 +730,8 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     $('progress').classList.toggle('on', inflight > 0);
     for (const id of ['refresh', 'nw-refresh']) $(id).classList.toggle('busy', inflight > 0);
   }
+  // A refusal from these is the sign-in's answer, not a session that ended.
+  const SIGN_IN = new Set(['login', 'login_code', 'passkey_login_options', 'passkey_login']);
   async function call(body) {
     const token = session.get();
     busy(1);
@@ -706,7 +742,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
         body: JSON.stringify(body),
       });
       const data = await res.json().catch(() => ({}));
-      if (res.status === 401 && body.action !== 'login' && body.action !== 'login_code') { session.set(''); showLogin('Your session ended. Sign in again.', true); }
+      if (res.status === 401 && !SIGN_IN.has(body.action)) { session.set(''); showLogin('Your session ended. Sign in again.', true); }
       return { status: res.status, data };
     } catch {
       return { status: 0, data: { error: 'Could not reach the server. Check the connection and try again.' } };
@@ -721,16 +757,18 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
   function showPasswordStep() {
     challenge = '';
     $('code-form').hidden = true; $('login-form').hidden = false;
+    $('passkey-row').hidden = !passkeysWork();
+    $('passkey-error').textContent = '';
   }
   function showCodeStep(phones, minutes) {
-    $('login-form').hidden = true; $('code-form').hidden = false;
+    $('login-form').hidden = true; $('passkey-row').hidden = true; $('code-form').hidden = false;
     $('code-note').textContent = 'We sent a code to Convoy on your phone' + (phones > 1 ? ' (' + phones + ' phones)' : '') + '. It expires in ' + minutes + ' minutes.';
     $('code-error').textContent = '';
     $('code').value = '';
     $('code').focus();
   }
   function showLogin(message, info) {
-    $('app').hidden = true; $('tabs').hidden = true; $('signout').hidden = true; $('find').hidden = true;
+    $('app').hidden = true; $('tabs').hidden = true; $('signout').hidden = true; $('find').hidden = true; $('passkeys').hidden = true;
     $('login').hidden = false;
     showPasswordStep();
     $('login-error').textContent = message || '';
@@ -742,7 +780,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     if (e && !e.value) e.focus();
   }
   function showApp() {
-    $('login').hidden = true; $('app').hidden = false; $('tabs').hidden = false; $('signout').hidden = false; $('find').hidden = false;
+    $('login').hidden = true; $('app').hidden = false; $('tabs').hidden = false; $('signout').hidden = false; $('find').hidden = false; $('passkeys').hidden = false;
     showTab(location.hash === '#networth' ? 'networth' : 'collection');
   }
   function signedIn(token) {
@@ -777,6 +815,182 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
   $('restart').addEventListener('click', () => { showPasswordStep(); $('login-error').textContent = ''; });
   function signOut() { session.set(''); showLogin('Signed out.', true); }
   $('signout').addEventListener('click', signOut);
+
+  // ── passkeys (2026-10-05): "Add passkeys to the dashboard login." ──────
+  /*
+    Admin's, on the Dashboard's own keys: WebAuthn speaks bytes and the
+    function speaks SimpleWebAuthn's JSON, where bytes are base64url. These
+    convert at the edge, and the browser's own JSON helpers are used where it
+    has them.
+  */
+  const b64u = {
+    bytes(s) {
+      const t = String(s).replace(/-/g, '+').replace(/_/g, '/');
+      const b = atob(t + '==='.slice((t.length + 3) % 4));
+      const out = new Uint8Array(b.length);
+      for (let i = 0; i < b.length; i++) out[i] = b.charCodeAt(i);
+      return out.buffer;
+    },
+    text(buf) {
+      const b = new Uint8Array(buf || new ArrayBuffer(0));
+      let s = '';
+      for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
+      return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    },
+  };
+  function passkeysWork() { return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.get); }
+  function creationOptions(o) {
+    if (PublicKeyCredential.parseCreationOptionsFromJSON) return PublicKeyCredential.parseCreationOptionsFromJSON(o);
+    return Object.assign({}, o, {
+      challenge: b64u.bytes(o.challenge),
+      user: Object.assign({}, o.user, { id: b64u.bytes(o.user.id) }),
+      excludeCredentials: (o.excludeCredentials || []).map((c) => Object.assign({}, c, { id: b64u.bytes(c.id) })),
+    });
+  }
+  function requestOptions(o) {
+    if (PublicKeyCredential.parseRequestOptionsFromJSON) return PublicKeyCredential.parseRequestOptionsFromJSON(o);
+    return Object.assign({}, o, {
+      challenge: b64u.bytes(o.challenge),
+      allowCredentials: (o.allowCredentials || []).map((c) => Object.assign({}, c, { id: b64u.bytes(c.id) })),
+    });
+  }
+  function credentialJSON(c) {
+    if (typeof c.toJSON === 'function') { try { return c.toJSON(); } catch (e) { /* the long way, below */ } }
+    const r = c.response;
+    const response = { clientDataJSON: b64u.text(r.clientDataJSON) };
+    if (r.attestationObject) {
+      response.attestationObject = b64u.text(r.attestationObject);
+      response.transports = r.getTransports ? r.getTransports() : [];
+    }
+    if (r.authenticatorData) {
+      response.authenticatorData = b64u.text(r.authenticatorData);
+      response.signature = b64u.text(r.signature);
+      if (r.userHandle) response.userHandle = b64u.text(r.userHandle);
+    }
+    return { id: c.id, rawId: b64u.text(c.rawId), type: c.type, response, clientExtensionResults: c.getClientExtensionResults ? c.getClientExtensionResults() : {}, authenticatorAttachment: c.authenticatorAttachment || undefined };
+  }
+
+  // Both steps at once: the passkey is the password and the phone in one.
+  $('passkey-signin').addEventListener('click', async () => {
+    const btn = $('passkey-signin'), err = $('passkey-error');
+    err.textContent = '';
+    btn.disabled = true;
+    try {
+      const start = await call({ action: 'passkey_login_options' });
+      if (start.status !== 200) { err.textContent = start.data.error || 'Could not start (' + start.status + ').'; return; }
+      let cred = null;
+      try {
+        cred = await navigator.credentials.get({ publicKey: requestOptions(start.data.options) });
+      } catch (e) {
+        err.textContent = e && e.name === 'NotAllowedError' ? 'No passkey was used. Try again, or sign in with your password.' : 'This browser could not use a passkey here.';
+        return;
+      }
+      if (!cred) return;
+      const { status, data } = await call({ action: 'passkey_login', token: start.data.token, response: credentialJSON(cred) });
+      if (status === 200 && data.token) return signedIn(data.token);
+      err.textContent = data.error || 'That did not work (' + status + ').';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  /** The Dashboard's passkeys: listed, one added from this device, one removed after a second press. */
+  function openPasskeys() {
+    const d = el('dialog', 'sheet');
+    d.setAttribute('aria-labelledby', 'pk-title');
+    const inner = el('div', 'body');
+    const h = el('h3', '', 'Passkeys'); h.id = 'pk-title';
+    inner.append(h, el('p', 'note', 'Sign in to the Dashboard with Face ID, Touch ID, Windows Hello or your phone, instead of the password and the code. These are the Dashboard’s own: Admin’s passkeys open only Admin.'));
+    const list = el('div', 'pk-list');
+    const form = el('form', 'pk-add'); form.noValidate = true;
+    const label = el('label', '', 'Name it after the device that keeps it');
+    const name = el('input', 'input'); name.maxLength = 40; name.placeholder = 'e.g. iPhone, or this laptop'; name.autocomplete = 'off';
+    label.append(name);
+    const add = el('button', 'btn primary', 'Add a passkey'); add.type = 'submit';
+    form.append(label, add);
+    const err = el('p', 'error'); err.setAttribute('role', 'alert');
+    inner.append(list, form, err);
+    const works = passkeysWork();
+    if (!works) { add.disabled = true; name.disabled = true; err.className = 'error info'; err.textContent = 'This browser cannot make passkeys.'; }
+    const foot = el('div', 'foot');
+    const done = el('button', 'btn', 'Close'); done.type = 'button';
+    foot.append(done);
+    d.append(inner, foot);
+    let keys = null;
+    let sure = '';
+    const draw = () => {
+      list.replaceChildren();
+      if (keys === null) { list.append(el('p', 'privacy', 'Loading…')); return; }
+      if (!keys.length) { list.append(el('p', 'privacy', 'None yet.')); return; }
+      for (const k of keys) {
+        const r = el('div', 'pk-row');
+        const left = el('div');
+        left.append(el('b', '', k.name), el('div', 'privacy', 'Added ' + ago(k.createdAt) + (k.lastUsedAt ? ' · last used ' + ago(k.lastUsedAt) : ' · not used yet')));
+        const acts = el('div', 'acts');
+        if (sure === k.id) {
+          const yes = el('button', 'btn small danger', 'Remove'); yes.type = 'button';
+          const no = el('button', 'btn small', 'Keep'); no.type = 'button';
+          yes.addEventListener('click', async () => {
+            yes.disabled = true;
+            const { status, data } = await call({ action: 'passkey_delete', id: k.id });
+            sure = '';
+            if (status !== 200) { toast(data.error || 'Could not remove it.', true); draw(); return; }
+            toast('Removed “' + k.name + '”. The copy on the device can be deleted there.');
+            reload();
+          });
+          no.addEventListener('click', () => { sure = ''; draw(); });
+          acts.append(yes, no);
+        } else {
+          const del = el('button', 'btn small', 'Remove'); del.type = 'button';
+          del.setAttribute('aria-label', 'Remove ' + k.name);
+          del.addEventListener('click', () => { sure = k.id; draw(); });
+          acts.append(del);
+        }
+        r.append(left, acts);
+        list.append(r);
+      }
+    };
+    const reload = async () => {
+      const { status, data } = await call({ action: 'passkeys' });
+      if (status !== 200) { list.replaceChildren(el('p', 'privacy', data.error || 'Could not load the passkeys.')); return; }
+      keys = data.passkeys || [];
+      draw();
+    };
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      err.textContent = ''; err.className = 'error';
+      add.disabled = true;
+      try {
+        const start = await call({ action: 'passkey_register_options' });
+        if (start.status !== 200) { err.textContent = start.data.error || 'Could not start (' + start.status + ').'; return; }
+        let cred = null;
+        try {
+          cred = await navigator.credentials.create({ publicKey: creationOptions(start.data.options) });
+        } catch (e) {
+          err.textContent = e && e.name === 'InvalidStateError' ? 'This device already has a passkey for the Dashboard.' : e && e.name === 'NotAllowedError' ? 'No passkey was made.' : 'This browser could not make a passkey.';
+          return;
+        }
+        if (!cred) return;
+        const { status, data } = await call({ action: 'passkey_register', token: start.data.token, response: credentialJSON(cred), name: name.value.trim() || 'Passkey' });
+        if (status !== 200) { err.textContent = data.error || 'That did not work (' + status + ').'; return; }
+        name.value = '';
+        toast('Passkey added. Sign in with it next time.');
+        reload();
+      } finally {
+        add.disabled = !works;
+      }
+    });
+    const close = () => { d.close(); d.remove(); };
+    done.addEventListener('click', close);
+    d.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
+    d.addEventListener('click', (e) => { if (e.target === d) close(); });
+    document.body.append(d);
+    d.showModal();
+    draw();
+    reload();
+    (works ? name : done).focus();
+  }
+  $('passkeys').addEventListener('click', openPasskeys);
 
   // ── the collection ───────────────────────────────────────────────────────
   let items = [];
@@ -1986,48 +2200,101 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
   $('mo-tx-csv').addEventListener('click', exportTransactions);
   $('mo-budget-csv').addEventListener('click', exportBudgets);
 
-  // ── pushes to his phone (2026-10-04) ─────────────────────────────────────
+  // ── pushes to his phone (2026-10-04; his choices 2026-10-05) ────────────
   /*
-    The two pushes the schedule sends each morning (0099), switched here. The
-    preview works them out now and sends nothing.
+    What the schedule sends (0099, every hour since 0102), switched and
+    shaped here: the morning pushes at the hour he picks, and three alerts as
+    soon as the bank shows them. Each choice is saved as it is made; a
+    refusal puts it back. The preview works all five out now and sends
+    nothing.
   */
   const PUSHES = [
-    ['reminders', 'Bills coming up', 'Each morning: the repeating charges due in the next two days.'],
-    ['summary', 'Your week in money', 'Monday mornings: what you spent, what came in, the biggest charges, any budget off pace.'],
+    ['reminders', 'Bills coming up'],
+    ['summary', 'Your week in money'],
+    ['large', 'Large charge'],
+    ['low', 'Low balance'],
+    ['budget', 'Budget running high'],
   ];
+  const hourWords = (h) => (h === 12 ? 'noon' : h < 12 ? h + ' am' : (h - 12) + ' pm');
+  const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   let pushSettings = null;
   let pushAsked = false;
   async function loadPushes() {
     pushAsked = true;
     const { status, data } = await call({ action: 'money_notify_settings' });
     if (status === 200) pushSettings = data.settings;
-    renderPushes(status === 200 ? '' : data.error || 'Could not load the switches.');
+    renderPushes(status === 200 ? '' : data.error || 'Could not load the pushes.');
   }
+  /** One choice saved; the card is drawn again from what was saved, and the control keeps the focus. */
+  async function savePush(key, value) {
+    const { status, data } = await call({ action: 'money_notify_settings', value: { [key]: value } });
+    if (status === 200) pushSettings = data.settings;
+    renderPushes('');
+    const again = $('mo-push-rows').querySelector('[data-k="' + key + '"]');
+    if (again) again.focus();
+    if (status !== 200) { toast(data.error || 'Could not change it.', true); return; }
+    toast(data.changed ? data.changed.charAt(0).toUpperCase() + data.changed.slice(1) + '.' : 'Saved.');
+  }
+  function pushSelect(key, options) {
+    const s = el('select', 'kind-select');
+    s.dataset.k = key;
+    for (const [v, text] of options) { const o = el('option', '', text); o.value = String(v); s.append(o); }
+    s.value = String(pushSettings ? pushSettings[key] : options[0][0]);
+    s.disabled = !pushSettings;
+    s.addEventListener('change', () => { s.disabled = true; savePush(key, Number(s.value)); });
+    return s;
+  }
+  function pushAmount(key, label, min) {
+    const box = el('span', 'amt');
+    const i = el('input');
+    i.dataset.k = key;
+    i.inputMode = 'decimal';
+    i.autocomplete = 'off';
+    i.setAttribute('aria-label', label);
+    i.value = pushSettings ? String(pushSettings[key]) : '';
+    i.disabled = !pushSettings;
+    i.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); i.blur(); } });
+    i.addEventListener('change', () => {
+      const n = Number(i.value.replace(/[$,\s]/g, ''));
+      if (!i.value.trim() || !Number.isFinite(n) || n < min) { toast(label + ' is a number of dollars' + (min ? ' above 0.' : ', 0 or more.'), true); i.value = String(pushSettings[key]); return; }
+      savePush(key, Math.round(n * 100) / 100);
+    });
+    box.append(el('span', '', '$'), i);
+    return box;
+  }
+  /** A sentence with its controls in it: strings are words, the rest are elements. */
+  const sentence = (...parts) => { const d = el('div', 'd'); for (const p of parts) d.append(typeof p === 'string' ? document.createTextNode(p) : p); return d; };
   function renderPushes(problem) {
     const box = $('mo-push-rows');
     box.replaceChildren();
     if (problem) { box.append(el('p', 'privacy', problem)); return; }
-    for (const [key, title, detail] of PUSHES) {
-      const row = el('div');
+    const when = el('div', 'when');
+    when.append(el('b', '', 'When'), sentence(
+      'Bills and the week go at ',
+      pushSelect('hour', Array.from({ length: 17 }, (_, i) => [i + 5, hourWords(i + 5)])),
+      ', New York time. Alerts come as soon as the bank shows them, from then until 10 pm.',
+    ));
+    box.append(when);
+    const detail = {
+      reminders: () => sentence('Repeating charges due ', pushSelect('reminderDays', [[0, 'that day'], [1, 'up to a day ahead'], [2, 'up to 2 days ahead'], [3, 'up to 3 days ahead'], [4, 'up to 4 days ahead'], [5, 'up to 5 days ahead'], [6, 'up to 6 days ahead'], [7, 'up to a week ahead']]), ', of ', pushAmount('reminderMin', 'The smallest bill', 0), ' or more.'),
+      summary: () => sentence('Every ', pushSelect('summaryDay', WEEKDAYS.map((w, i) => [i, w])), ': what you spent and what came in over the seven days before, the biggest charges, and any budget off pace.'),
+      large: () => sentence('Any one charge of ', pushAmount('largeOver', 'A large charge', 1), ' or more.'),
+      low: () => sentence('When checking or savings is under ', pushAmount('lowUnder', 'A low balance', 1), '. Said once, and again only after it has been back over.'),
+      budget: () => sentence('When a budget passes ', pushSelect('budgetAt', [[50, '50%'], [75, '75%'], [80, '80%'], [90, '90%']]), ' of its month, and again if it goes over.'),
+    };
+    for (const [key, title] of PUSHES) {
+      const on = !!pushSettings && pushSettings[key] !== false;
+      const row = el('div', on ? '' : 'off');
       const lab = el('label', 'switch');
       const cb = el('input');
       cb.type = 'checkbox';
-      cb.checked = !pushSettings || pushSettings[key] !== false;
+      cb.dataset.k = key;
+      cb.checked = on;
       cb.disabled = !pushSettings;
-      const word = el('span', '', cb.checked ? 'On' : 'Off');
-      lab.append(cb, word);
       cb.setAttribute('aria-label', title);
-      cb.addEventListener('change', async () => {
-        cb.disabled = true;
-        const next = Object.assign({}, pushSettings, { [key]: cb.checked });
-        const { status, data } = await call({ action: 'money_notify_settings', value: next });
-        cb.disabled = false;
-        if (status !== 200) { cb.checked = !cb.checked; toast(data.error || 'Could not change it.', true); return; }
-        pushSettings = data.settings;
-        word.textContent = cb.checked ? 'On' : 'Off';
-        toast(title + (cb.checked ? ' is on.' : ' is off.'));
-      });
-      row.append(el('b', '', title), lab, el('div', 'd', detail));
+      lab.append(cb, el('span', '', on ? 'On' : 'Off'));
+      cb.addEventListener('change', () => { cb.disabled = true; savePush(key, cb.checked); });
+      row.append(el('b', '', title), lab, detail[key]());
       box.append(row);
     }
   }
@@ -2036,16 +2303,19 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     const btn = $('mo-push-preview');
     btn.disabled = true;
     out.replaceChildren(el('p', 'privacy', 'Working them out…'));
-    const answers = await Promise.all(PUSHES.map(([kind]) => call({ action: 'money_notify', kind, dry: true })));
+    const { status, data } = await call({ action: 'money_notify_preview' });
     btn.disabled = false;
+    if (status !== 200) { out.replaceChildren(el('p', 'privacy', data.error || 'Could not work them out.')); return; }
     const box = el('div', 'preview');
-    answers.forEach(({ status, data }, i) => {
+    for (const p of data.pushes || []) {
       const d = el('div');
-      if (status !== 200) d.append(el('b', '', PUSHES[i][1]), el('span', 'why', data.error || 'Could not work it out.'));
-      else if (data.text) d.append(el('b', '', data.text.title), document.createTextNode(data.text.body));
-      else d.append(el('b', '', PUSHES[i][1]), el('span', 'why', 'Nothing to send now. ' + (data.why || '')));
+      const head = el('div', 'ph');
+      head.append(el('span', '', (PUSHES.find(([k]) => k === p.kind) || [p.kind, p.kind])[1]), el('span', '', p.on ? 'On' : 'Off'));
+      d.append(head);
+      if (p.text) d.append(el('b', '', p.text.title), document.createTextNode(p.text.body));
+      else d.append(el('span', 'why', 'Nothing to send now. ' + (p.why || '')));
       box.append(d);
-    });
+    }
     out.replaceChildren(box);
   });
 
@@ -2076,6 +2346,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
       { group: 'Do', label: 'Sync banks now', run: () => { toView('banks'); loadMoney(true); } },
       { group: 'Do', label: 'Refresh', keys: 'R', run: () => refreshHere() },
       { group: 'Do', label: 'Keyboard shortcuts', keys: '?', run: () => shortcuts() },
+      { group: 'Do', label: 'Passkeys', sub: 'Face ID, Touch ID or Windows Hello', run: () => openPasskeys() },
       { group: 'Do', label: 'Sign out', run: () => signOut() },
       { group: 'Export', label: 'The collection', sub: 'CSV', run: () => { showTab('collection'); exportCollection(); } },
       { group: 'Export', label: 'Net worth', sub: 'CSV, everything you own and owe', run: () => exportNetWorth() },

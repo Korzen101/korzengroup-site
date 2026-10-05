@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UsFjABENCI+0OzGOXr3NBgwnI054W0QMcvXR6mwQ5wA=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-C2p1QI99BrckWCvlRXdl4cQf7NyZM9CWkZIKS62UdC8='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UcRlDzUgyvAW3FtJpAc0GMDW5GNwQBggIlmQ3nkb2Hw=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-C2p1QI99BrckWCvlRXdl4cQf7NyZM9CWkZIKS62UdC8='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -1530,8 +1530,11 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     housekeeping_run: 'Clean-up run', backup_saved: 'Backup downloaded', support_reply: 'Support reply sent', support_status: 'Support email marked',
     review_reply: 'Review answered', review_reply_delete: 'Review reply deleted', admin_invite: 'Admin invited', admin_accept: 'Invitation accepted',
     admin_update: 'Admin changed', admin_remove: 'Admin removed', passkey_register: 'Passkey added', passkey_delete: 'Passkey removed',
-    money_notify: 'Money push sent', money_notify_settings: 'Money pushes switched',
+    money_notify: 'Money push sent', money_notify_settings: 'Money pushes changed',
+    dashboard_sign_in: 'Dashboard sign-in', dashboard_code_sent: 'Dashboard code sent', dashboard_passkey_add: 'Dashboard passkey added', dashboard_passkey_remove: 'Dashboard passkey removed',
   };
+  // The Dashboard's money pushes, by kind (2026-10-05).
+  const PUSH_WORDS = { reminders: 'bills coming up', summary: 'the week in money', large: 'a large charge', low: 'a low balance', budget: 'a budget running high' };
   async function loadActivity() {
     const list = $('activity-list');
     list.replaceChildren(el('p', '', 'Loading…'));
@@ -1543,7 +1546,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     for (const e of data.entries) {
       const it = el('div', 'ev');
       const head = el('div', 'line');
-      const what = (DID[e.action] || cap(e.action)) + (e.ok ? '' : e.action === 'sign_in' ? ' refused' : ' failed');
+      const what = (DID[e.action] || cap(e.action)) + (e.ok ? '' : /(^|_)sign_in$/.test(e.action) ? ' refused' : ' failed');
       head.append(el('span', 'status ' + (e.ok ? 'ok' : 'error'), what));
       head.append(el('span', 'tag grey', e.via === 'service key' ? 'Service key' : e.via === 'sign-in' ? 'Sign-in' : e.via === 'schedule' ? 'Schedule' : 'Dashboard'));
       const at = el('span', 'when', ago(e.at)); at.title = when(e.at);
@@ -1575,7 +1578,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       if (d.enabled !== undefined) bits.push(d.enabled ? 'switched on' : 'switched off');
       if (d.rows) bits.push(plural(d.rows, 'row'));
       if (d.note) bits.push('Note: ' + d.note);
-      if (d.kind === 'reminders' || d.kind === 'summary') bits.push(d.kind === 'summary' ? 'the week in money' : 'bills coming up');
+      if (PUSH_WORDS[d.kind]) bits.push(PUSH_WORDS[d.kind]);
       if (typeof d.reminders === 'boolean') bits.push('bills coming up ' + (d.reminders ? 'on' : 'off'));
       if (typeof d.summary === 'boolean') bits.push('the week in money ' + (d.summary ? 'on' : 'off'));
       if (d.error) bits.push(d.error);
@@ -4015,7 +4018,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     ['alerts_full', 'Services, plans and crashes', 'Every hour at :07', 60],
     ['police', 'Police areas', 'At :17 and :47', 30],
     ['housekeeping', 'Clean-up', 'Every night at 07:41 UTC', 1440],
-    ['money', 'Dashboard money pushes', 'Every morning at 12:23 UTC', 1440],
+    ['money', 'Dashboard money pushes', 'Every hour at :23; sends only at the hours chosen on the Dashboard', 60],
   ];
   function renderScheduleCard({ status, data }) {
     const c = $('sys-schedule'); c.replaceChildren();
