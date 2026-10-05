@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-MvE4CHuUAmxHGx9/WvI/R5LwLNaG7Um3NrzcPvZHI8M=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-IT8uTpVFls3Ua00cZ1GGI3cAqiVSg96FiQ0pgOJLM4A='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-OrptCe6P+1BOYWNdePTi09jSvof1VMrm8zVZ5PNaYXQ=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-MPDPhn+mF8H4Vf1JxcNeQAbeBWbqOx3zVY4exThX8T4='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -443,6 +443,29 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
 .reply { margin-top: 4px; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); font-size: 14px; white-space: pre-wrap; }
 .reply .by { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
 .form textarea.tall { min-height: 120px; }
+/* Announcements as pages (0101, 2026-10-04): the picture, the count, and a phone-sized preview in the app's own colours. */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.form textarea.page { min-height: 260px; }
+.ann-grid { display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr) 296px; align-items: start; }
+@media (max-width: 960px) { .ann-grid { grid-template-columns: minmax(0, 1fr); } }
+.ann-count { text-align: right; margin-top: -6px; }
+.ann-count.over { color: #ff8f8f; }
+.ann-photo .t { font-weight: 600; }
+/* A label that is a button: the plain label rule would make it grey and small. */
+.ann-photo label.btn { display: inline-block; margin: 0; color: var(--ink); font-size: 13px; cursor: pointer; }
+.ann-photo .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+.ann-photo img { display: block; width: 160px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line-2); }
+.ann-thumb { display: block; width: 100%; max-width: 320px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; border: 1px solid var(--line-2); margin: 4px 0 8px; }
+.quote.clamp { max-height: 10.5em; overflow: hidden; }
+.ann-preview .t { color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: 12px 0 8px; }
+.ann-phone { width: 280px; height: 560px; border-radius: 34px; border: 8px solid var(--raise); background: #F3F2F2; color: #201E1D; display: flex; flex-direction: column; overflow: hidden; }
+.ann-phone-scroll { flex: 1; overflow-y: auto; padding-top: 26px; }
+.ann-phone-img { display: block; width: 100%; object-fit: cover; background: #EAE9E9; }
+.ann-phone-kicker { margin: 14px 16px 0; color: #EC3013; font-size: 10px; letter-spacing: .12em; font-weight: 600; }
+.ann-phone-title { margin: 6px 16px 0; font-size: 22px; line-height: 1.15; font-weight: 800; word-break: break-word; }
+.ann-phone-body { margin: 10px 16px 16px; font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+.ann-phone-bar { border-top: 2px solid rgba(32,30,29,.12); padding: 10px 14px 18px; }
+.ann-phone-btn { display: block; text-align: center; background: #EC3013; color: #F3F2F2; border-radius: 999px; padding: 10px; font-weight: 700; font-size: 14px; }
 .split2 { display: grid; grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); gap: 14px; align-items: start; }
 @media (max-width: 960px) { .split2 { grid-template-columns: minmax(0, 1fr); } }
 .person .meta { margin-left: auto; text-align: right; display: grid; gap: 4px; justify-items: end; font-size: 12px; color: var(--muted); }
@@ -1482,7 +1505,8 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     achievement_move: 'Achievement moved', achievement_grant: 'Achievement given', remove_post: 'Post removed',
     delete_account: 'Account deleted', deletion_decline: 'Deletion declined', alerts_settings: 'Alerts changed',
     app_config_save: 'Switch changed', announcement_save: 'Announcement saved', announcement_send: 'Announcement sent',
-    announcement_end: 'Banner taken down', announcement_delete: 'Draft deleted', note_add: 'Note added', note_delete: 'Note deleted',
+    announcement_end: 'Announcement taken down', announcement_delete: 'Draft deleted',
+    announcement_photo: 'Announcement picture added', announcement_photo_remove: 'Announcement picture removed', note_add: 'Note added', note_delete: 'Note deleted',
     warn: 'Warning sent', profile_clear: 'Profile cleared', car_photo_remove: 'Car photo removed', sign_out_all: 'Signed out everywhere',
     crew_rename: 'Crew renamed', crew_remove: 'Crew removed', crew_owner: 'Crew handed over', crew_member_remove: 'Taken out of a crew',
     run_end: 'Run ended', police_source_save: 'Police source saved', police_source_toggle: 'Police source switched',
@@ -3196,27 +3220,42 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     const p = a.audience && a.audience.platform, c = a.audience && a.audience.city;
     return 'everybody' + (p === 'ios' ? ' on an iPhone' : p === 'android' ? ' on Android' : '') + (c ? ' whose profile says ' + c : '');
   };
+  /*
+    In the app, an announcement is a banner, a full page (0101: shown when
+    Convoy opens until it is acknowledged, with a picture and up to 4000
+    characters), or nothing but its Notifications row.
+  */
+  const DISPLAY = { banner: 'Banner', page: 'Full page', none: 'Notifications only' };
+  const displayOf = (a) => a.display || (a.banner === false ? 'none' : a.style === 'page' ? 'page' : 'banner');
+  const BODY_MAX = { banner: 500, page: 4000, none: 500 };
   function renderAnnouncements(data) {
     const list = $('ann-list'); list.replaceChildren();
     if (data.unavailable) { list.append(el('div', 'empty', data.unavailable)); return; }
+    if (data.note) list.append(el('p', 'hint mb-12', data.note));
     const all = data.announcements || [];
     if (!all.length) { list.append(el('div', 'empty', 'No announcements yet. Write one: it stays a draft, seen by nobody, until you send it.')); return; }
     for (const a of all) list.append(announcementItem(a));
   }
   function announcementItem(a) {
     const it = el('div', 'item');
+    const shown = displayOf(a);
     const head = el('div', 'head');
-    head.append(el('span', 'tag', KIND[a.kind] || cap(a.kind)), el('span', 'tag grey', audienceText(a)));
-    const state = a.draft ? ['info', 'Draft'] : a.showing ? ['ok', 'Banner showing'] : ['info', 'Sent'];
+    head.append(el('span', 'tag', KIND[a.kind] || cap(a.kind)), el('span', 'tag grey', DISPLAY[shown]), el('span', 'tag grey', audienceText(a)));
+    const state = a.draft ? ['info', 'Draft'] : a.showing ? ['ok', shown === 'page' ? 'Page showing' : 'Banner showing'] : ['info', 'Sent'];
     head.append(el('span', 'status ' + state[0], state[1]));
     const stampAt = a.draft ? a.createdAt : a.sentAt;
     const at = el('span', 'when', (a.draft ? 'written ' : 'sent ') + ago(stampAt)); at.title = when(stampAt);
     head.append(at);
-    it.append(head, el('b', '', a.title));
-    if (a.body) it.append(el('div', 'quote', a.body));
+    it.append(head);
+    if (a.photoUrl) { const img = el('img', 'ann-thumb'); img.src = a.photoUrl; img.alt = ''; img.loading = 'lazy'; it.append(img); }
+    it.append(el('b', '', a.title));
+    if (a.body) it.append(el('div', 'quote' + (a.body.length > 420 ? ' clamp' : ''), a.body));
     const facts = [];
     if (!a.draft) facts.push('In the Notifications of ' + plural(a.recipients || 0, 'person', 'people') + (a.kind === 'service' ? ', pushed to ' + plural(a.pushed || 0, 'phone') : ''));
-    facts.push(a.banner ? (a.days ? 'a banner for ' + plural(a.days, 'day') : 'a banner until ended') + (a.showing && a.endsAt ? ', to ' + when(a.endsAt) : '') : 'no banner');
+    if (shown === 'none') facts.push('nothing in the app');
+    else facts.push((shown === 'page' ? 'a full page' : 'a banner') + (a.days ? ' for ' + plural(a.days, 'day') : ' until ended') + (a.showing && a.endsAt ? ', to ' + when(a.endsAt) : ''));
+    if (shown === 'page' && !a.draft && typeof a.acks === 'number') facts.push('acknowledged by ' + plural(a.acks, 'person', 'people'));
+    if (a.body && a.body.length > 500) facts.push(a.body.length.toLocaleString() + ' characters');
     if (a.by && a.by !== 'owner') facts.push('by ' + a.by);
     it.append(el('div', 'muted small', cap(facts.join(' · '))));
     const actions = el('div', 'actions');
@@ -3229,18 +3268,22 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       del.addEventListener('click', async () => { if (await act(del, { action: 'announcement_delete', id: a.id }, 'Delete this draft? Nobody has seen it.', { title: 'Delete the draft', confirm: 'Delete', danger: true, done: 'Draft deleted.' })) loadControl(); });
       actions.append(send, edit, del);
     } else if (a.showing) {
-      const end = el('button', 'btn small', 'Take the banner down'); end.type = 'button';
-      end.addEventListener('click', async () => { if (await act(end, { action: 'announcement_end', id: a.id }, 'Take the banner down now? It stays in Notifications.', { title: 'End the banner', confirm: 'Take it down', done: 'The banner is down.' })) loadControl(); });
+      const what = shown === 'page' ? 'page' : 'banner';
+      const end = el('button', 'btn small', 'Take the ' + what + ' down'); end.type = 'button';
+      end.addEventListener('click', async () => { if (await act(end, { action: 'announcement_end', id: a.id }, 'Take the ' + what + ' down now? It stays in Notifications.', { title: 'End the ' + what, confirm: 'Take it down', done: 'The ' + what + ' is down.' })) loadControl(); });
       actions.append(end);
     }
     if (actions.childElementCount) it.append(actions);
     return it;
   }
   async function sendAnnouncementFlow(a, button) {
+    const shown = displayOf(a);
+    const span = a.days ? 'for ' + plural(a.days, 'day') : 'until you end it';
     const body = [
       '“' + a.title + '” goes into the Notifications of ' + audienceWords(a) + '.',
       a.kind === 'service' ? 'It is also pushed to their phones.' : 'It is not pushed: news never is.',
-      a.banner ? 'It shows as a banner at the top of the app ' + (a.days ? 'for ' + plural(a.days, 'day') : 'until you end it') + '.' : '',
+      shown === 'banner' ? 'It shows as a banner at the top of the app ' + span + '.' : '',
+      shown === 'page' ? 'It opens as a full page the next time each of them opens Convoy, ' + span + ', and stays until they tap Acknowledge.' : '',
       'It cannot be unsent.',
     ].filter(Boolean).join('\n');
     if (!(await ask({ title: 'Send this announcement?', body, confirm: a.kind === 'service' ? 'Send and push' : 'Send', danger: a.kind === 'service' }))) return;
@@ -3251,39 +3294,155 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     toast('Sent to ' + plural(data.inbox, 'person', 'people') + (a.kind === 'service' ? ', pushed to ' + plural(data.pushed, 'phone') : '') + '.');
     loadControl();
   }
+  /*
+    Made smaller before it leaves, as the dashboard does: 1600 on the long side
+    is plenty for a phone's width, and keeps it well under the 2 MB the
+    function takes. WebP where the browser writes it, otherwise JPEG (PNG for
+    a PNG). Its size goes with it, so the app can give it room before it loads.
+  */
+  async function shrinkPicture(file) {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const encode = (type, quality) => new Promise((done) => canvas.toBlob(done, type, quality));
+    let blob = await encode('image/webp', 0.86);
+    if (!blob || blob.type !== 'image/webp') blob = await encode(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.88);
+    if (!blob) throw new Error('read');
+    if (blob.size > 2 * 1024 * 1024) throw new Error('big');
+    const url = await new Promise((done, fail) => {
+      const reader = new FileReader();
+      reader.onload = () => done(String(reader.result));
+      reader.onerror = () => fail(new Error('read'));
+      reader.readAsDataURL(blob);
+    });
+    return { type: blob.type, data: url.split(',')[1] || '', url, w: canvas.width, h: canvas.height };
+  }
   function openAnnouncementEditor(a) {
     const host = $('ann-editor'); host.replaceChildren();
     const card = el('div', 'card mb-12');
     card.append(el('h3', '', a ? 'Edit the draft' : 'New announcement'), el('p', 'hint', 'Saved as a draft: nobody sees it until you send it.'));
+    const grid = el('div', 'ann-grid');
     const form = el('form', 'form mt-12'); form.noValidate = true;
     const lab = (text, input, cls) => { const l = el('label', cls || '', text); l.append(input); form.append(l); return input; };
+    const display = lab('In the app', selectEl([['banner', 'A banner at the top'], ['page', 'A full page when Convoy opens, with Acknowledge'], ['none', 'Nothing: Notifications only']], a ? displayOf(a) : 'banner'), 'wide');
     const title = lab('Title', inputEl({ value: a ? a.title : '', max: 80, placeholder: 'Short, like a headline' }), 'wide');
-    const body = lab('Message', textareaEl({ value: a ? a.body : '', max: 500, placeholder: 'What people need to know, in a sentence or two', tall: true }), 'wide');
+    const body = lab('Message', textareaEl({ value: a ? a.body : '', max: 4000, placeholder: '', tall: true }), 'wide');
+    const count = el('div', 'hint wide ann-count'); form.append(count);
+
+    // The picture, for a page only.
+    const photoRow = el('div', 'wide ann-photo');
+    const photoBox = el('div', 'row');
+    const pick = el('label', 'btn small', 'Choose a picture');
+    const file = el('input', 'sr'); file.type = 'file'; file.accept = 'image/jpeg,image/png,image/webp'; pick.append(file);
+    const unpick = el('button', 'btn small', 'Remove the picture'); unpick.type = 'button';
+    photoRow.append(el('div', 't', 'Picture (optional)'), photoBox, el('p', 'hint mt-12', 'Across the top of the page. A JPEG, PNG or WebP, made smaller here before it goes up. A sent announcement keeps the picture it went out with.'));
+    form.append(photoRow);
+
     const kind = lab('Kind', selectEl([['news', 'News: Notifications only'], ['service', 'Service: also a push']], a ? a.kind : 'news'));
     const platform = lab('Phones', selectEl([['', 'Every phone'], ['ios', 'iPhones only'], ['android', 'Android only']], a && a.audience ? a.audience.platform || '' : ''));
     const city = lab('City (optional)', inputEl({ value: a && a.audience ? a.audience.city || '' : '', max: 60, placeholder: 'Matched against profile locations' }));
-    const days = lab('The banner shows for', selectEl([['1', 'A day'], ['3', 'Three days'], ['7', 'A week'], ['14', 'Two weeks'], ['30', 'A month'], ['0', 'Until I end it']], a ? String(a.days || 0) : '7'));
-    const bw = el('div', 'wide');
-    const ban = switchEl(a ? a.banner : true, 'Also a banner at the top of the app', true);
-    bw.append(ban.label); form.append(bw);
-    const sync = () => { days.disabled = !ban.input.checked; };
-    ban.input.addEventListener('change', sync); sync();
-    form.append(el('p', 'hint wide', 'News is never pushed: Apple allows promotional pushes only to people who agreed to them. Service is for something about the app itself, like an outage, or a change people must act on.'));
+    const days = lab('Shown in the app for', selectEl([['1', 'A day'], ['3', 'Three days'], ['7', 'A week'], ['14', 'Two weeks'], ['30', 'A month'], ['0', 'Until I end it']], a ? String(a.days || 0) : '7'));
+    form.append(el('p', 'hint wide', 'News is never pushed: Apple allows promotional pushes only to people who agreed to them. Service is for something about the app itself, like an outage, or a change people must act on. A full page shows once to each person, when they next open Convoy, until they tap Acknowledge; Admin counts who did.'));
     const row = el('div', 'actions wide');
     const saveB = el('button', 'btn primary', 'Save draft'); saveB.type = 'submit';
     const cancel = el('button', 'btn', 'Cancel'); cancel.type = 'button';
     cancel.addEventListener('click', () => host.replaceChildren());
     row.append(saveB, cancel); form.append(row);
+
+    // The page as a phone shows it, roughly: the app's own paper, ink and red.
+    const previewWrap = el('div', 'ann-preview');
+    const phone = el('div', 'ann-phone');
+    previewWrap.append(el('div', 't', 'How the page looks'), phone);
+
+    let saved = a && a.photoUrl ? { url: a.photoUrl, w: a.photoWidth, h: a.photoHeight } : null;
+    let chosen = null;
+    let removed = false;
+    const picture = () => chosen || saved;
+    function drawPhoto() {
+      photoBox.replaceChildren();
+      const p = picture();
+      if (p) { const img = el('img'); img.src = p.url; img.alt = ''; photoBox.append(img); }
+      photoBox.append(pick);
+      if (p) photoBox.append(unpick);
+    }
+    function drawPreview() {
+      phone.replaceChildren();
+      const scroll = el('div', 'ann-phone-scroll');
+      const p = picture();
+      if (p) {
+        const img = el('img', 'ann-phone-img'); img.src = p.url; img.alt = '';
+        // As the app does: the picture's own shape, held between 3:4 and 2:1.
+        if (p.w && p.h) img.style.aspectRatio = String(Math.min(2, Math.max(0.75, p.w / p.h)));
+        scroll.append(img);
+      }
+      scroll.append(
+        el('div', 'ann-phone-kicker', kind.value === 'service' ? 'FROM CONVOY' : 'NEWS FROM CONVOY'),
+        el('div', 'ann-phone-title', title.value.trim() || 'The title'),
+        el('div', 'ann-phone-body', body.value.trim()),
+      );
+      const bar = el('div', 'ann-phone-bar'); bar.append(el('span', 'ann-phone-btn', 'Acknowledge'));
+      phone.append(scroll, bar);
+    }
+    function sync() {
+      const d = display.value;
+      days.disabled = d === 'none';
+      photoRow.hidden = d !== 'page';
+      previewWrap.hidden = d !== 'page';
+      body.className = d === 'page' ? 'page' : 'tall';
+      body.placeholder = d === 'page' ? 'Everything people need to know. A blank line starts a new paragraph.' : 'What people need to know, in a sentence or two';
+      const n = body.value.trim().length;
+      const max = BODY_MAX[d];
+      count.textContent = n.toLocaleString() + ' / ' + max.toLocaleString() + ' characters' + (n > max ? ': too long for a ' + (d === 'none' ? 'Notifications row' : 'banner') + '. Make it a full page for more.' : '');
+      count.className = 'hint wide ann-count' + (n > max ? ' over' : '');
+      drawPreview();
+    }
+    file.addEventListener('change', async () => {
+      const f = file.files && file.files[0];
+      file.value = '';
+      if (!f) return;
+      if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { toast('Choose a JPEG, PNG or WebP. An iPhone photo can be exported as a JPEG.', true); return; }
+      try {
+        chosen = await shrinkPicture(f);
+        removed = false;
+      } catch (e) {
+        toast(e && e.message === 'big' ? 'That picture is too large even made smaller. Try another.' : 'That picture could not be read.', true);
+        return;
+      }
+      drawPhoto(); sync();
+    });
+    unpick.addEventListener('click', () => { if (chosen) chosen = null; else if (saved) { saved = null; removed = true; } drawPhoto(); sync(); });
+    for (const input of [display, title, body, kind]) input.addEventListener('input', sync);
+    display.addEventListener('change', sync); kind.addEventListener('change', sync);
+    drawPhoto(); sync();
+
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
+      const d = display.value;
       if (!title.value.trim()) { toast('Give it a title.', true); title.focus(); return; }
-      const ok = await act(saveB, {
+      if (body.value.trim().length > BODY_MAX[d]) { toast(d === 'page' ? 'A page holds up to 4000 characters.' : 'That is too long for a banner. Make it a full page for more.', true); body.focus(); return; }
+      saveB.disabled = true;
+      const res = await call({
         action: 'announcement_save', id: a ? a.id : undefined, title: title.value.trim(), body: body.value.trim(), kind: kind.value,
-        platform: platform.value, city: city.value.trim(), banner: ban.input.checked, days: Number(days.value),
-      }, null, { done: 'Saved as a draft. Send it when it is ready.' });
-      if (ok) { host.replaceChildren(); loadControl(); }
+        platform: platform.value, city: city.value.trim(), display: d, banner: d !== 'none', days: Number(days.value),
+      });
+      if (res.status !== 200) { saveB.disabled = false; toast(res.data.error || 'That did not work (' + res.status + ').', true); return; }
+      const id = res.data.id;
+      // A picture belongs to a page: a new one goes up, and one taken off, or left on something that is no longer a page, comes off.
+      if (d === 'page' && chosen) {
+        const up = await call({ action: 'announcement_photo', id, photo: chosen.data, type: chosen.type, width: chosen.w, height: chosen.h });
+        if (up.status !== 200) { saveB.disabled = false; toast('Saved, but the picture did not go up: ' + (up.data.error || up.status), true); loadControl(); return; }
+      } else if (a && a.photoUrl && (removed || d !== 'page')) {
+        await call({ action: 'announcement_photo_remove', id });
+      }
+      saveB.disabled = false;
+      toast('Saved as a draft. Send it when it is ready.');
+      host.replaceChildren(); loadControl();
     });
-    card.append(form);
+    grid.append(form, previewWrap);
+    card.append(grid);
     host.append(card);
     title.focus();
   }
