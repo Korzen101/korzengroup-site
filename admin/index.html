@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-OrptCe6P+1BOYWNdePTi09jSvof1VMrm8zVZ5PNaYXQ=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-MPDPhn+mF8H4Vf1JxcNeQAbeBWbqOx3zVY4exThX8T4='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UsFjABENCI+0OzGOXr3NBgwnI054W0QMcvXR6mwQ5wA=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-C2p1QI99BrckWCvlRXdl4cQf7NyZM9CWkZIKS62UdC8='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -140,6 +140,19 @@ dd { margin: 0; text-align: right; font-weight: 600; white-space: nowrap; font-v
 .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
 .stat { background: var(--panel-2); border-radius: 12px; padding: 12px 14px; }
 .stat .n { font-size: 22px; font-weight: 800; } .stat .l { font-size: 12px; color: var(--muted); }
+/* A count that opens what it counts (2026-10-05). */
+button.stat { border: 1px solid transparent; text-align: left; cursor: pointer; color: inherit; font: inherit; }
+button.stat:hover { border-color: var(--line-2); }
+button.stat[aria-expanded="true"] { border-color: var(--ink-2); }
+.person-list .row { display: flex; gap: 8px 12px; align-items: baseline; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid var(--line); }
+.person-list .row:first-of-type { border-top: 0; }
+.person-list .row .quote { flex-basis: 100%; }
+.person-list button.linkish { border: 0; background: none; padding: 0; color: var(--ink); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+/* The schedule: one row a job (2026-10-05). */
+.sched .row { display: grid; grid-template-columns: minmax(160px, 1.3fr) minmax(120px, 1fr) auto; gap: 4px 14px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+.sched .row:first-child { border-top: 0; }
+.sched .row .why { grid-column: 1 / -1; }
+@media (max-width: 640px) { .sched .row { grid-template-columns: minmax(0, 1fr) auto; } .sched .row > .small { grid-column: 1 / -1; grid-row: 2; } }
 
 /* ── moderation ─────────────────────────────────────────────────────────── */
 .seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 3px; gap: 2px; }
@@ -832,6 +845,10 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
           <div class="card" id="sys-passkeys"></div>
         </div>
       </div>
+      <div data-needs="jobs">
+        <h2>Schedule</h2>
+        <div class="card" id="sys-schedule"></div>
+      </div>
       <div data-needs="admins">
         <h2>Who can use Admin</h2>
         <div class="card" id="sys-admins"></div>
@@ -1121,7 +1138,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     still decides every call; this only hides what a role cannot use.
   */
   const MODERATOR = new Set([
-    'stats', 'moderation', 'report_status', 'remove_content', 'issue_status', 'user_search', 'user', 'ban', 'unban',
+    'stats', 'moderation', 'report_status', 'remove_content', 'issue_status', 'user_search', 'user', 'person_items', 'ban', 'unban',
     'note_add', 'note_delete', 'warn', 'profile_clear', 'car_photo_remove',
     'posts', 'post_comments', 'remove_post', 'crews', 'crew',
     'police', 'network', 'achievements', 'achievement_earners', 'growth', 'releases', 'sentry_issues', 'sentry_issue',
@@ -1505,7 +1522,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     achievement_move: 'Achievement moved', achievement_grant: 'Achievement given', remove_post: 'Post removed',
     delete_account: 'Account deleted', deletion_decline: 'Deletion declined', alerts_settings: 'Alerts changed',
     app_config_save: 'Switch changed', announcement_save: 'Announcement saved', announcement_send: 'Announcement sent',
-    announcement_end: 'Announcement taken down', announcement_delete: 'Draft deleted',
+    announcement_end: 'Announcement taken down', announcement_delete: 'Announcement deleted', achievement_delete: 'Achievement deleted',
     announcement_photo: 'Announcement picture added', announcement_photo_remove: 'Announcement picture removed', note_add: 'Note added', note_delete: 'Note deleted',
     warn: 'Warning sent', profile_clear: 'Profile cleared', car_photo_remove: 'Car photo removed', sign_out_all: 'Signed out everywhere',
     crew_rename: 'Crew renamed', crew_remove: 'Crew removed', crew_owner: 'Crew handed over', crew_member_remove: 'Taken out of a crew',
@@ -1588,6 +1605,56 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     renderReports(); renderIssues();
   }
 
+  async function personList(u, kind, label, button, st, box) {
+    const wasOpen = button.getAttribute('aria-expanded') === 'true';
+    for (const b of st.querySelectorAll('button.stat')) b.setAttribute('aria-expanded', 'false');
+    box.replaceChildren();
+    if (wasOpen) return;
+    button.setAttribute('aria-expanded', 'true');
+    const panel = el('div', 'panel');
+    panel.append(el('div', 'muted small', 'Loading…'));
+    box.append(panel);
+    const { status, data } = await call({ action: 'person_items', id: u.id, kind });
+    if (button.getAttribute('aria-expanded') !== 'true') return;
+    panel.replaceChildren();
+    if (status !== 200) { panel.append(el('div', 'empty', data.error || 'Could not load the list.')); return; }
+    const items = data.items || [];
+    panel.append(el('b', '', label + (items.length >= 50 ? ' (the newest 50)' : '')));
+    if (!items.length) { panel.append(el('div', 'muted', kind === 'crews' ? 'In no crew.' : 'None.')); return; }
+    const me = { id: u.id, name: u.name, username: u.username };
+    for (const it of items) panel.append(personListRow(kind, it, me));
+  }
+  function personListRow(kind, it, me) {
+    if (kind === 'posts') return postItem(Object.assign({}, it, { author: me, openReports: 0 }));
+    const row = el('div', 'row');
+    if (kind === 'comments') {
+      row.append(el('span', 'when', ago(it.at)), el('div', 'quote small', it.body));
+    } else if (kind === 'runs') {
+      row.append(el('b', '', it.name || 'A run'), el('span', 'tag grey', it.status === 'live' ? 'Live' : cap(it.status || 'ended')));
+      if (it.mode) row.append(el('span', 'tag grey', cap(it.mode)));
+      const at = el('span', 'when', ago(it.startsAt || it.at)); at.title = when(it.startsAt || it.at); row.append(at);
+    } else if (kind === 'crews') {
+      const b = el('button', 'linkish', it.name || 'A crew'); b.type = 'button';
+      b.addEventListener('click', () => openCrewFrom(it.id));
+      row.append(b, el('span', 'tag' + (it.role === 'owner' ? '' : ' grey'), it.role === 'owner' ? 'Owner' : 'Member'));
+      if (it.city) row.append(el('span', 'muted small', it.city));
+    } else if (kind === 'friends') {
+      row.append(personButton(it));
+    } else if (kind === 'cars') {
+      row.append(el('b', '', it.label || 'A car'), el('span', 'muted small', it.photo ? 'has a photo' : 'no photo'));
+    }
+    return row;
+  }
+  // A crew from somebody's page: Posts & Crews, on Crews, with that crew open.
+  async function openCrewFrom(id) {
+    commView = 'crews';
+    for (const x of $('comm-seg').querySelectorAll('button')) x.setAttribute('aria-pressed', String(x.dataset.view === 'crews'));
+    $('comm-posts').hidden = true; $('comm-crews').hidden = false; $('comm-runs').hidden = true;
+    if (current() !== 'community') go('community');
+    await loadCrews();
+    openCrew(id);
+  }
+
   function personButton(p) {
     if (!p) return el('span', '', 'somebody since deleted');
     const b = el('button', '', (p.name || 'No name') + (p.username ? ' (@' + p.username + ')' : ''));
@@ -1663,15 +1730,28 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
 
   // ── people ───────────────────────────────────────────────────────────────
   const initial = (p) => (p.name || p.username || '?').trim().charAt(0).toUpperCase();
+  /*
+    Only the newest search draws (2026-10-05: "Searching for a person pulled up
+    3 results of the same person"). Typing searches as it pauses and Find
+    searches again, and every answer used to add its people to the same list
+    whenever it arrived.
+  */
+  let searchSeq = 0;
   $('search-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const q = $('search').value.trim();
+    const seq = ++searchSeq;
     const results = $('results'); results.replaceChildren();
     if (q.length < 2) { results.append(el('div', 'empty', 'Type at least two letters.')); return; }
     const { status, data } = await call({ action: 'user_search', q });
+    if (seq !== searchSeq) return;
+    results.replaceChildren();
     if (status !== 200) { results.append(el('div', 'empty', data.error || 'Search failed.')); return; }
     if (!data.users.length) { results.append(el('div', 'empty', 'Nobody matches "' + q + '".')); return; }
+    const shown = new Set();
     for (const u of data.users) {
+      if (shown.has(u.id)) continue;
+      shown.add(u.id);
       const b = el('button', 'person'); b.type = 'button'; b.dataset.id = u.id;
       const text = el('div');
       text.append(el('div', 'nm', u.name || 'No name'), el('div', 'un', (u.username ? '@' + u.username : '') + (u.handle ? ' · ' + u.handle : '') + ' · joined ' + ago(u.joined)));
@@ -1755,10 +1835,27 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     if (u.app) pair('App', appLine(u.app));
     card.append(kv);
     if (!u.owner && !u.recoveryVerified && can('set_recovery_email')) card.append(recoveryForm(u));
+    /*
+      Each count opens what it counts (2026-10-05: "I should be able to click
+      posts, cars, friends, etc."). Messages stay a number: they are private.
+    */
     const st = el('div', 'stats');
-    [['Cars', u.counts.cars], ['Posts', u.counts.posts], ['Comments', u.counts.comments], ['Messages', u.counts.messages], ['Runs hosted', u.counts.runsHosted], ['Crews owned', u.counts.crewsOwned], ['Friends', u.counts.friends]]
-      .forEach(([l, v]) => { const s = el('div', 'stat'); s.append(el('div', 'n', num(v)), el('div', 'l', l)); st.append(s); });
-    card.append(st);
+    const listBox = el('div', 'person-list');
+    [['Cars', u.counts.cars, 'cars'], ['Posts', u.counts.posts, 'posts'], ['Comments', u.counts.comments, 'comments'], ['Messages', u.counts.messages, null], ['Runs hosted', u.counts.runsHosted, 'runs'], ['Crews owned', u.counts.crewsOwned, 'crews'], ['Friends', u.counts.friends, 'friends']]
+      .forEach(([l, v, kind]) => {
+        // Crews opens even at none owned: it lists the crews they belong to as well.
+        const opens = kind && can('person_items') && (v > 0 || kind === 'crews');
+        const s = el(opens ? 'button' : 'div', 'stat');
+        s.append(el('div', 'n', num(v)), el('div', 'l', l));
+        if (!kind) s.title = 'Private: only the count is shown.';
+        if (opens) {
+          s.type = 'button';
+          s.setAttribute('aria-expanded', 'false');
+          s.addEventListener('click', () => personList(u, kind, l, s, st, listBox));
+        }
+        st.append(s);
+      });
+    card.append(st, listBox);
     const reps = el('p', 'small');
     reps.style.margin = '14px 0';
     reps.textContent = 'Reported ' + u.reports.against + ' time' + (u.reports.against === 1 ? '' : 's') + (u.reports.againstOpen ? ' (' + u.reports.againstOpen + ' open)' : '') + ' · made ' + u.reports.made + ' report' + (u.reports.made === 1 ? '' : 's') + ' · sent ' + u.reports.issuesSent + ' issue report' + (u.reports.issuesSent === 1 ? '' : 's');
@@ -2353,6 +2450,15 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     give.disabled = a.hidden;
     give.addEventListener('click', () => toggle(panel, give, () => grantPanel(a)));
     actions.append(edit, vis, who, give);
+    // Only one added here: a built-in one is the app's own rule, so it is hidden instead (2026-10-05).
+    if (!a.builtIn && can('achievement_delete')) {
+      const del = el('button', 'btn small danger', 'Delete'); del.type = 'button';
+      del.addEventListener('click', async () => {
+        const body = 'Delete "' + a.name + '" for good? ' + (a.earned ? plural(a.earned, 'person', 'people') + ' earned it; it comes off their profiles and their badge counts. ' : '') + 'This cannot be undone. Hiding it can.';
+        if (await act(del, { action: 'achievement_delete', id: a.id }, body, { title: 'Delete the achievement', confirm: 'Delete', danger: true, done: 'Deleted.' })) loadAchievements();
+      });
+      actions.append(del);
+    }
     it.append(actions, panel);
     return it;
   }
@@ -3267,11 +3373,20 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       const del = el('button', 'btn small danger', 'Delete'); del.type = 'button';
       del.addEventListener('click', async () => { if (await act(del, { action: 'announcement_delete', id: a.id }, 'Delete this draft? Nobody has seen it.', { title: 'Delete the draft', confirm: 'Delete', danger: true, done: 'Draft deleted.' })) loadControl(); });
       actions.append(send, edit, del);
-    } else if (a.showing) {
-      const what = shown === 'page' ? 'page' : 'banner';
-      const end = el('button', 'btn small', 'Take the ' + what + ' down'); end.type = 'button';
-      end.addEventListener('click', async () => { if (await act(end, { action: 'announcement_end', id: a.id }, 'Take the ' + what + ' down now? It stays in Notifications.', { title: 'End the ' + what, confirm: 'Take it down', done: 'The ' + what + ' is down.' })) loadControl(); });
-      actions.append(end);
+    } else {
+      if (a.showing) {
+        const what = shown === 'page' ? 'page' : 'banner';
+        const end = el('button', 'btn small', 'Take the ' + what + ' down'); end.type = 'button';
+        end.addEventListener('click', async () => { if (await act(end, { action: 'announcement_end', id: a.id }, 'Take the ' + what + ' down now? It stays in Notifications.', { title: 'End the ' + what, confirm: 'Take it down', done: 'The ' + what + ' is down.' })) loadControl(); });
+        actions.append(end);
+      }
+      // Gone for good, Notifications included (2026-10-05: "Add ability to delete them in admin").
+      const del = el('button', 'btn small danger', 'Delete'); del.type = 'button';
+      del.addEventListener('click', async () => {
+        const body = 'Delete “' + a.title + '” for good? It disappears from the app' + (a.recipients ? ' and from the Notifications of ' + plural(a.recipients, 'person', 'people') : '') + '.' + (a.pushed ? ' The ' + plural(a.pushed, 'push', 'pushes') + ' already delivered cannot be called back.' : '') + ' This cannot be undone.';
+        if (await act(del, { action: 'announcement_delete', id: a.id }, body, { title: 'Delete the announcement', confirm: 'Delete', danger: true, done: 'Deleted.' })) loadControl();
+      });
+      actions.append(del);
     }
     if (actions.childElementCount) it.append(actions);
     return it;
@@ -3833,7 +3948,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     if (keys.status === 401) return;
     banner(''); stamp(new Date().toISOString());
     if (alerts) renderAlertsCard(alerts, jobsR && jobsR.status === 200 ? jobsR.data.schedule || {} : null);
-    if (jobsR) { renderHouseCard(jobsR); renderBackupCard(jobsR); }
+    if (jobsR) { renderScheduleCard(jobsR); renderHouseCard(jobsR); renderBackupCard(jobsR); }
     renderPasskeys(keys);
     if (admins) renderAdmins(admins);
   }
@@ -3889,6 +4004,37 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       c.append(el('h2', '', 'Recent'));
       c.append(rowsList(recent.map((a) => [a.title, a.resolvedAt ? 'resolved ' + ago(a.resolvedAt) : a.sentAt ? ago(a.sentAt) : 'not sent yet'])));
     }
+  }
+  /*
+    Every job the database runs on its own (0099, 0100), with its newest run
+    (2026-10-05: "Not seeing the scheduled jobs in system under admin"). Late is
+    two of its gaps without a run.
+  */
+  const SCHEDULE = [
+    ['alerts', 'Alerts', 'Every 15 minutes', 15],
+    ['alerts_full', 'Services, plans and crashes', 'Every hour at :07', 60],
+    ['police', 'Police areas', 'At :17 and :47', 30],
+    ['housekeeping', 'Clean-up', 'Every night at 07:41 UTC', 1440],
+    ['money', 'Dashboard money pushes', 'Every morning at 12:23 UTC', 1440],
+  ];
+  function renderScheduleCard({ status, data }) {
+    const c = $('sys-schedule'); c.replaceChildren();
+    c.append(el('p', 'hint', 'The database runs these on its own, each with a one-time ticket, so no key is kept anywhere. Each row is the newest run.'));
+    if (status !== 200 || data.unavailable) { c.append(el('p', 'muted mt-12', data.unavailable || data.error || 'Could not load the schedule.')); return; }
+    const box = el('div', 'sched mt-12');
+    for (const [key, label, cadence, everyMin] of SCHEDULE) {
+      const r = (data.schedule || {})[key];
+      const row = el('div', 'row');
+      const name = el('div'); name.append(el('b', '', label), el('div', 'muted small', cadence));
+      const last = el('div', 'small', r ? (r.finishedAt ? 'Ran ' : 'Started ') + ago(r.at) : 'No run yet');
+      if (r) last.title = when(r.at);
+      const late = r && Date.now() - Date.parse(r.at) > 2 * everyMin * 60e3;
+      const st = !r ? ['warn', 'Not yet'] : r.ok === false ? ['error', 'Failed'] : !r.finishedAt ? ['info', 'Running'] : late ? ['warn', 'Late'] : ['ok', 'OK'];
+      row.append(name, last, el('span', 'status ' + st[0], st[1]));
+      if (r && r.error) row.append(el('div', 'muted small why', r.error));
+      box.append(row);
+    }
+    c.append(box);
   }
   function renderHouseCard({ status, data }) {
     const c = $('sys-house'); c.replaceChildren();
