@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UcRlDzUgyvAW3FtJpAc0GMDW5GNwQBggIlmQ3nkb2Hw=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-C2p1QI99BrckWCvlRXdl4cQf7NyZM9CWkZIKS62UdC8='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-NVG5MZG64+qF/c8IU4jIsi9gM4F5wlAq4dTLKxwmGNM=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-BfaEj3qZ9Iq7WT9FN/ASn753+YvqdMYDa6neT2hwm5c='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -432,7 +432,17 @@ header.top .wrap, main.wrap { max-width: 1480px; }
 .setting .d { color: var(--muted); font-size: 13px; max-width: 70ch; }
 .setting .when { color: var(--muted); font-size: 12px; }
 .setting .more { grid-column: 1 / -1; margin-top: 10px; }
-.setting > .switch, .setting > .status { grid-row: 1 / span 2; grid-column: 2; align-self: center; }
+.setting > .switch, .setting > .status, .setting > .ctl { grid-row: 1 / span 2; grid-column: 2; align-self: center; }
+.setting > .ctl { align-items: center; justify-content: flex-end; }
+.ctl select { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink); font: inherit; font-size: 14px; }
+.ctl select:focus { outline: 2px solid rgba(57,135,229,.6); outline-offset: 1px; }
+.ctl select:disabled { opacity: .55; }
+.card > .setting:last-child { padding-bottom: 0; }
+/* On a phone a row with a group of controls is one column: the controls go under its words rather than squeezing them. */
+@media (max-width: 560px) {
+  .setting.stack { grid-template-columns: minmax(0, 1fr); }
+  .setting.stack > .ctl { grid-row: auto; grid-column: 1; justify-content: flex-start; margin-top: 8px; }
+}
 /* Tables: wide ones scroll inside their own box, never the page. */
 .tbl-wrap { overflow-x: auto; }
 table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -619,6 +629,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       <div class="seg" id="modseg">
         <button type="button" data-view="content" aria-pressed="true">Content reports<span class="n" id="n-content" hidden></span></button>
         <button type="button" data-view="issues" aria-pressed="false">Issue reports<span class="n" id="n-issues" hidden></span></button>
+        <button type="button" data-view="hidden" aria-pressed="false" data-needs="hidden_list">Hidden<span class="n" id="n-hidden" hidden></span></button>
         <button type="button" data-view="deletions" aria-pressed="false" data-needs="deletion_requests">Deletion requests<span class="n" id="n-deletions" hidden></span></button>
         <button type="button" data-view="people" aria-pressed="false">People</button>
         <button type="button" data-view="activity" aria-pressed="false" data-needs="activity">Activity</button>
@@ -636,6 +647,11 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
           <button type="button" data-f="closed" aria-pressed="false">Resolved</button>
         </div>
         <div class="list" id="issue-list"></div>
+      </div>
+      <div id="view-hidden" hidden>
+        <p class="muted small mb-12">Posts and comments taken off the app. <b>Hidden after reports</b>: enough different people reported it, so it waits for you; its author still sees it and is not told. <b>Removed</b>: taken down from here; nobody sees it, and it can be put back for 30 days, after which the nightly clean-up deletes it for good.</p>
+        <div class="card mb-12" id="hidden-settings" data-needs="auto_hide_save"></div>
+        <div class="list" id="hidden-list"></div>
       </div>
       <div id="view-deletions" hidden>
         <p class="muted small mb-12">Requests to delete an account, from the website’s form (confirmed by a code sent to the account’s verified recovery email) or written to you. Deleting asks for the username back and cannot be undone.</p>
@@ -767,6 +783,10 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
         </div>
         <div id="support-detail"><div class="empty">Pick an email to read it, see whose account it is, and answer.</div></div>
       </div>
+      <div class="grid g-4 mt-14" data-needs="support_replies_save">
+        <div class="card" id="support-replies"></div>
+        <div class="card" id="support-ack" data-needs="support_ack_save"></div>
+      </div>
     </section>
 
     <section id="control" role="tabpanel" aria-labelledby="tab-control" hidden>
@@ -785,6 +805,10 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       <div class="grid g-4 mt-14" id="rel-cards"></div>
       <h2>Published updates</h2>
       <div class="card" id="rel-published"></div>
+      <div data-needs="rollback">
+        <h2>Roll back an update</h2>
+        <div class="card" id="rel-rollback"></div>
+      </div>
       <div data-needs="reviews">
         <h2>App Store reviews</h2>
         <div id="rel-reviews"></div>
@@ -836,10 +860,14 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     </section>
 
     <section id="system" role="tabpanel" aria-labelledby="tab-system" hidden>
-      <p class="lede">What reaches your phone, the scheduled clean-up, backups, how you sign in here, and who else can.</p>
+      <p class="lede">What reaches your phone and whether pushes arrive, the morning briefing, the scheduled clean-up, backups, how you sign in here, and who else can.</p>
       <div class="sys-grid">
-        <div class="card" id="sys-alerts" data-needs="alerts_settings"></div>
         <div class="grid">
+          <div class="card" id="sys-alerts" data-needs="alerts_settings"></div>
+          <div class="card" id="sys-pushes" data-needs="push_health"></div>
+        </div>
+        <div class="grid">
+          <div class="card" id="sys-briefing" data-needs="briefing_settings"></div>
           <div class="card" id="sys-house" data-needs="housekeeping_run"></div>
           <div class="card" id="sys-backup" data-needs="backup_rows"></div>
           <div class="card" id="sys-passkeys"></div>
@@ -881,6 +909,24 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     get() { try { return sessionStorage.getItem(KEY) || ''; } catch { return ''; } },
     set(v) { try { if (v) sessionStorage.setItem(KEY, v); else sessionStorage.removeItem(KEY); } catch {} },
   };
+  /*
+    This browser's own random id, sent with each sign-in step so a sign-in
+    from a browser never seen before is a push to the owner (2026-10-06). It
+    means nothing anywhere else, and the server keeps only a hash of it.
+    Without storage nothing is sent, and the server goes by the browser and
+    network instead.
+  */
+  const DEVICE_KEY = 'korzen.admin.device';
+  function deviceId() {
+    try {
+      let v = localStorage.getItem(DEVICE_KEY) || '';
+      if (!/^[A-Za-z0-9_-]{16,80}$/.test(v)) {
+        v = Array.from(crypto.getRandomValues(new Uint8Array(24)), (b) => b.toString(16).padStart(2, '0')).join('');
+        localStorage.setItem(DEVICE_KEY, v);
+      }
+      return v;
+    } catch { return undefined; }
+  }
   const el = (tag, cls, text) => {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -980,7 +1026,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     if (!username || !password) { $('login-error').textContent = 'Enter the username and the password.'; return; }
     $('signin').disabled = true;
     $('login-error').textContent = ''; $('login-error').className = 'error';
-    const { status, data } = await call({ action: 'login', username, password });
+    const { status, data } = await call({ action: 'login', username, password, device: deviceId() });
     $('signin').disabled = false;
     form.password.value = '';
     if (status === 200 && data.step === 'code' && data.challenge) { challenge = data.challenge; return showCodeStep(data.phones || 1, data.minutes || 5); }
@@ -993,7 +1039,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     if (code.length !== 6) { $('code-error').textContent = 'The code is six digits.'; return; }
     $('verify').disabled = true;
     $('code-error').textContent = '';
-    const { status, data } = await call({ action: 'login_code', challenge, code });
+    const { status, data } = await call({ action: 'login_code', challenge, code, device: deviceId() });
     $('verify').disabled = false;
     if (status === 200 && data.token) return signedIn(data.token);
     $('code-error').textContent = data.error || (status === 0 ? 'Could not reach the server.' : 'That did not work (' + status + ').');
@@ -1071,7 +1117,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
         return;
       }
       if (!cred) return;
-      const { status, data } = await call({ action: 'passkey_login', token: start.data.token, response: credentialJSON(cred) });
+      const { status, data } = await call({ action: 'passkey_login', token: start.data.token, response: credentialJSON(cred), device: deviceId() });
       if (status === 200 && data.token) return signedIn(data.token);
       err.textContent = data.error || 'That did not work (' + status + ').';
     } finally {
@@ -1143,8 +1189,13 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     'posts', 'post_comments', 'remove_post', 'crews', 'crew',
     'police', 'network', 'achievements', 'achievement_earners', 'growth', 'releases', 'sentry_issues', 'sentry_issue',
     'runs_live', 'passkeys', 'passkey_register_options', 'passkey_register', 'passkey_delete', 'whoami',
+    'hidden_list', 'content_restore', 'content_remove',
   ]);
-  const OWNER_ONLY = new Set(['admins', 'admin_invite', 'admin_update', 'admin_remove']);
+  const OWNER_ONLY = new Set([
+    'admins', 'admin_invite', 'admin_update', 'admin_remove',
+    'rollback_choices', 'rollback_check', 'rollback', 'rollback_probe', 'person_export',
+    'briefing_settings', 'briefing_save', 'briefing_preview', 'briefing_send',
+  ]);
   let me = { role: 'owner', name: '' };
   const can = (action) => me.role === 'owner' || (!OWNER_ONLY.has(action) && (me.role === 'admin' || MODERATOR.has(action)));
   // The one call each tab cannot do without.
@@ -1488,13 +1539,14 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       onPick(b.getAttribute(attr));
     });
   }
-  const VIEWS = ['content', 'issues', 'deletions', 'people', 'activity'];
+  const VIEWS = ['content', 'issues', 'hidden', 'deletions', 'people', 'activity'];
   segment('modseg', 'data-view', (v) => {
     modView = v;
     for (const k of VIEWS) $('view-' + k).hidden = k !== v;
     if (v === 'people') $('search').focus();
     if (v === 'activity') loadActivity();
     if (v === 'deletions') loadDeletions();
+    if (v === 'hidden') loadHidden();
   });
   segment('content-filter', 'data-f', (f) => { filters.content = f; renderReports(); });
   segment('issue-filter', 'data-f', (f) => { filters.issues = f; renderIssues(); });
@@ -1532,6 +1584,10 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     admin_update: 'Admin changed', admin_remove: 'Admin removed', passkey_register: 'Passkey added', passkey_delete: 'Passkey removed',
     money_notify: 'Money push sent', money_notify_settings: 'Money pushes changed',
     dashboard_sign_in: 'Dashboard sign-in', dashboard_code_sent: 'Dashboard code sent', dashboard_passkey_add: 'Dashboard passkey added', dashboard_passkey_remove: 'Dashboard passkey removed',
+    // 2026-10-06: the eight.
+    rollback: 'Update rolled back', content_restore: 'Put back', content_remove: 'Content removed', auto_hide_save: 'Auto-hide changed',
+    support_replies_save: 'Saved replies changed', support_ack_save: 'Automatic reply changed', person_export: 'Data exported',
+    briefing_save: 'Morning briefing changed', briefing_send: 'Morning briefing sent',
   };
   // The Dashboard's money pushes, by kind (2026-10-05).
   const PUSH_WORDS = { reminders: 'bills coming up', summary: 'the week in money', large: 'a large charge', low: 'a low balance', budget: 'a budget running high' };
@@ -1579,6 +1635,12 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       if (d.rows) bits.push(plural(d.rows, 'row'));
       if (d.note) bits.push('Note: ' + d.note);
       if (PUSH_WORDS[d.kind]) bits.push(PUSH_WORDS[d.kind]);
+      if (d.kind === 'post' || d.kind === 'comment') bits.push('a ' + d.kind);
+      if (typeof d.on === 'boolean') bits.push(d.on ? 'switched on' : 'switched off');
+      if (typeof d.reports === 'number') bits.push('after ' + plural(d.reports, 'report') + ' from different people');
+      if (typeof d.hour === 'number') bits.push('at ' + hourLabel(d.hour) + ', New York time');
+      if (typeof d.count === 'number') bits.push(plural(d.count, 'saved reply', 'saved replies'));
+      if (typeof d.messages === 'boolean') bits.push(d.messages ? 'with the messages they wrote' : 'without their messages');
       if (typeof d.reminders === 'boolean') bits.push('bills coming up ' + (d.reminders ? 'on' : 'off'));
       if (typeof d.summary === 'boolean') bits.push('the week in money ' + (d.summary ? 'on' : 'off'));
       if (d.error) bits.push(d.error);
@@ -1590,6 +1652,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
 
   async function loadModeration() {
     if (modView === 'activity') loadActivity();
+    if (modView === 'hidden') loadHidden();
     loadDeletions();
     $('refresh').disabled = true;
     const { status, data } = await call({ action: 'moderation' });
@@ -1599,10 +1662,13 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     banner('');
     stamp(new Date().toISOString());
     queuesData = data;
+    contentRestorable = data.restorable === true;
     const openContent = data.contentReports.filter((r) => r.status === 'open').length;
     const openIssues = data.issueReports.filter((i) => i.status === 'open').length;
     setSegCount('n-content', openContent);
     setSegCount('n-issues', openIssues);
+    setSegCount('n-hidden', new Set(data.contentReports.filter((r) => r.status === 'open' && r.hidden === 'reports').map((r) => r.kind + ':' + r.targetId)).size);
+    if (can('auto_hide_save')) renderAutoHide(data.autoHide);
     openQueue = openContent + openIssues;
     updateModCount();
     renderReports(); renderIssues();
@@ -1631,7 +1697,10 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     if (kind === 'posts') return postItem(Object.assign({}, it, { author: me, openReports: 0 }));
     const row = el('div', 'row');
     if (kind === 'comments') {
-      row.append(el('span', 'when', ago(it.at)), el('div', 'quote small', it.body));
+      row.append(el('span', 'when', ago(it.at)));
+      const hid = hiddenTag(it.hidden);
+      if (hid) row.append(hid);
+      row.append(el('div', 'quote small', it.body));
     } else if (kind === 'runs') {
       row.append(el('b', '', it.name || 'A run'), el('span', 'tag grey', it.status === 'live' ? 'Live' : cap(it.status || 'ended')));
       if (it.mode) row.append(el('span', 'tag grey', cap(it.mode)));
@@ -1666,6 +1735,91 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     return b;
   }
 
+  // ── hidden posts and comments (0103, 2026-10-06) ─────────────────────────
+  // Whether a removal can be undone yet: false until the 0103 database update has run.
+  let contentRestorable = false;
+  const HIDDEN_WORD = { reports: ['warn', 'Hidden after reports'], removed: ['info', 'Removed'] };
+  const hiddenTag = (reason) => (HIDDEN_WORD[reason] ? el('span', 'status ' + HIDDEN_WORD[reason][0], HIDDEN_WORD[reason][1]) : null);
+  const removeText = (kind) => 'Remove this ' + kind + ' for everybody, its author too? ' + (contentRestorable && (kind === 'post' || kind === 'comment') ? 'It can be put back from Moderation → Hidden for 30 days.' : 'This cannot be undone.');
+  const removedText = (kind) => (contentRestorable && (kind === 'post' || kind === 'comment') ? 'Removed. It can be put back from Hidden for 30 days.' : 'Removed for everybody.');
+
+  async function loadHidden() {
+    const list = $('hidden-list');
+    list.replaceChildren(el('div', 'empty', 'Loading…'));
+    const { status, data } = await call({ action: 'hidden_list' });
+    list.replaceChildren();
+    if (status !== 200) { list.append(el('div', 'empty', data.error || 'Could not load what is hidden.')); return; }
+    if (data.unavailable) { list.append(el('div', 'empty', data.unavailable)); return; }
+    setSegCount('n-hidden', data.items.filter((h) => h.reason === 'reports' && h.exists).length);
+    if (!data.items.length) { list.append(el('div', 'empty', 'Nothing is hidden.')); return; }
+    for (const h of data.items) list.append(hiddenItem(h));
+  }
+  function hiddenItem(h) {
+    const it = el('div', 'item');
+    const head = el('div', 'head');
+    head.append(el('span', 'tag grey', cap(h.kind)));
+    head.append(h.reason === 'reports' ? el('span', 'status warn', 'Hidden after ' + plural(h.reporters, 'report')) : el('span', 'status info', 'Removed' + (h.by && h.by !== 'auto' ? ' by ' + h.by : '')));
+    const at = el('span', 'when', ago(h.at)); at.title = when(h.at); head.append(at);
+    it.append(head);
+    if (!h.exists) it.append(el('div', 'muted small', 'Its author has since deleted it.'));
+    else if (h.text) it.append(el('div', 'quote', h.text));
+    const who = el('div', 'who');
+    const by = el('span', '', 'By: '); by.append(personButton(h.author)); who.append(by);
+    if (h.goesAt) who.append(el('span', '', 'Deleted for good ' + shortDay(h.goesAt)));
+    it.append(who);
+    if (h.exists) it.append(hiddenActions(h.kind, h.id, h.reason, () => { loadHidden(); loadModeration(); }));
+    return it;
+  }
+  /*
+    What can be done with something hidden. After reports: keep it up (shown
+    again, its reports closed as looked at) or remove it. Removed: put it back.
+    `after` hears 'shown' or 'removed'.
+  */
+  function hiddenActions(kind, id, reason, after) {
+    const actions = el('div', 'actions');
+    if (can('content_restore')) {
+      const word = reason === 'reports' ? 'Keep it up' : 'Put it back';
+      const back = el('button', 'btn small', word); back.type = 'button';
+      back.addEventListener('click', async () => {
+        const text = reason === 'reports' ? 'Show this ' + kind + ' to everybody again? Its reports close as looked at.' : 'Put this ' + kind + ' back for everybody, as it was? Its reports close as looked at.';
+        if (await act(back, { action: 'content_restore', kind, id }, text, { title: word, confirm: word, done: 'Shown to everybody again.' })) after('shown');
+      });
+      actions.append(back);
+    }
+    if (reason === 'reports' && can('content_remove')) {
+      const rm = el('button', 'btn small danger', 'Remove ' + kind); rm.type = 'button';
+      rm.addEventListener('click', async () => {
+        if (await act(rm, { action: 'content_remove', kind, id }, removeText(kind), { title: 'Remove this ' + kind, confirm: 'Remove', danger: true, done: removedText(kind) })) after('removed');
+      });
+      actions.append(rm);
+    }
+    return actions;
+  }
+  /** Hidden automatically after how many different people's reports: one switch and one number. */
+  function renderAutoHide(s) {
+    const c = $('hidden-settings'); c.replaceChildren();
+    if (!s) return;
+    const cur = { on: s.on !== false, reports: s.reports || 3 };
+    const row = setting('Hide automatically', 'A post or comment reported by this many different people is hidden until somebody looks, and you hear about it. Its author still sees it and is not told.');
+    row.classList.add('stack');
+    const ctl = el('div', 'actions ctl');
+    const n = selectEl([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((k) => [String(k), plural(k, 'report')]), cur.reports);
+    n.setAttribute('aria-label', 'Reports from different people before it is hidden');
+    const sw = switchEl(cur.on, 'Hide automatically');
+    n.disabled = !cur.on;
+    const save = async (next, undo) => {
+      sw.input.disabled = true; n.disabled = true;
+      const ok = await act(null, { action: 'auto_hide_save', value: next }, null, { done: next.on ? 'Hidden after ' + plural(next.reports, 'report') + '.' : 'Nothing is hidden automatically now.' });
+      if (ok) Object.assign(cur, next); else undo();
+      sw.input.disabled = false; n.disabled = !cur.on;
+    };
+    sw.input.addEventListener('change', () => save({ on: sw.input.checked, reports: cur.reports }, () => { sw.input.checked = cur.on; }));
+    n.addEventListener('change', () => save({ on: cur.on, reports: Number(n.value) }, () => { n.value = String(cur.reports); }));
+    ctl.append(n, sw.label);
+    row.append(ctl);
+    c.append(row);
+  }
+
   function renderReports() {
     const list = $('content-list'); list.replaceChildren();
     const rows = queuesData.contentReports.filter((r) => (filters.content === 'open') === (r.status === 'open'));
@@ -1675,6 +1829,8 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       const head = el('div', 'head');
       head.append(el('span', 'tag', cap(r.reason)), el('span', 'tag grey', cap(r.kind)));
       if (r.status !== 'open') head.append(el('span', 'status ' + (r.status === 'actioned' ? 'ok' : 'info'), r.status === 'actioned' ? 'Handled' : 'Dismissed'));
+      const hid = hiddenTag(r.hidden);
+      if (hid) head.append(hid);
       head.append(el('span', 'when', ago(r.at)));
       it.append(head);
       if (r.excerpt) it.append(el('div', 'quote', r.excerpt));
@@ -1687,20 +1843,32 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       if (r.status === 'open') {
         if (r.kind !== 'user') {
           const rm = el('button', 'btn small danger', 'Remove ' + r.kind); rm.type = 'button';
-          rm.addEventListener('click', async () => { if (await act(rm, { action: 'remove_content', id: r.id }, 'Remove this ' + r.kind + ' for everybody? This cannot be undone.', { title: 'Remove this ' + r.kind, confirm: 'Remove', danger: true, done: 'Removed for everybody.' })) loadModeration(); });
+          rm.addEventListener('click', async () => { if (await act(rm, { action: 'remove_content', id: r.id }, removeText(r.kind), { title: 'Remove this ' + r.kind, confirm: 'Remove', danger: true, done: removedText(r.kind) })) loadModeration(); });
           actions.append(rm);
         }
-        const done = el('button', 'btn small', 'Mark handled'); done.type = 'button';
-        done.addEventListener('click', async () => { if (await act(done, { action: 'report_status', id: r.id, status: 'actioned' }, null, { done: 'Marked handled.' })) loadModeration(); });
-        const dis = el('button', 'btn small', 'Dismiss'); dis.type = 'button';
-        dis.addEventListener('click', async () => { if (await act(dis, { action: 'report_status', id: r.id, status: 'dismissed' }, null, { done: 'Dismissed.' })) loadModeration(); });
-        actions.append(done, dis);
+        if (r.hidden === 'reports' && can('content_restore')) {
+          // Hidden after reports: one answer for all of its reports, not one report at a time.
+          const keep = el('button', 'btn small', 'Keep it up'); keep.type = 'button';
+          keep.addEventListener('click', async () => { if (await act(keep, { action: 'content_restore', kind: r.kind, id: r.targetId }, 'Show this ' + r.kind + ' to everybody again? Every report on it closes as looked at.', { title: 'Keep it up', confirm: 'Keep it up', done: 'Shown to everybody again.' })) loadModeration(); });
+          actions.append(keep);
+        } else {
+          const done = el('button', 'btn small', 'Mark handled'); done.type = 'button';
+          done.addEventListener('click', async () => { if (await act(done, { action: 'report_status', id: r.id, status: 'actioned' }, null, { done: 'Marked handled.' })) loadModeration(); });
+          const dis = el('button', 'btn small', 'Dismiss'); dis.type = 'button';
+          dis.addEventListener('click', async () => { if (await act(dis, { action: 'report_status', id: r.id, status: 'dismissed' }, null, { done: 'Dismissed.' })) loadModeration(); });
+          actions.append(done, dis);
+        }
         if (r.reported) {
           const view = el('button', 'btn small', 'View account'); view.type = 'button';
           view.addEventListener('click', () => openPerson(r.reported.id));
           actions.append(view);
         }
       } else {
+        if (r.hidden === 'removed' && can('content_restore')) {
+          const back = el('button', 'btn small', 'Put it back'); back.type = 'button';
+          back.addEventListener('click', async () => { if (await act(back, { action: 'content_restore', kind: r.kind, id: r.targetId }, 'Put this ' + r.kind + ' back for everybody, as it was?', { title: 'Put it back', confirm: 'Put it back', done: 'Shown to everybody again.' })) loadModeration(); });
+          actions.append(back);
+        }
         const re = el('button', 'btn small', 'Reopen'); re.type = 'button';
         re.addEventListener('click', async () => { if (await act(re, { action: 'report_status', id: r.id, status: 'open' }, null, { done: 'Reopened.' })) loadModeration(); });
         actions.append(re);
@@ -2626,6 +2794,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     if (status === 401) return;
     if (!more) list.replaceChildren();
     if (status !== 200) { list.append(el('div', 'empty', data.error || 'Could not load posts.')); return; }
+    if (typeof data.restorable === 'boolean') contentRestorable = data.restorable;
     banner(''); stamp(new Date().toISOString());
     if (!more && !data.posts.length) list.append(el('div', 'empty', postQuery ? 'No post mentions "' + postQuery + '".' : 'No posts yet.'));
     for (const p of data.posts) list.append(postItem(p));
@@ -2641,6 +2810,8 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     head.append(el('span', 'tag', POST_KIND[p.kind] || cap(p.kind)));
     if (p.car) head.append(el('span', 'tag grey', p.car));
     if (p.openReports) head.append(el('span', 'status warn', plural(p.openReports, 'open report')));
+    const hid = hiddenTag(p.hidden);
+    if (hid) head.append(hid);
     const at = el('span', 'when', ago(p.at)); at.title = when(p.at); head.append(at);
     it.append(head);
     const sub = [p.kicker, p.subtitle].filter(Boolean).join(' · ');
@@ -2657,13 +2828,22 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       show.addEventListener('click', () => toggle(panel, show, () => commentsPanel(p)));
       actions.append(show);
     }
-    const rm = el('button', 'btn small danger', 'Remove post'); rm.type = 'button';
-    rm.addEventListener('click', async () => {
-      if (await act(rm, { action: 'remove_post', id: p.id }, 'Remove this post for everybody? Its comments and likes go with it, and any open reports on it close. This cannot be undone.', { title: 'Remove this post', confirm: 'Remove', danger: true, done: 'Post removed.' })) {
-        it.replaceChildren(el('div', 'done', 'Removed. It is gone from every phone.'));
-      }
-    });
-    actions.append(rm);
+    if (p.hidden) {
+      // Hidden already (0103): keep it up or remove it, or put it back.
+      const more = hiddenActions('post', p.id, p.hidden, (what) => it.replaceChildren(el('div', 'done', what === 'shown' ? 'Shown to everybody again.' : removedText('post'))));
+      actions.append(...more.children);
+    } else {
+      const rm = el('button', 'btn small danger', 'Remove post'); rm.type = 'button';
+      rm.addEventListener('click', async () => {
+        const text = contentRestorable
+          ? 'Remove this post for everybody, its author too? Any open reports on it close. It can be put back from Moderation → Hidden for 30 days, with its comments and likes.'
+          : 'Remove this post for everybody? Its comments and likes go with it, and any open reports on it close. This cannot be undone.';
+        if (await act(rm, { action: 'remove_post', id: p.id }, text, { title: 'Remove this post', confirm: 'Remove', danger: true, done: 'Post removed.' })) {
+          it.replaceChildren(el('div', 'done', contentRestorable ? 'Removed from every phone. It can be put back from Moderation → Hidden for 30 days.' : 'Removed. It is gone from every phone.'));
+        }
+      });
+      actions.append(rm);
+    }
     it.append(actions, panel);
     return it;
   }
@@ -2678,7 +2858,10 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       for (const c of data.comments) {
         const r = el('div');
         const w = el('div', 'who'); w.append(personButton(c.author), el('span', '', ago(c.at)));
+        const hid = hiddenTag(c.hidden);
+        if (hid) w.append(hid);
         r.append(w, el('div', 'quote small', c.body));
+        if (c.hidden) r.append(hiddenActions('comment', c.id, c.hidden, (what) => r.replaceChildren(el('div', 'done', what === 'shown' ? 'Comment shown to everybody again.' : removedText('comment')))));
         box.append(r);
       }
     });
@@ -2978,7 +3161,39 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       });
       row.append(s);
     }
+    if (can('person_export')) {
+      const x = el('button', 'btn', 'Export data…'); x.type = 'button';
+      x.addEventListener('click', () => exportPerson(u, x));
+      row.append(x);
+    }
     return row;
+  }
+  /*
+    Everything Convoy holds that is one person's, as one file, for a request
+    to see it (2026-10-06). Their messages only when ticked, and then only the
+    ones they wrote, never what others sent them. Owner only, and logged.
+  */
+  async function exportPerson(u, btn) {
+    const who = u.name || '@' + u.username;
+    const picked = await ask({
+      title: 'Export ' + who + '’s data',
+      body: 'Everything Convoy holds that is theirs, as one file on this computer: profile, settings, recovery email, cars, routes, drives, runs, crews, friends, blocks, posts, comments, likes, votes, notifications, achievements and reports. The export goes in the activity log.',
+      choices: [{ value: 'messages', label: 'Include the messages they wrote (never the ones sent to them)' }],
+      confirm: 'Export',
+    });
+    if (picked === false) return;
+    btn.disabled = true;
+    const { status, data } = await call({ action: 'person_export', id: u.id, messages: picked.includes('messages') });
+    btn.disabled = false;
+    if (status !== 200) { toast(data.error || 'That did not work (' + status + ').', true); return; }
+    const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+    const a = el('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'convoy-data-' + String(data.username || 'account').replace(/[^A-Za-z0-9_.-]/g, '') + '-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    const rows = Object.values(data.counts || {}).reduce((n, v) => n + v, 0);
+    toast('Exported ' + plural(rows, 'row') + ', ' + bytes(blob.size) + '.');
   }
 
   // ── 9. crews and runs ────────────────────────────────────────────────────
@@ -3115,6 +3330,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
   async function loadSupport(more) {
     const list = $('support-list');
     if (!more) { list.replaceChildren(el('div', 'empty', 'Loading…')); supportEmails = []; supportNext = null; }
+    if (!more && can('support_replies')) loadSupportExtras();
     $('refresh').disabled = true;
     const { status, data } = await call({ action: 'support_list', after: more ? supportNext : undefined });
     $('refresh').disabled = false;
@@ -3202,6 +3418,19 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     const form = el('form', 'form'); form.noValidate = true;
     const l = el('label', 'wide', 'Reply to ' + (m.address || e.from));
     const text = textareaEl({ tall: true, max: 5000, placeholder: 'It goes from Convoy support, as a reply in their thread.' });
+    // A saved reply puts its words in, after any already written; they can be changed before sending.
+    if (savedReplyList.length) {
+      const pick = selectEl([['', 'Put in a saved reply…'], ...savedReplyList.map((r, i) => [String(i), r.title])], '');
+      pick.setAttribute('aria-label', 'Put in a saved reply');
+      pick.addEventListener('change', () => {
+        const r = savedReplyList[Number(pick.value)];
+        pick.value = '';
+        if (!r) return;
+        text.value = text.value.trim() ? text.value.replace(/\s+$/, '') + '\n\n' + r.body : r.body;
+        text.focus();
+      });
+      const pl = el('div', 'wide'); pl.append(pick); form.append(pl);
+    }
     l.append(text); form.append(l);
     const row = el('div', 'actions wide');
     const send = el('button', 'btn primary', 'Send reply'); send.type = 'submit';
@@ -3215,6 +3444,117 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     box.append(form);
     return box;
   }
+  // ── saved replies, and the automatic reply (2026-10-06) ──────────────────
+  let savedReplyList = [];
+  async function loadSupportExtras() {
+    const [rep, ack] = await Promise.all([call({ action: 'support_replies' }), can('support_ack') ? call({ action: 'support_ack' }) : Promise.resolve(null)]);
+    if (rep.status === 200) { savedReplyList = rep.data.replies || []; renderSavedReplies(); }
+    if (ack && ack.status === 200) renderAck(ack.data);
+  }
+  function renderSavedReplies() {
+    const c = $('support-replies'); c.replaceChildren();
+    c.append(el('h3', '', 'Saved replies'), el('p', 'hint', 'Answers to the questions that keep coming. Pick one above a reply to put its words in, then change what needs changing before you send.'));
+    const list = el('div', 'mt-12');
+    if (!savedReplyList.length) list.append(el('p', 'muted small', 'None yet.'));
+    savedReplyList.forEach((r, i) => {
+      const row = el('div', 'member');
+      const left = el('div');
+      left.append(el('b', '', r.title), el('div', 'muted small', r.body.length > 90 ? r.body.slice(0, 89) + '…' : r.body));
+      const acts = el('div', 'actions');
+      const edit = el('button', 'btn small', 'Edit'); edit.type = 'button';
+      edit.addEventListener('click', () => editSavedReply(i));
+      const del = el('button', 'btn small', 'Delete'); del.type = 'button';
+      del.addEventListener('click', async () => {
+        if (!(await ask({ title: 'Delete “' + r.title + '”?', body: 'Replies already sent are not changed.', confirm: 'Delete', danger: true }))) return;
+        saveReplyList(savedReplyList.filter((_, k) => k !== i), 'Deleted.');
+      });
+      acts.append(edit, del);
+      row.append(left, acts);
+      list.append(row);
+    });
+    c.append(list);
+    const add = el('button', 'btn primary mt-12', 'Add a saved reply'); add.type = 'button';
+    add.addEventListener('click', () => editSavedReply(-1));
+    c.append(add);
+  }
+  /** One saved reply, new (-1) or changed, in a form under the list. */
+  function editSavedReply(i) {
+    const c = $('support-replies');
+    const open = c.querySelector('.panel'); if (open) open.remove();
+    const r = i >= 0 ? savedReplyList[i] : { title: '', body: '' };
+    const box = el('div', 'panel');
+    const form = el('form', 'form'); form.noValidate = true;
+    const tl = el('label', 'wide', 'Its name, for you'); const title = inputEl({ max: 60, value: r.title, placeholder: 'e.g. Resetting a password' }); tl.append(title);
+    const bl = el('label', 'wide', 'The words'); const body = textareaEl({ tall: true, max: 4000, value: r.body, placeholder: 'What they read. You can change it before each send.' }); bl.append(body);
+    const row = el('div', 'actions wide');
+    const save = el('button', 'btn primary', i >= 0 ? 'Save' : 'Add'); save.type = 'submit';
+    const cancel = el('button', 'btn', 'Cancel'); cancel.type = 'button';
+    cancel.addEventListener('click', () => box.remove());
+    row.append(save, cancel);
+    form.append(tl, bl, row);
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const next = { id: r.id, title: title.value.trim(), body: body.value.trim() };
+      if (!next.title || next.body.length < 2) { toast('Give it a name and some words.', true); return; }
+      const list = savedReplyList.slice();
+      if (i >= 0) list[i] = next; else list.push(next);
+      save.disabled = true;
+      await saveReplyList(list, i >= 0 ? 'Saved.' : 'Added.');
+      save.disabled = false;
+    });
+    box.append(form);
+    c.append(box);
+    title.focus();
+  }
+  async function saveReplyList(list, done) {
+    const { status, data } = await call({ action: 'support_replies_save', replies: list });
+    if (status !== 200) { toast(data.error || 'That did not work (' + status + ').', true); return false; }
+    savedReplyList = data.replies || [];
+    renderSavedReplies();
+    toast(done);
+    return true;
+  }
+  /*
+    The automatic "we got your message": off until switched on here, and then
+    only for mail that arrives afterwards. The server also leaves out no-reply
+    senders, lists, other automatic replies and Convoy's own domain, and
+    answers a sender once a day at most (support.ts).
+  */
+  function renderAck(s) {
+    const c = $('support-ack'); c.replaceChildren();
+    c.append(el('h3', '', 'Automatic reply'), el('p', 'hint', 'A short note back to each new email, within 15 minutes of it arriving: only mail that comes after it is switched on, one a day to any sender, and never to a no-reply address, a mailing list, another automatic reply or Convoy’s own address.'));
+    const row = setting('Answer new mail automatically', s.on && s.since ? 'On since ' + when(s.since) + '.' : 'Off.');
+    const sw = switchEl(!!s.on, 'Answer new mail automatically');
+    row.append(sw.label);
+    c.append(row);
+    const form = el('form', 'form mt-12'); form.noValidate = true;
+    const bl = el('label', 'wide', 'What it says'); const body = textareaEl({ tall: true, max: 2000, value: s.body || '' }); bl.append(body);
+    const actions = el('div', 'actions wide');
+    const save = el('button', 'btn', 'Save the words'); save.type = 'submit';
+    actions.append(save);
+    form.append(bl, actions);
+    c.append(form);
+    sw.input.addEventListener('change', async () => {
+      const on = sw.input.checked;
+      if (on && !(await ask({ title: 'Switch on the automatic reply?', body: 'From now on each new email gets these words back within 15 minutes. Mail already in the inbox is not answered.', confirm: 'Switch on' }))) { sw.input.checked = false; return; }
+      sw.input.disabled = true;
+      const { status, data } = await call({ action: 'support_ack_save', value: { on, body: body.value.trim() } });
+      sw.input.disabled = false;
+      if (status !== 200) { sw.input.checked = !on; toast(data.error || 'That did not work (' + status + ').', true); return; }
+      toast(on ? 'On. New mail is answered from now.' : 'Off.');
+      renderAck(data.settings);
+    });
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      save.disabled = true;
+      const { status, data } = await call({ action: 'support_ack_save', value: { body: body.value.trim() } });
+      save.disabled = false;
+      if (status !== 200) { toast(data.error || 'That did not work (' + status + ').', true); return; }
+      toast('Saved.');
+      renderAck(data.settings);
+    });
+  }
+
   function linkAccountForm(m) {
     const box = el('div', 'recover');
     box.append(el('div', 'h', 'Whose account is this about?'));
@@ -3576,6 +3916,50 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     banner(''); stamp(new Date().toISOString());
     renderReleases(rel.data);
     if (rev) renderReviews(rev.status === 200 ? rev.data : { reviews: [], unavailable: rev.data.error || 'Could not load the reviews.' });
+    if (can('rollback')) renderRollbackCard();
+  }
+  /*
+    Rolling back an update (2026-10-06). A crash at launch ships no logs, so a
+    bad update is rolled back first and looked into after. An earlier update,
+    the same bundle, is published again as the newest on both channels; phones
+    take it the way they take any update. Owner only, and asked twice: the
+    server checks it first, then he confirms.
+  */
+  function renderRollbackCard() {
+    const c = $('rel-rollback'); c.replaceChildren();
+    c.append(el('p', 'hint', 'If an update breaks the app, put an earlier one back: it is published again, unchanged, as the newest update on production and preview, and phones take it the next time they open Convoy. Nothing is rebuilt, and the bad update stays in the list above.'));
+    const pick = el('button', 'btn primary mt-12', 'Choose an earlier update'); pick.type = 'button';
+    const out = el('div', 'mt-12');
+    pick.addEventListener('click', async () => {
+      pick.disabled = true;
+      out.replaceChildren(el('p', 'muted small', 'Asking Expo…'));
+      const { status, data } = await call({ action: 'rollback_choices' });
+      pick.disabled = false;
+      out.replaceChildren();
+      if (status !== 200) { out.append(el('p', 'muted', data.error || 'Could not ask Expo.')); return; }
+      if (!data.groups.length) { out.append(el('p', 'muted', 'Nothing has been published to production.')); return; }
+      out.append(dataTable(['Update', 'Published', 'Runtime', 'Platforms', ''], data.groups.map((g) => {
+        let cell;
+        if (g.live) cell = el('span', 'status ok', 'Phones get this now');
+        else if (!g.sameRuntime) cell = el('span', 'muted small', 'For another build');
+        else { cell = el('button', 'btn small', 'Roll back to this'); cell.type = 'button'; cell.addEventListener('click', () => rollBackTo(g, cell)); }
+        return [g.message || '(no message)', when(g.at), g.runtime, g.platforms.map((p) => PLATFORM[p] || p).join(', '), cell];
+      })));
+    });
+    c.append(pick, out);
+  }
+  async function rollBackTo(g, btn) {
+    btn.disabled = true;
+    const check = await call({ action: 'rollback_check', group: g.group });
+    btn.disabled = false;
+    if (check.status !== 200) { toast(check.data.error || 'That update cannot be put back.', true); return; }
+    const ok = await ask({
+      title: 'Roll back to this update?',
+      body: '“' + (g.message || 'untitled') + '”, published ' + when(g.at) + ', goes out again as the newest update on ' + check.data.channels.join(' and ') + ', named “' + check.data.message + '”. Phones take it the next time they open Convoy.',
+      confirm: 'Roll back', danger: true,
+    });
+    if (!ok) return;
+    if (await act(btn, { action: 'rollback', group: g.group }, null, { done: 'Rolled back. Phones take it the next time they open Convoy.' })) loadReleases();
   }
   const updateName = (u) => (u.updateId === 'embedded' ? 'As built, no update yet' : u.message || 'Update ' + String(u.updateId).slice(0, 8));
   function renderReleases(d) {
@@ -3928,11 +4312,14 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     usage: ['Plan limits', 'A plan at 90% of its limit, once a month (hourly)'],
     crashes: ['Crashes', 'A crash Sentry first saw in the last two days (hourly)'],
     backup: ['Backups', 'No backup downloaded for a week, once a week'],
+    pushes: ['Push delivery', 'A day in which one push in five or more did not reach the phone (hourly)'],
+    security: ['Sign-ins', 'Admin or the Dashboard signed in to from a browser never seen before, or five wrong tries at either within 15 minutes'],
   };
   const HOUSE = {
     rate_log: ['rate-limit row', 'rate-limit rows'], deletion_requests: ['unconfirmed deletion request', 'unconfirmed deletion requests'],
     runs_ended: ['stuck run ended', 'stuck runs ended'], live_cleared: ['live flag cleared', 'live flags cleared'], positions: ['old position', 'old positions'],
     alerts: ['old alert', 'old alerts'], snapshots: ['old snapshot', 'old snapshots'], posts: ['expired post', 'expired posts'], device_logs: ['old log line', 'old log lines'],
+    removed_for_good: ['removed post or comment deleted for good', 'removed posts and comments deleted for good'], hidden_orphans: ['hidden row let go', 'hidden rows let go'],
   };
   const houseText = (s) => {
     const parts = Object.entries(s || {}).filter(([, n]) => Number(n) > 0).map(([k, n]) => (HOUSE[k] ? plural(Number(n), HOUSE[k][0], HOUSE[k][1]) : num(n) + ' ' + k));
@@ -3941,16 +4328,20 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
   async function loadSystem() {
     $('refresh').disabled = true;
     const ask1 = (ok, body) => (ok ? call(body) : Promise.resolve(null));
-    const [alerts, jobsR, keys, admins] = await Promise.all([
+    const [alerts, jobsR, keys, admins, pushes, briefing] = await Promise.all([
       ask1(can('alerts'), { action: 'alerts' }),
       ask1(can('jobs'), { action: 'jobs' }),
       call({ action: 'passkeys' }),
       ask1(can('admins'), { action: 'admins' }),
+      ask1(can('push_health'), { action: 'push_health' }),
+      ask1(can('briefing_settings'), { action: 'briefing_settings' }),
     ]);
     $('refresh').disabled = false;
     if (keys.status === 401) return;
     banner(''); stamp(new Date().toISOString());
     if (alerts) renderAlertsCard(alerts, jobsR && jobsR.status === 200 ? jobsR.data.schedule || {} : null);
+    if (pushes) renderPushesCard(pushes);
+    if (briefing) renderBriefingCard(briefing);
     if (jobsR) { renderScheduleCard(jobsR); renderHouseCard(jobsR); renderBackupCard(jobsR); }
     renderPasskeys(keys);
     if (admins) renderAdmins(admins);
@@ -4009,6 +4400,82 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     }
   }
   /*
+    What became of the pushes the server sent in the last day (0103): Expo's
+    ticket says accepted or refused at once, and its receipt, about fifteen
+    minutes on, whether Apple or Google took it. A phone the app is gone from
+    comes off the list by itself.
+  */
+  const PUSH_KIND_WORDS = {
+    app: 'From the app', alerts: 'Alerts to you and the team', admin_code: 'Admin sign-in codes', dashboard_code: 'Dashboard sign-in codes',
+    money: 'Dashboard money', announcement: 'Announcements', warning: 'Warnings', security: 'Sign-in alerts', briefing: 'Morning briefing',
+  };
+  function renderPushesCard({ status, data }) {
+    const c = $('sys-pushes'); c.replaceChildren();
+    c.append(el('h3', '', 'Push delivery'), el('p', 'hint', 'Every push the server sent in the last day, and whether it reached the phone. The answer comes about 15 minutes after each send. A phone the app has been deleted from comes off the list by itself.'));
+    if (status !== 200 || data.unavailable) { c.append(el('p', 'muted mt-12', data.unavailable || data.error || 'Could not load the pushes.')); return; }
+    const t = data.total || { sent: 0, delivered: 0, failed: 0, waiting: 0 };
+    const tiles = el('div', 'stats mt-12');
+    for (const [l, v] of [['Sent', t.sent], ['Delivered', t.delivered], ['Failed', t.failed], ['Waiting', t.waiting]]) {
+      const s = el('div', 'stat'); s.append(el('div', 'n', num(v)), el('div', 'l', l)); tiles.append(s);
+    }
+    c.append(tiles);
+    const kinds = Object.entries(data.byKind || {}).sort((a, b) => b[1].sent - a[1].sent);
+    if (kinds.length) c.append(dataTable(['Kind', 'Sent', 'Delivered', 'Failed', 'Waiting'], kinds.map(([k, v]) => [PUSH_KIND_WORDS[k] || cap(k), num(v.sent), num(v.delivered), num(v.failed), num(v.waiting)]), [false, true, true, true, true]));
+    else c.append(el('p', 'muted small', 'Nothing sent in the last day.'));
+    const reasons = Object.entries(data.reasons || {}).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    if (reasons.length) { c.append(el('h2', '', 'Why they did not arrive')); c.append(rowsList(reasons.map(([why, n]) => [why, plural(n, 'push', 'pushes')]))); }
+    c.append(el('p', 'muted small mt-12', data.deadPhonesWeek ? plural(data.deadPhonesWeek, 'push', 'pushes') + ' in the last week went to a phone the app is gone from. Those phones are off the list now.' : 'No push in the last week went to a phone the app is gone from.'));
+  }
+  /** The morning briefing (2026-10-06): one push a day, at his hour, New York time. */
+  function renderBriefingCard({ status, data }) {
+    const c = $('sys-briefing'); c.replaceChildren();
+    c.append(el('h3', '', 'Morning briefing'), el('p', 'hint', 'One push a day to your phone: sign-ups and runs in the last day, reports open, posts hidden for review, support mail waiting, new crashes and new reviews.'));
+    if (status !== 200) { c.append(el('p', 'muted mt-12', data.error || 'Could not load the briefing.')); return; }
+    const cur = { on: data.on !== false, hour: data.hour || 8 };
+    const row = setting('Send it every day', 'At the first check from this hour, New York time.');
+    row.classList.add('stack');
+    const ctl = el('div', 'actions ctl');
+    const hour = selectEl(Array.from({ length: 17 }, (_, i) => [String(i + 5), hourLabel(i + 5)]), cur.hour);
+    hour.setAttribute('aria-label', 'Hour, New York time');
+    hour.disabled = !cur.on;
+    const sw = switchEl(cur.on, 'Send the morning briefing');
+    const save = async (next, undo) => {
+      sw.input.disabled = true; hour.disabled = true;
+      const ok = await act(null, { action: 'briefing_save', value: next }, null, { done: next.on ? 'Every day at ' + hourLabel(next.hour) + ', New York time.' : 'No morning briefing.' });
+      if (ok) Object.assign(cur, next); else undo();
+      sw.input.disabled = false; hour.disabled = !cur.on;
+    };
+    sw.input.addEventListener('change', () => save({ on: sw.input.checked, hour: cur.hour }, () => { sw.input.checked = cur.on; }));
+    hour.addEventListener('change', () => save({ on: cur.on, hour: Number(hour.value) }, () => { hour.value = String(cur.hour); }));
+    ctl.append(hour, sw.label);
+    row.append(ctl);
+    c.append(row);
+    const out = el('div');
+    const actions = el('div', 'actions mt-12');
+    const preview = el('button', 'btn small', 'What it would say now'); preview.type = 'button';
+    preview.addEventListener('click', async () => {
+      preview.disabled = true;
+      const r = await call({ action: 'briefing_preview' });
+      preview.disabled = false;
+      out.replaceChildren();
+      if (r.status !== 200) { toast(r.data.error || 'That did not work.', true); return; }
+      const box = el('div', 'panel');
+      box.append(el('b', '', r.data.text.title), el('div', 'small', r.data.text.body));
+      if (r.data.sentToday) box.append(el('div', 'muted small', 'Today’s has gone already.'));
+      out.append(box);
+    });
+    const send = el('button', 'btn small', 'Send one now'); send.type = 'button';
+    send.addEventListener('click', async () => {
+      send.disabled = true;
+      const r = await call({ action: 'briefing_send' });
+      send.disabled = false;
+      if (r.status !== 200) { toast(r.data.error || 'That did not work.', true); return; }
+      toast(r.data.sent ? 'Sent to your phone. The one at your hour still comes.' : 'It did not reach a phone: is Convoy signed in with its notifications on?', !r.data.sent);
+    });
+    actions.append(preview, send);
+    c.append(actions, out);
+  }
+  /*
     Every job the database runs on its own (0099, 0100), with its newest run
     (2026-10-05: "Not seeing the scheduled jobs in system under admin"). Late is
     two of its gaps without a run.
@@ -4041,7 +4508,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
   }
   function renderHouseCard({ status, data }) {
     const c = $('sys-house'); c.replaceChildren();
-    c.append(el('h3', '', 'Clean-up'), el('p', 'hint', 'Every night: rate-limit rows over three days old, unconfirmed deletion requests, positions from finished runs, old alerts; ends runs left live with nobody moving; and prunes posts and log lines by the app’s own rules. Never a person or a message.'));
+    c.append(el('h3', '', 'Clean-up'), el('p', 'hint', 'Every night: rate-limit rows over three days old, unconfirmed deletion requests, positions from finished runs, old alerts; ends runs left live with nobody moving; prunes posts and log lines by the app’s own rules; and deletes for good what was removed in Moderation 30 days ago. Never a person or a message.'));
     if (status !== 200 || data.unavailable) { c.append(el('p', 'muted mt-12', data.unavailable || data.error || 'Could not load the clean-up.')); return; }
     const runs = (data.jobs || []).filter((j) => j.job === 'housekeeping').slice(0, 4);
     const list = el('div', 'mt-12');
@@ -4317,6 +4784,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       ...visibleTabs().map((t, i) => ({ group: 'Go to', label: TAB_LABEL[t], keys: i < 9 ? String(i + 1) : '', run: () => go(t) })),
       { group: 'Go to', label: 'Content reports', sub: 'Moderation', run: () => goMod('content') },
       { group: 'Go to', label: 'Issue reports', sub: 'Moderation', run: () => goMod('issues') },
+      can('hidden_list') && { group: 'Go to', label: 'Hidden posts and comments', sub: 'Moderation', run: () => goMod('hidden') },
       can('deletion_requests') && { group: 'Go to', label: 'Deletion requests', sub: 'Moderation', run: () => goMod('deletions') },
       { group: 'Go to', label: 'People', sub: 'Moderation', run: () => goMod('people') },
       can('activity') && { group: 'Go to', label: 'Activity', sub: 'every sign-in and change', run: () => goMod('activity') },
@@ -4327,6 +4795,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       can('achievement_save') && { group: 'Do', label: 'New achievement', run: async () => { await go('achievements'); if (achData && !achData.unavailable) openEditor(null); } },
       can('announcement_save') && { group: 'Do', label: 'New announcement', sub: 'App control', run: async () => { await go('control'); openAnnouncementEditor(null); } },
       can('backup_rows') && { group: 'Do', label: 'Download a backup', sub: 'System', run: pressIn('system', 'sys-backup') },
+      can('rollback') && { group: 'Do', label: 'Roll back an update', sub: 'Releases', run: pressIn('releases', 'rel-rollback') },
       { group: 'Do', label: 'Add a passkey', sub: 'System', run: pressIn('system', 'sys-passkeys') },
       { group: 'Do', label: 'Keyboard shortcuts', keys: '?', run: () => shortcuts() },
       { group: 'Do', label: 'Sign out', run: () => signOut() },

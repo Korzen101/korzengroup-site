@@ -18,7 +18,7 @@
   else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-cDelD1gcJxEEL4DxquprZGWyS3Tef8m7jBhrD2uSUH8=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-NiGJiwhot6E1yrh1r5mvpJTWwrQo2a6J1jpx7QNH7D8='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Yxebupm9pbsvq4RkTPtTstigx4n105vLrxX+m7CdX/0=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-NiGJiwhot6E1yrh1r5mvpJTWwrQo2a6J1jpx7QNH7D8='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <!-- img-src names the Supabase host for the collection's pictures: private, each shown through a signed link the function makes for an hour. data: is a picture chosen but not yet saved. -->
 <title>Dashboard · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -713,6 +713,22 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     get() { try { return sessionStorage.getItem(KEY) || ''; } catch { return ''; } },
     set(v) { try { if (v) sessionStorage.setItem(KEY, v); else sessionStorage.removeItem(KEY); } catch {} },
   };
+  /*
+    This browser's own random id, sent with each sign-in step so a sign-in
+    from a browser never seen before is a push to you (2026-10-06). It means
+    nothing anywhere else, and the server keeps only a hash of it.
+  */
+  const DEVICE_KEY = 'korzen.dashboard.device';
+  function deviceId() {
+    try {
+      let v = localStorage.getItem(DEVICE_KEY) || '';
+      if (!/^[A-Za-z0-9_-]{16,80}$/.test(v)) {
+        v = Array.from(crypto.getRandomValues(new Uint8Array(24)), (b) => b.toString(16).padStart(2, '0')).join('');
+        localStorage.setItem(DEVICE_KEY, v);
+      }
+      return v;
+    } catch { return undefined; }
+  }
   const el = (tag, cls, text) => {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -794,7 +810,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     if (!email || !password) { $('login-error').textContent = 'Enter the email and the password.'; return; }
     $('signin').disabled = true;
     $('login-error').textContent = ''; $('login-error').className = 'error';
-    const { status, data } = await call({ action: 'login', email, password });
+    const { status, data } = await call({ action: 'login', email, password, device: deviceId() });
     $('signin').disabled = false;
     form.password.value = '';
     if (status === 200 && data.step === 'code' && data.challenge) { challenge = data.challenge; return showCodeStep(data.phones || 1, data.minutes || 5); }
@@ -807,7 +823,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     if (code.length !== 6) { $('code-error').textContent = 'The code is six digits.'; return; }
     $('verify').disabled = true;
     $('code-error').textContent = '';
-    const { status, data } = await call({ action: 'login_code', challenge, code });
+    const { status, data } = await call({ action: 'login_code', challenge, code, device: deviceId() });
     $('verify').disabled = false;
     if (status === 200 && data.token) return signedIn(data.token);
     $('code-error').textContent = data.error || (status === 0 ? 'Could not reach the server.' : 'That did not work (' + status + ').');
@@ -886,7 +902,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
         return;
       }
       if (!cred) return;
-      const { status, data } = await call({ action: 'passkey_login', token: start.data.token, response: credentialJSON(cred) });
+      const { status, data } = await call({ action: 'passkey_login', token: start.data.token, response: credentialJSON(cred), device: deviceId() });
       if (status === 200 && data.token) return signedIn(data.token);
       err.textContent = data.error || 'That did not work (' + status + ').';
     } finally {
