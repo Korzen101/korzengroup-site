@@ -18,7 +18,7 @@
   else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Yxebupm9pbsvq4RkTPtTstigx4n105vLrxX+m7CdX/0=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-NiGJiwhot6E1yrh1r5mvpJTWwrQo2a6J1jpx7QNH7D8='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-k2Y3EvKQF7UbhddAO/573WOe2NU3wVDA4n7+y8Pdl04=' 'sha256-l9SUFP3mx/t6LHb3Lr5KyK0nJWJJlaI3CVztDWETym0='; style-src 'sha256-X225BRDikKl3HUdOlWX2wYB652KW9JPTS1XY+UOmSnQ='; font-src 'self'; img-src 'self' data: https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <!-- img-src names the Supabase host for the collection's pictures: private, each shown through a signed link the function makes for an hour. data: is a picture chosen but not yet saved. -->
 <title>Dashboard · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -407,6 +407,176 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
   .find { padding: 7px 10px; margin-left: 0; }
   .find .label, .find .kbd { display: none; }
 }
+
+/* ── mail (2026-10-07, 0105): his own mailbox ────────────────────────────── */
+#tab-mail { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='m3 7 9 6 9-6'/%3E%3C/svg%3E"); }
+.ico.mail-i { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='m3 7 9 6 9-6'/%3E%3C/svg%3E"); }
+.ico.pen { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E"); }
+.ico.inbox { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 13h5l1.5 3h5l1.5-3h5'/%3E%3Cpath d='M5.5 5h13l2.5 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6Z'/%3E%3C/svg%3E"); }
+.ico.star { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z'/%3E%3C/svg%3E"); }
+.ico.star-on { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath fill='black' d='m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z'/%3E%3C/svg%3E"); }
+.ico.send { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m22 2-7 20-4-9-9-4Z'/%3E%3Cpath d='M22 2 11 13'/%3E%3C/svg%3E"); }
+.ico.draft { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8Z'/%3E%3Cpath d='M14 3v5h5'/%3E%3Cpath d='M9 13h6M9 17h4'/%3E%3C/svg%3E"); }
+.ico.archive { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='4' rx='1'/%3E%3Cpath d='M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8'/%3E%3Cpath d='M10 12h4'/%3E%3C/svg%3E"); }
+.ico.spam { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3 4 6.5V12c0 4.6 3.4 8.3 8 9 4.6-.7 8-4.4 8-9V6.5Z'/%3E%3Cpath d='M12 8v5'/%3E%3Cpath d='M12 16.5h.01'/%3E%3C/svg%3E"); }
+.ico.trash { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M8 6V4h8v2'/%3E%3Cpath d='M6 6l1 14h10l1-14'/%3E%3Cpath d='M10 10v6M14 10v6'/%3E%3C/svg%3E"); }
+.ico.reply { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 14 4 9l5-5'/%3E%3Cpath d='M4 9h10a6 6 0 0 1 6 6v4'/%3E%3C/svg%3E"); }
+.ico.reply-all { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 14 2 9l5-5'/%3E%3Cpath d='M12 14 7 9l5-5'/%3E%3Cpath d='M7 9h8a6 6 0 0 1 6 6v4'/%3E%3C/svg%3E"); }
+.ico.forward { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 14 5-5-5-5'/%3E%3Cpath d='M20 9H10a6 6 0 0 0-6 6v4'/%3E%3C/svg%3E"); }
+.ico.clip { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21 11-8.5 8.5a5 5 0 0 1-7-7l9-9a3.3 3.3 0 0 1 4.7 4.7l-9 9a1.7 1.7 0 0 1-2.4-2.4L16 7'/%3E%3C/svg%3E"); }
+.ico.back { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E"); }
+.ico.next { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E"); }
+.ico.sliders { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1'/%3E%3Ccircle cx='15' cy='6' r='2'/%3E%3Ccircle cx='9' cy='12' r='2'/%3E%3Ccircle cx='17' cy='18' r='2'/%3E%3C/svg%3E"); }
+.ico.more { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='5' cy='12' r='1.2'/%3E%3Ccircle cx='12' cy='12' r='1.2'/%3E%3Ccircle cx='19' cy='12' r='1.2'/%3E%3C/svg%3E"); }
+.ico.picture { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Ccircle cx='9' cy='10' r='2'/%3E%3Cpath d='m21 16-5-5-9 9'/%3E%3C/svg%3E"); }
+.ico.block { --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m5.6 5.6 12.8 12.8'/%3E%3C/svg%3E"); }
+/* The unread count on the tab: a number on the accent, never colour alone. */
+.tab-count { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #3987e5; color: #fff; font-size: 11px; font-weight: 800; line-height: 18px; text-align: center; font-variant-numeric: tabular-nums; }
+.mail { display: grid; grid-template-columns: 188px minmax(0, 1fr); gap: 20px; align-items: start; }
+.mail-folders { display: grid; gap: 2px; position: sticky; top: 84px; }
+.mf { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; color: var(--ink-2); padding: 9px 12px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; text-align: left; }
+.mf:hover { background: rgba(255,255,255,.04); color: var(--ink); }
+.mf[aria-current="true"] { background: var(--raise); color: var(--ink); }
+.mf:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.mf .n { margin-left: auto; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.mf.has .n { color: var(--ink); font-weight: 800; }
+.mail-card { padding: 0; overflow: hidden; }
+.mail-tools { display: flex; align-items: center; gap: 6px 8px; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; min-height: 56px; }
+.mail-bulk { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.mail-bulk .msel { color: var(--muted); font-size: 13px; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.mail-tools .mail-q { flex: 1 1 220px; width: auto; margin-left: auto; padding: 8px 12px; font-size: 14px; border-radius: 10px; max-width: 340px; }
+.btn.small .label:empty { display: none; }
+.mcheck { display: grid; place-items: center; padding: 0 4px 0 16px; cursor: pointer; align-self: stretch; }
+.mcheck input { width: 16px; height: 16px; accent-color: #3987e5; cursor: pointer; margin: 0; }
+.mrow { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; border-bottom: 1px solid var(--line); }
+.mrow:last-child { border-bottom: 0; }
+.mrow:hover { background: rgba(255,255,255,.025); }
+.mrow.sel { background: rgba(57,135,229,.10); }
+.mrow.cursor { box-shadow: inset 3px 0 0 #3987e5; }
+.mstar { border: 0; background: none; padding: 8px 6px; color: var(--muted); cursor: pointer; display: grid; place-items: center; border-radius: 8px; }
+.mstar:hover { color: var(--ink); }
+.mstar.on { color: var(--warning); }
+.mstar:focus-visible, .mopen:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.mopen { display: grid; grid-template-columns: minmax(0, 180px) minmax(0, 1fr) auto; gap: 14px; align-items: baseline; border: 0; background: none; color: var(--ink-2); padding: 13px 16px 13px 4px; text-align: left; cursor: pointer; width: 100%; min-width: 0; font: inherit; font-size: 14px; }
+.mrow.unread .mopen { color: var(--ink); }
+.mrow.unread .mwho, .mrow.unread .msubj { font-weight: 800; }
+.mwho, .mline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.mwho .mcount { color: var(--muted); font-weight: 600; font-size: 12px; }
+.msnip { color: var(--muted); }
+.mwhen { display: inline-flex; gap: 8px; align-items: center; font-size: 12.5px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.mwhen .ico { width: 14px; height: 14px; }
+.mrow.unread .mwhen { color: var(--ink); font-weight: 700; }
+.mtag { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--ink-2); border: 1px solid var(--line-2); border-radius: 6px; padding: 0 6px; }
+.mtag.draft { color: #ff8f8f; border-color: rgba(208,59,59,.5); }
+.mempty { color: var(--muted); padding: 38px 22px; text-align: center; font-size: 14px; }
+.mempty b { display: block; color: var(--ink); font-size: 16px; margin-bottom: 4px; }
+/* One conversation. */
+.mbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+.mbar .mnav { margin-left: auto; display: inline-flex; gap: 4px; align-items: center; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.msubject { font-size: clamp(20px, 2.6vw, 26px); line-height: 1.25; margin: 0 0 16px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; text-wrap: balance; overflow-wrap: anywhere; }
+.msubject .pill { font-size: 12px; }
+.mmsg { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; margin-bottom: 10px; }
+.mmsg.closed { background: transparent; }
+.mhead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px 12px; padding: 14px 16px; align-items: start; cursor: pointer; border-radius: 16px; }
+.mhead:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.mavatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: var(--raise); color: var(--ink); font-size: 14px; }
+.mavatar.me { background: rgba(57,135,229,.22); }
+.mfrom { min-width: 0; overflow-wrap: anywhere; }
+.mfrom b { color: var(--ink); }
+.maddr, .mto { color: var(--muted); font-size: 13px; }
+.mto { margin-top: 1px; }
+.mclosed-line { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 1px; }
+.mside { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.mdate { color: var(--muted); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.mtools { display: flex; gap: 4px; align-items: center; }
+.mtools .btn.small { padding: 4px 8px; }
+.mmenu { position: relative; }
+.mmenu > summary { list-style: none; cursor: pointer; }
+.mmenu > summary::-webkit-details-marker { display: none; }
+.mmenu .list { position: absolute; right: 0; top: calc(100% + 6px); z-index: 4; min-width: 220px; display: grid; padding: 6px; border-radius: 12px; background: #15181c; border: 1px solid var(--line-2); box-shadow: 0 14px 34px rgba(0,0,0,.5); }
+.mmenu .list button, .mmenu .list a { display: flex; gap: 10px; align-items: center; text-align: left; border: 0; background: none; color: var(--ink); padding: 8px 10px; border-radius: 8px; cursor: pointer; font: inherit; font-size: 14px; text-decoration: none; }
+.mmenu .list button:hover, .mmenu .list a:hover { background: var(--raise); }
+.mwarn { margin: 0 16px 12px; padding: 10px 12px; border-radius: 12px; background: rgba(208,59,59,.1); border: 1px solid rgba(208,59,59,.4); font-size: 14px; }
+.mimgbar { margin: 0 16px 12px; display: flex; gap: 8px 12px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); padding: 8px 12px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--line); }
+.mbodywrap { padding: 0 16px 16px; }
+/* The email's own page: white, like the paper it was written for, and sealed in its own shadow root. */
+.mpaper { border-radius: 12px; overflow: hidden; background: #fff; }
+.mplain { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink); font-size: 15px; line-height: 1.6; }
+.mplain a { color: #8fb8ff; }
+.mquoted { color: var(--ink-2); border-left: 2px solid var(--line-2); padding-left: 12px; margin-top: 8px; }
+.mquote-btn { border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink-2); border-radius: 8px; padding: 0 8px; line-height: 18px; cursor: pointer; margin-top: 8px; font-weight: 800; letter-spacing: .1em; }
+.mfiles { display: flex; gap: 10px; flex-wrap: wrap; padding: 0 16px 16px; }
+.mfile { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 0 10px; align-items: center; width: min(240px, 100%); padding: 8px 10px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink); text-align: left; cursor: pointer; font: inherit; }
+.mfile:hover { background: var(--raise); }
+.mfile:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.mfile img, .mfile .ext { width: 40px; height: 40px; grid-row: 1 / span 2; border-radius: 8px; }
+.mfile img { object-fit: cover; background: #dfe3e8; }
+.mfile .ext { display: grid; place-items: center; background: var(--raise); font-size: 10.5px; font-weight: 800; letter-spacing: .04em; color: var(--ink-2); text-transform: uppercase; overflow: hidden; }
+.mfile b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.mfile .s { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.mfile .x { grid-row: 1 / span 2; grid-column: 3; }
+.manswer { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.mdraft-line { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 14px; margin-bottom: 10px; border: 1px dashed var(--line-2); border-radius: 14px; font-size: 14px; color: var(--ink-2); }
+/* The composer. */
+dialog.compose { width: min(780px, calc(100vw - 24px)); }
+.compose .body { padding: 16px 20px 4px; }
+.compose h3 { margin: 0 0 6px; }
+.cfield { display: grid; grid-template-columns: 62px minmax(0, 1fr) auto; gap: 10px; align-items: center; border-bottom: 1px solid var(--line); padding: 4px 0; }
+.cfield:focus-within { border-bottom-color: rgba(57,135,229,.6); }
+.cfield > label, .cfield > .lab { color: var(--muted); font-size: 13px; }
+.cfield .from { color: var(--ink-2); font-size: 14px; padding: 8px 0; overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 38px; cursor: text; padding: 3px 0; }
+.chip { display: inline-flex; align-items: center; gap: 2px; padding: 2px 2px 2px 10px; border-radius: 999px; background: var(--raise); border: 1px solid var(--line-2); font-size: 13px; max-width: 100%; }
+.chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip.bad { border-color: rgba(208,59,59,.7); color: #ff8f8f; }
+.chip-x { border: 0; background: none; color: var(--muted); cursor: pointer; width: 22px; height: 22px; border-radius: 50%; font-size: 15px; line-height: 1; flex: none; }
+.chip-x:hover { background: rgba(255,255,255,.08); color: var(--ink); }
+.chip-input, .csubject { border: 0; background: transparent; color: var(--ink); outline: none; font-size: 15px; }
+.chip-input { flex: 1 1 140px; min-width: 120px; padding: 6px 2px; }
+.csubject { width: 100%; padding: 9px 0; }
+.cbody { display: block; width: 100%; min-height: min(44vh, 380px); resize: vertical; border: 0; background: transparent; padding: 12px 0; font: 15px/1.6 Archivo, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); outline: none; }
+.cfiles { display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 0 10px; }
+.cfiles .mfile { grid-template-columns: 40px minmax(0, 1fr) auto; cursor: default; }
+.compose .foot { align-items: center; flex-wrap: wrap; padding-top: 12px; }
+.compose label.btn.file { display: inline-flex; }
+.compose label.btn.file:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.compose .csaved { margin-right: auto; color: var(--muted); font-size: 13px; }
+.compose .cnote { color: #ff8f8f; font-size: 13px; width: 100%; text-align: right; }
+.compose .cnote:empty { display: none; }
+.ccc { color: var(--muted); font-size: 13px; border: 0; background: none; cursor: pointer; padding: 6px 4px; }
+.ccc:hover { color: var(--ink); }
+.sheet .keys-head { margin: 20px 0 0; font-size: 15px; }
+/* Settings. */
+dialog.mail-settings { width: min(560px, calc(100vw - 32px)); }
+.mail-settings .grid { display: grid; gap: 14px; }
+.mail-settings textarea.input { min-height: 96px; resize: vertical; font: inherit; }
+.mlist { display: grid; gap: 6px; margin-top: 6px; }
+.mlist > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; padding: 6px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.mlist > div:last-child { border-bottom: 0; }
+.mail-settings .addrow { display: flex; gap: 8px; margin-top: 8px; }
+.mail-settings .addrow .input { padding: 8px 12px; font-size: 14px; }
+@media (max-width: 860px) {
+  .mail { grid-template-columns: 1fr; gap: 12px; }
+  .mail-folders { position: static; display: flex; overflow-x: auto; gap: 4px; padding-bottom: 4px; scrollbar-width: none; }
+  .mail-folders::-webkit-scrollbar { display: none; }
+  .mf { width: auto; white-space: nowrap; padding: 7px 11px; }
+}
+@media (max-width: 640px) {
+  .mail-tools { padding-right: 10px; }
+  .mail-tools .mail-q { flex: 1 1 100%; max-width: none; margin: 0 0 0 16px; order: 3; }
+  .mail-bulk .btn .label { display: none; }
+  .mopen { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding-right: 12px; }
+  .mopen .mline { grid-column: 1 / -1; grid-row: 2; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .mopen .mwhen { grid-column: 2; grid-row: 1; }
+  .mbar .btn .label { display: none; }
+  .mbar .mback .label { display: inline; }
+  .mhead { grid-template-columns: auto minmax(0, 1fr); }
+  .mside { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center; }
+  .mbodywrap, .mfiles { padding-left: 10px; padding-right: 10px; }
+  .cfield { grid-template-columns: 48px minmax(0, 1fr) auto; }
+  .compose .body { padding: 14px 14px 4px; }
+  .compose .foot { padding: 12px 14px 16px; }
+}
 </style>
 </head>
 <body>
@@ -415,6 +585,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
   <nav class="tabs" id="tabs" role="tablist" hidden>
     <button class="tab" role="tab" id="tab-collection" aria-selected="true" aria-controls="collection" type="button">Collection</button>
     <button class="tab" role="tab" id="tab-networth" aria-selected="false" aria-controls="networth" tabindex="-1" type="button">Net Worth</button>
+    <button class="tab" role="tab" id="tab-mail" aria-selected="false" aria-controls="mail" tabindex="-1" type="button">Mail<span class="tab-count" id="mail-badge" hidden></span></button>
   </nav>
   <button class="btn small find" id="find" type="button" hidden aria-keyshortcuts="Control+K Meta+K"><span class="label">Search</span><kbd class="kbd" id="find-kbd">Ctrl K</kbd></button>
   <button class="btn small keys-btn" id="passkeys" type="button" hidden aria-label="Passkeys" title="Passkeys"><span class="ico key" aria-hidden="true"></span><span class="label">Passkeys</span></button>
@@ -690,8 +861,39 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
         </div>
       </div>
     </section>
+
+    <!-- Mail (2026-10-07, 0105): "please create an email for me … and create a mailbox with all the needed features in the website dashboard." The address itself comes from the function once he is signed in: this page names no address. -->
+    <section id="mail" role="tabpanel" aria-labelledby="tab-mail" hidden>
+      <div class="titlebar">
+        <div><h1>Mail</h1><div class="sub" id="mail-sub" aria-live="polite"></div></div>
+        <div class="actions">
+          <button class="btn" id="mail-refresh" type="button" title="Check for new mail (R)"><span class="ico refresh" aria-hidden="true"></span>Refresh</button>
+          <button class="btn" id="mail-settings" type="button" title="Mail settings"><span class="ico sliders" aria-hidden="true"></span><span class="label">Settings</span></button>
+          <button class="btn primary" id="mail-compose" type="button" title="Write an email (C)"><span class="ico pen" aria-hidden="true"></span>Compose</button>
+        </div>
+      </div>
+      <div class="banner" id="mail-banner" role="alert" hidden></div>
+      <div class="mail">
+        <nav class="mail-folders" id="mail-folders" aria-label="Mail folders"></nav>
+        <div class="mail-main">
+          <div id="mail-listview">
+            <div class="card mail-card">
+              <div class="mail-tools">
+                <label class="mcheck mall"><input type="checkbox" id="mail-all" aria-label="Select every conversation shown"></label>
+                <div class="mail-bulk" id="mail-bulk"></div>
+                <input class="input mail-q" id="mail-q" type="search" placeholder="Search mail" autocomplete="off" spellcheck="false" aria-label="Search mail" enterkeyhint="search">
+              </div>
+              <div class="mail-list" id="mail-list" role="list" aria-label="Conversations"></div>
+            </div>
+            <div class="foot"><span id="mail-foot"></span><button class="btn small" id="mail-more" type="button" hidden>Older</button></div>
+          </div>
+          <div id="mail-reader" class="mreader" hidden></div>
+        </div>
+      </div>
+    </section>
   </div>
 </main>
+<datalist id="mail-contacts"></datalist>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script>
@@ -744,13 +946,14 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
   function busy(d) {
     inflight = Math.max(0, inflight + d);
     $('progress').classList.toggle('on', inflight > 0);
-    for (const id of ['refresh', 'nw-refresh']) $(id).classList.toggle('busy', inflight > 0);
+    for (const id of ['refresh', 'nw-refresh', 'mail-refresh']) $(id).classList.toggle('busy', inflight > 0);
   }
   // A refusal from these is the sign-in's answer, not a session that ended.
   const SIGN_IN = new Set(['login', 'login_code', 'passkey_login_options', 'passkey_login']);
-  async function call(body) {
+  /** `quiet`: a check made in the background (Mail's every two minutes), which turns nothing at the top. */
+  async function call(body, quiet) {
     const token = session.get();
-    busy(1);
+    if (!quiet) busy(1);
     try {
       const res = await fetch(API, {
         method: 'POST',
@@ -763,7 +966,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     } catch {
       return { status: 0, data: { error: 'Could not reach the server. Check the connection and try again.' } };
     } finally {
-      busy(-1);
+      if (!quiet) busy(-1);
     }
   }
 
@@ -792,12 +995,14 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     items = [];
     nwLoaded = false;
     nw = { items: [], history: [], collection: { count: 0, total: 0 }, today: '' };
+    forgetMail();
     const e = document.querySelector('#login-form input[name=email]');
     if (e && !e.value) e.focus();
   }
   function showApp() {
     $('login').hidden = true; $('app').hidden = false; $('tabs').hidden = false; $('signout').hidden = false; $('find').hidden = false; $('passkeys').hidden = false;
-    showTab(location.hash === '#networth' ? 'networth' : 'collection');
+    showTab(location.hash === '#networth' ? 'networth' : location.hash === '#mail' ? 'mail' : 'collection');
+    startMail();
   }
   function signedIn(token) {
     session.set(token); showPasswordStep(); $('login-form').reset(); showApp(); return load();
@@ -1271,8 +1476,8 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
   }
 
   // ── tabs ─────────────────────────────────────────────────────────────────
-  // The open tab is in the address as a bare #networth, so a reload keeps it.
-  const PANELS = ['collection', 'networth'];
+  // The open tab is in the address as a bare #networth or #mail, so a reload keeps it.
+  const PANELS = ['collection', 'networth', 'mail'];
   let tabNow = 'collection';
   function showTab(name, focus) {
     tabNow = PANELS.includes(name) ? name : 'collection';
@@ -1284,12 +1489,13 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
       $(p).hidden = !on;
       if (on && focus) tab.focus();
     }
-    try { history.replaceState(null, '', tabNow === 'networth' ? '#networth' : location.pathname + location.search); } catch {}
+    try { history.replaceState(null, '', tabNow === 'collection' ? location.pathname + location.search : '#' + tabNow); } catch {}
     if (tabNow === 'networth') {
       if (!nwLoaded) loadNetWorth(); else renderNetWorth();
       // Money (0097): suggestions on the overview, and the other four views.
       if (!mo && !moBusy) loadMoney(false);
     }
+    if (tabNow === 'mail') openMail();
   }
   for (const p of PANELS) $('tab-' + p).addEventListener('click', () => showTab(p));
   $('tabs').addEventListener('keydown', (ev) => {
@@ -2335,6 +2541,1320 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     out.replaceChildren(box);
   });
 
+  // ── mail (2026-10-07, 0105): his own mailbox ────────────────────────────
+  /*
+    "If possible, please create an email for me: [his name at korzengroup.com]
+    and create a mailbox with all the needed features in the website
+    dashboard."
+
+    The function (dashboard/mail.ts) copies his mail in from Resend every
+    five minutes and whenever this tab asks, keeps it, and sends through
+    Resend. This draws it: the folders, a page of conversations, one
+    conversation, and the composer, whose drafts are saved on the server as
+    he types, so one begun here is there in any other browser too.
+
+    An email's HTML is never trusted. DOMParser reads it inert (it runs no
+    script and loads nothing), and it is rebuilt element by element from a
+    list of allowed tags, attributes and styles, inside a shadow root on a
+    white page sealed from this one. Its links open in a new tab, its own
+    pictures (cid:) come from his copy, and a picture from another site
+    shows only through the image proxy, and only when he asks, so a
+    tracking pixel learns nothing until then. Whatever an email carries,
+    the page's policy runs no script but its own.
+  */
+  // His address, as the function says it (mail_list, mail_counts): like his sign-in address, it is written nowhere in this page.
+  let MAIL_ADDRESS = '';
+  const MAIL_FOLDERS = [
+    { key: 'inbox', label: 'Inbox', icon: 'inbox' },
+    { key: 'starred', label: 'Starred', icon: 'star' },
+    { key: 'sent', label: 'Sent', icon: 'send' },
+    { key: 'drafts', label: 'Drafts', icon: 'draft' },
+    { key: 'archive', label: 'Archive', icon: 'archive' },
+    { key: 'spam', label: 'Spam', icon: 'spam' },
+    { key: 'trash', label: 'Trash', icon: 'trash' },
+  ];
+  const FOLDER_WORD = { inbox: 'Inbox', sent: 'Sent', archive: 'Archive', spam: 'Spam', trash: 'Trash' };
+  const mail = {
+    asked: false, folder: 'inbox', q: '', threads: [], drafts: [], counts: {}, more: null, state: null,
+    selected: new Set(), cursor: -1, view: null, expanded: new Set(), plain: new Set(),
+    shown: new Map(), remote: new Map(), contacts: null, timer: 0, syncing: false, listing: 0, composer: null, fromName: '',
+  };
+
+  const icon = (name) => { const i = el('span', 'ico ' + name); i.setAttribute('aria-hidden', 'true'); return i; };
+  function iconBtn(name, label, cls) {
+    const b = el('button', 'btn small' + (cls ? ' ' + cls : ''));
+    b.type = 'button';
+    b.title = label;
+    // Named for a screen reader too: on a phone the word is hidden and only the icon shows.
+    b.setAttribute('aria-label', label);
+    b.append(icon(name), el('span', 'label', label));
+    return b;
+  }
+  /** His address, or one of its plus-forms. */
+  const isMine = (address) => {
+    if (!MAIL_ADDRESS) return false;
+    const a = String(address || '').toLowerCase();
+    const [local, domain] = [a.slice(0, a.lastIndexOf('@')), a.slice(a.lastIndexOf('@') + 1)];
+    const at = MAIL_ADDRESS.lastIndexOf('@');
+    return a === MAIL_ADDRESS || (domain === MAIL_ADDRESS.slice(at + 1) && local.split('+')[0] === MAIL_ADDRESS.slice(0, at));
+  };
+  const heard = (data) => {
+    if (data && typeof data.address === 'string' && data.address.includes('@')) MAIL_ADDRESS = data.address.toLowerCase();
+    if (data && typeof data.fromName === 'string' && data.fromName) mail.fromName = data.fromName;
+  };
+  const ADDRESS_RE = /^[^@\s<>(),;:"[\]\\]+@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/;
+  /** "Name <address>" or a bare address → { name, address }, or null. The server checks again before anything is sent. */
+  function personOf(raw) {
+    if (raw && typeof raw === 'object') return raw.address ? { name: raw.name || null, address: String(raw.address).toLowerCase() } : null;
+    const s = String(raw || '').trim();
+    const m = s.match(/^(.*?)<\s*([^<>\s]+@[^<>\s]+)\s*>\s*$/);
+    let name = null, address = s.replace(/^mailto:/i, '');
+    if (m) { name = m[1].trim().replace(/^"([\s\S]*)"$/, '$1').trim() || null; address = m[2]; }
+    address = address.trim().toLowerCase();
+    if (!ADDRESS_RE.test(address)) return null;
+    return { name: name && name.toLowerCase() !== address ? name : null, address };
+  }
+  /** A list as typed or pasted, split at its commas and semicolons, but not inside a quoted name or the angle brackets. */
+  function splitTyped(s) {
+    const out = [];
+    let cur = '', quoted = false, angle = 0;
+    for (const c of String(s || '')) {
+      if (c === '"') quoted = !quoted;
+      else if (!quoted && c === '<') angle++;
+      else if (!quoted && c === '>') angle = Math.max(0, angle - 1);
+      if ((c === ',' || c === ';' || c === '\n') && !quoted && !angle) { if (cur.trim()) out.push(cur.trim()); cur = ''; continue; }
+      cur += c;
+    }
+    if (cur.trim()) out.push(cur.trim());
+    return out;
+  }
+  const nameOf = (p) => (!p ? '' : isMine(p.address) ? 'me' : p.name || p.address);
+  const firstOf = (p) => { const n = nameOf(p); return n === 'me' || n.includes('@') ? n : n.split(/\s+/)[0]; };
+  const initialOf = (p) => { const n = (p && (p.name || p.address)) || '?'; return (n.match(/[A-Za-z0-9]/) || ['?'])[0].toUpperCase(); };
+  const sizeWords = (n) => (n < 1024 ? n + ' B' : n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / 1048576).toFixed(n < 10485760 ? 1 : 0) + ' MB');
+  function whenShort(iso) {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    const now = new Date();
+    if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    if (d.getFullYear() === now.getFullYear()) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: '2-digit' });
+  }
+  const whenLong = (iso) => { const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }); };
+
+  function mailBanner(message) { $('mail-banner').textContent = message || ''; $('mail-banner').hidden = !message; }
+  function renderMailSub() {
+    const s = mail.state || {};
+    const bits = MAIL_ADDRESS ? [MAIL_ADDRESS] : [];
+    if (s.last_sync_at) bits.push('checked ' + ago(s.last_sync_at));
+    if (s.last_error) bits.push('the last check failed');
+    $('mail-sub').textContent = bits.join(' · ');
+    $('mail-sub').title = s.last_error || '';
+  }
+
+  /** A question in a sheet, answered by one of its buttons: the chosen key, or null when it is closed. */
+  function askSheet(title, text, choices) {
+    return new Promise((resolve) => {
+      const d = el('dialog', 'sheet');
+      const inner = el('div', 'body');
+      inner.append(el('h3', '', title));
+      if (text) inner.append(el('p', 'note', text));
+      const foot = el('div', 'foot');
+      const done = (v) => { d.close(); d.remove(); resolve(v); };
+      const no = el('button', 'btn', 'Cancel'); no.type = 'button';
+      no.addEventListener('click', () => done(null));
+      foot.append(no);
+      for (const c of choices) {
+        const b = el('button', 'btn ' + (c.cls || 'primary'), c.label); b.type = 'button';
+        b.addEventListener('click', () => done(c.key));
+        foot.append(b);
+      }
+      d.append(inner, foot);
+      d.addEventListener('cancel', (e) => { e.preventDefault(); done(null); });
+      d.addEventListener('click', (e) => { if (e.target === d) done(null); });
+      document.body.append(d);
+      d.showModal();
+      foot.lastChild.focus();
+    });
+  }
+
+  /** A notice with Undo beside it, for a move he might not have meant. */
+  function toastUndo(text, undo) {
+    const t = el('div', 'toast');
+    t.setAttribute('role', 'status');
+    const words = el('span', '', text);
+    words.style.flex = '1';
+    const b = el('button', 'btn small', 'Undo'); b.type = 'button';
+    b.addEventListener('click', () => { t.remove(); undo(); });
+    t.append(words, b);
+    $('toasts').append(t);
+    setTimeout(() => t.remove(), 7000);
+  }
+
+  // ── an email's HTML, cleaned ───────────────────────────────────────────
+  const KEEP_TAGS = new Set('a abbr address article aside b bdi bdo big blockquote br caption center cite code col colgroup dd del details dfn div dl dt em figcaption figure font footer h1 h2 h3 h4 h5 h6 header hr i img ins kbd li main mark nav ol p pre q s samp section small span strike strong sub summary sup table tbody td tfoot th thead time tr tt u ul var wbr'.split(' '));
+  const DROP_TAGS = new Set('script style head title noscript template iframe frame frameset object embed applet svg math form input button select option optgroup textarea video audio source track canvas link meta base param picture portal dialog slot'.split(' '));
+  const KEEP_ATTRS = new Set('align valign width height bgcolor color face size dir lang title border cellpadding cellspacing colspan rowspan alt nowrap start type scope headers abbr span summary datetime reversed'.split(' '));
+  const scratch = document.createElement('div');
+  /** A style as the email wrote it, without what could reach outside its box: no url(), no fixed or absolute position. */
+  function cleanDecls(style) {
+    const out = [];
+    for (let i = 0; i < style.length; i++) {
+      const p = style[i];
+      const v = style.getPropertyValue(p);
+      if (/url\s*\(|image-set|expression\s*\(|javascript:|behavior|-moz-binding|@import/i.test(v)) continue;
+      if (p === 'position' && !/^\s*(static|relative)\s*$/i.test(v)) continue;
+      if (p === 'cursor' || p === 'pointer-events' || p === 'content' || p.startsWith('--')) continue;
+      out.push([p, v, style.getPropertyPriority(p)]);
+    }
+    return out;
+  }
+  function cleanStyle(text, to) {
+    scratch.style.cssText = String(text).slice(0, 20000);
+    for (const [p, v, pr] of cleanDecls(scratch.style)) to.style.setProperty(p, v, pr);
+    scratch.style.cssText = '';
+  }
+  const scopeSelector = (sel) =>
+    sel.split(',').map((s) => s.trim()
+      .replace(/^(:root|html)(\s+body)?(?=$|[\s.#:[>+~])/i, '.m-root')
+      .replace(/^body(?=$|[\s.#:[>+~])/i, '.m-root'))
+      .filter((s) => s && !/:host|::slotted|::part/i.test(s))
+      .join(', ');
+  /** The email's own stylesheets, rule by rule through the same check, as one sheet for its shadow root. */
+  function cleanSheet(text) {
+    if (!text.trim() || typeof CSSStyleSheet === 'undefined' || !('replaceSync' in CSSStyleSheet.prototype)) return null;
+    const src = new CSSStyleSheet();
+    try { src.replaceSync(text.slice(0, 300000)); } catch { return null; }
+    const out = [];
+    const walk = (rules, sink, depth) => {
+      if (depth > 4) return;
+      for (const r of rules) {
+        if (r instanceof CSSStyleRule) {
+          const decls = cleanDecls(r.style);
+          const sel = scopeSelector(r.selectorText);
+          if (decls.length && sel) sink.push(sel + '{' + decls.map(([p, v, pr]) => p + ':' + v + (pr ? ' !' + pr : '')).join(';') + '}');
+        } else if (typeof CSSMediaRule !== 'undefined' && r instanceof CSSMediaRule) {
+          const inner = [];
+          walk(r.cssRules, inner, depth + 1);
+          if (inner.length) sink.push('@media ' + r.media.mediaText + '{' + inner.join('') + '}');
+        }
+      }
+    };
+    walk(src.cssRules, out, 0);
+    if (!out.length) return null;
+    const sheet = new CSSStyleSheet();
+    try { sheet.replaceSync(out.join('\n')); } catch { return null; }
+    return sheet;
+  }
+  /*
+    The email's own styles, taken out before it is parsed: its <style> blocks
+    kept aside, and each style="" renamed. A document DOMParser makes keeps
+    this page's policy, which refuses an inline style and says so in the
+    console; renamed, there is nothing to refuse, and the styles still reach
+    the email through cleanStyle and cleanSheet.
+  */
+  function unstyled(html) {
+    const css = [];
+    const body = String(html)
+      .replace(/<style\b[^>]*>([\s\S]*?)<\/style\s*>/gi, (_, text) => { css.push(text); return ''; })
+      .replace(/(<[a-z][^<>]*?\s)style(\s*=)/gi, '$1data-m-style$2');
+    return { body, css: css.join('\n').replace(/<!--|-->/g, '') };
+  }
+  function copyAttrs(from, to) {
+    for (const a of from.attributes) {
+      const n = a.name.toLowerCase();
+      if (n === 'style' || n === 'data-m-style') cleanStyle(a.value, to);
+      else if (n === 'class') to.setAttribute('class', a.value.replace(/\bm-[a-z-]+/g, '').slice(0, 500));
+      else if (n === 'id') to.id = a.value.slice(0, 100);
+      else if (KEEP_ATTRS.has(n)) to.setAttribute(n, a.value.slice(0, 500));
+    }
+  }
+  function imageOut(from, out, ctx) {
+    const src = (from.getAttribute('src') || '').trim();
+    out.alt = from.getAttribute('alt') || '';
+    out.decoding = 'async';
+    out.loading = 'lazy';
+    out.referrerPolicy = 'no-referrer';
+    if (/^cid:/i.test(src)) {
+      const url = ctx.cid.get(src.slice(4).replace(/^<|>$/g, '').toLowerCase());
+      if (url) out.src = url; else out.className = 'm-gone';
+    } else if (/^data:image\/(png|jpe?g|gif|webp);base64,/i.test(src)) {
+      out.src = src;
+    } else if (/^https?:\/\//i.test(src)) {
+      ctx.remote.add(src);
+      const via = ctx.images && ctx.images.get(src);
+      if (via) out.src = via; else out.classList.add('m-hidden');
+    } else {
+      out.className = 'm-gone';
+    }
+  }
+  function linkOut(from, out) {
+    const href = (from.getAttribute('href') || '').trim();
+    if (/^https?:\/\//i.test(href)) {
+      out.href = href; out.target = '_blank'; out.rel = 'noopener noreferrer nofollow';
+      out.title = href.length > 300 ? href.slice(0, 300) + '…' : href;
+    } else if (/^mailto:/i.test(href)) {
+      out.href = href;
+      out.dataset.mailto = href.slice(7);
+    }
+    // Anything else (javascript:, data:, file:) is no link at all.
+  }
+  function appendClean(from, to, ctx, depth) {
+    if (depth > 80) return;
+    for (const node of from.childNodes) {
+      if (node.nodeType === 3) { to.append(document.createTextNode(node.nodeValue)); continue; }
+      if (node.nodeType !== 1) continue;
+      const tag = node.localName;
+      if (DROP_TAGS.has(tag)) continue;
+      // A tag not on the list keeps its words, not itself.
+      if (!KEEP_TAGS.has(tag)) { appendClean(node, to, ctx, depth + 1); continue; }
+      const out = document.createElement(tag);
+      copyAttrs(node, out);
+      if (tag === 'img') { imageOut(node, out, ctx); to.append(out); continue; }
+      if (tag === 'a') linkOut(node, out);
+      appendClean(node, out, ctx, depth + 1);
+      to.append(out);
+    }
+  }
+  const PAPER_CSS = [
+    ':host { display: block; contain: content; }',
+    '.m-root { background: #fff; color: #202124; font: 14px/1.5 Arial, Helvetica, sans-serif; padding: 18px; overflow-x: auto; overflow-wrap: break-word; min-height: 24px; }',
+    '.m-root img { max-width: 100%; height: auto; }',
+    '.m-root a { color: #1a5fd0; }',
+    '.m-root .m-hidden { display: inline-block; min-width: 18px; min-height: 18px; background: #eef1f4; outline: 1px dashed #c9ced6; outline-offset: -1px; }',
+    '.m-root .m-gone { display: none; }',
+    '.m-root [hidden] { display: none !important; }',
+    '.m-root blockquote { margin: 0 0 0 .8ex; border-left: 1px solid #ccc; padding-left: 1ex; }',
+    '.m-more { display: inline-block; margin-top: 10px; border: 1px solid #d5d9df; background: #f1f3f5; color: #444; border-radius: 8px; padding: 0 8px; line-height: 18px; cursor: pointer; font: 800 13px/18px Arial, sans-serif; letter-spacing: .1em; }',
+  ].join('\n');
+  let paperSheet = null;
+  function paperStyles() {
+    if (paperSheet !== null) return paperSheet;
+    try { paperSheet = new CSSStyleSheet(); paperSheet.replaceSync(PAPER_CSS); } catch { paperSheet = false; }
+    return paperSheet;
+  }
+  /** The quoted email under an answer, out of the way behind •••, the way a mail app tucks it. */
+  function tuckQuotes(root) {
+    const quotes = [...root.querySelectorAll('.gmail_quote, blockquote[type="cite"], .yahoo_quoted, #divRplyFwdMsg, .moz-cite-prefix')]
+      .filter((q, i, all) => !all.some((o) => o !== q && o.contains(q)));
+    if (!quotes.length || quotes.every((q) => q.parentNode === root && root.children.length === 1)) return;
+    for (const q of quotes) q.hidden = true;
+    const more = document.createElement('button');
+    more.type = 'button'; more.className = 'm-more'; more.textContent = '•••';
+    more.title = 'Show the quoted email';
+    more.addEventListener('click', () => { const hide = !quotes[0].hidden; for (const q of quotes) q.hidden = hide; });
+    quotes[0].parentNode.insertBefore(more, quotes[0]);
+  }
+  /** One email's HTML, cleaned, in its own sealed page. `remote` collects the pictures it wants from other sites. */
+  function paperOf(m) {
+    const host = el('div', 'mpaper');
+    const shadow = host.attachShadow({ mode: 'open' });
+    const cid = new Map((m.files || []).filter((f) => f.cid && f.url).map((f) => [String(f.cid).toLowerCase(), f.url]));
+    const ctx = { cid, images: mail.shown.get(m.id) || null, remote: new Set() };
+    const parts = unstyled(m.html);
+    const doc = new DOMParser().parseFromString(parts.body, 'text/html');
+    const root = document.createElement('div');
+    root.className = 'm-root';
+    if (doc.body) {
+      copyAttrs(doc.body, root);
+      root.className = 'm-root ' + (doc.body.getAttribute('class') || '').replace(/\bm-[a-z-]+/g, '').slice(0, 300);
+      const bg = doc.body.getAttribute('bgcolor');
+      if (bg) root.style.backgroundColor = bg;
+      appendClean(doc.body, root, ctx, 0);
+    }
+    tuckQuotes(root);
+    const sheets = [paperStyles(), cleanSheet(parts.css)].filter(Boolean);
+    try { shadow.adoptedStyleSheets = sheets; } catch { /* an old browser: the email unstyled, still readable */ }
+    shadow.append(root);
+    shadow.addEventListener('click', (e) => {
+      const a = e.target.closest && e.target.closest('a[data-mailto]');
+      if (!a) return;
+      e.preventDefault();
+      const to = decodeURIComponent(a.dataset.mailto.split('?')[0] || '');
+      compose({ mode: 'new', to });
+    });
+    mail.remote.set(m.id, ctx.remote);
+    return { node: host, remote: ctx.remote };
+  }
+  /** Words with their links working; the quoted email under them tucked behind •••. */
+  function linkified(text) {
+    const frag = document.createDocumentFragment();
+    const re = /\bhttps?:\/\/[^\s<>"]*[^\s<>".,;:!?)\]']/g;
+    let at = 0, m;
+    while ((m = re.exec(text))) {
+      if (m.index > at) frag.append(document.createTextNode(text.slice(at, m.index)));
+      const a = el('a', '', m[0]); a.href = m[0]; a.target = '_blank'; a.rel = 'noopener noreferrer nofollow';
+      frag.append(a);
+      at = m.index + m[0].length;
+    }
+    if (at < text.length) frag.append(document.createTextNode(text.slice(at)));
+    return frag;
+  }
+  function plainBody(text) {
+    const box = el('div', 'mplain');
+    const lines = String(text || '').replace(/\r\n?/g, '\n').split('\n');
+    let cut = lines.findIndex((l, i) => /^on\b.{4,300}\bwrote:$/i.test(l.trim()) || /^-{2,}\s*original message\s*-{2,}$/i.test(l.trim()) || (/^>/.test(l) && lines.slice(i).every((x) => /^>/.test(x) || !x.trim())));
+    if (cut <= 0) cut = lines.length;
+    box.append(linkified(lines.slice(0, cut).join('\n').replace(/\s+$/, '')));
+    if (cut < lines.length) {
+      const more = el('button', 'mquote-btn', '•••'); more.type = 'button'; more.title = 'Show the quoted email';
+      const q = el('div', 'mquoted'); q.hidden = true;
+      q.append(linkified(lines.slice(cut).join('\n')));
+      more.addEventListener('click', () => { q.hidden = !q.hidden; });
+      box.append(document.createElement('br'), more, q);
+    }
+    return box;
+  }
+
+  // ── the folders and the list ───────────────────────────────────────────
+  function forgetMail() {
+    clearInterval(mail.timer);
+    if (mail.composer) mail.composer.drop();
+    Object.assign(mail, { asked: false, folder: 'inbox', q: '', threads: [], drafts: [], counts: {}, more: null, state: null, cursor: -1, view: null, contacts: null, timer: 0 });
+    mail.selected.clear(); mail.expanded.clear(); mail.plain.clear(); mail.shown.clear(); mail.remote.clear();
+    $('mail-q').value = '';
+    $('mail-reader').hidden = true; $('mail-listview').hidden = false;
+    $('mail-badge').hidden = true;
+  }
+  /** After sign-in: the tab's count, and every two minutes new mail (in the background, while this page is in front). */
+  function startMail() {
+    refreshCounts(true);
+    clearInterval(mail.timer);
+    mail.timer = setInterval(() => {
+      if ($('app').hidden || document.visibilityState !== 'visible' || document.querySelector('dialog[open]')) return;
+      if (tabNow === 'mail') syncMailNow(false); else refreshCounts(true);
+    }, 120000);
+  }
+  function openMail() {
+    renderFolders();
+    if (!mail.asked) loadMailList().then((ok) => { if (ok) syncMailNow(false); });
+  }
+  async function refreshCounts(quiet) {
+    const { status, data } = await call({ action: 'mail_counts' }, quiet);
+    if (status === 200) { heard(data); mail.counts = data.counts || {}; renderFolders(); renderMailSub(); }
+  }
+  function renderFolders() {
+    const box = $('mail-folders');
+    box.replaceChildren();
+    for (const f of MAIL_FOLDERS) {
+      const b = el('button', 'mf'); b.type = 'button';
+      b.setAttribute('aria-current', String(mail.folder === f.key && !mail.q));
+      const n = Number(f.key === 'inbox' ? mail.counts.inbox : f.key === 'drafts' ? mail.counts.drafts : f.key === 'spam' ? mail.counts.spam : 0) || 0;
+      b.append(icon(f.icon), el('span', '', f.label));
+      if (n) { b.classList.add('has'); b.append(el('span', 'n', n > 999 ? '999+' : n)); }
+      b.addEventListener('click', () => openFolder(f.key));
+      box.append(b);
+    }
+    const unread = Number(mail.counts.inbox) || 0;
+    $('mail-badge').textContent = unread > 99 ? '99+' : String(unread);
+    $('mail-badge').hidden = !unread;
+    $('tab-mail').setAttribute('aria-label', unread ? 'Mail, ' + plural(unread, 'unread conversation', 'unread conversations') : 'Mail');
+  }
+  function openFolder(key) {
+    mail.folder = key; mail.q = ''; $('mail-q').value = '';
+    closeReader(true);
+    loadMailList();
+    renderFolders();
+  }
+  async function loadMailList(more) {
+    const ticket = ++mail.listing;
+    const { status, data } = await call({ action: 'mail_list', folder: mail.folder, q: mail.q || undefined, before: more ? mail.more : undefined });
+    if (ticket !== mail.listing) return false;
+    if (status !== 200) { if (status !== 401) mailBanner(data.error || 'Could not load the mail.'); return false; }
+    mailBanner('');
+    heard(data);
+    mail.asked = true;
+    mail.counts = data.counts || {};
+    mail.state = data.state || null;
+    if (more) mail.threads = mail.threads.concat(data.threads || []);
+    else { mail.threads = data.threads || []; mail.selected.clear(); mail.cursor = Math.min(mail.cursor, mail.threads.length - 1); }
+    mail.drafts = data.drafts || [];
+    mail.more = data.more || null;
+    renderFolders(); renderMailList(); renderMailSub();
+    return true;
+  }
+  /** Who a conversation is with, as its line says it: names (or To: for what he sent), and "me" when he wrote in it. */
+  function whoLine(t) {
+    const latest = t.latest || {};
+    if (mail.folder === 'sent' || !(t.people || []).length) {
+      const to = (latest.to || []).map(personOf).filter(Boolean);
+      return 'To: ' + (to.length ? to.map(firstOf).join(', ') : 'nobody');
+    }
+    const names = [...new Set((t.people || []).map((p) => p.name || p.address).filter(Boolean))];
+    let s = names.length === 1 ? names[0] : names.slice(0, 3).map((n) => (n.includes('@') ? n : n.split(/\s+/)[0])).join(', ');
+    if (t.sent) s = s ? s + ', me' : 'me';
+    return s || '(unknown)';
+  }
+  const stays = (t) =>
+    mail.folder === 'starred' ? t.starred && t.folder !== 'spam' && t.folder !== 'trash'
+      : mail.folder === 'sent' ? t.sent && t.folder !== 'spam' && t.folder !== 'trash'
+        : t.folder === mail.folder;
+  function emptyWords() {
+    if (mail.q) return ['Nothing matches “' + mail.q + '”.', 'Search looks through every folder but Spam and the Trash: the people, the subject and the words.'];
+    return {
+      inbox: ['Nothing new.', 'Mail to ' + MAIL_ADDRESS + ' arrives here within five minutes, or the moment you press Refresh.'],
+      starred: ['No stars yet.', 'Star a conversation to keep it here.'],
+      sent: ['Nothing sent yet.', 'What you send from here goes from ' + MAIL_ADDRESS + '.'],
+      drafts: ['No drafts.', 'An email you start is saved here as you type.'],
+      archive: ['The archive is empty.', 'Archive takes a conversation out of the Inbox and keeps it.'],
+      spam: ['No spam.', 'Mail from senders you block, or that fails its checks, lands here and is deleted after 30 days.'],
+      trash: ['The trash is empty.', 'What you delete stays here 30 days, then goes for good.'],
+    }[mail.folder] || ['Nothing here.', ''];
+  }
+  function renderMailList() {
+    const list = $('mail-list');
+    list.replaceChildren();
+    const drafts = mail.folder === 'drafts' && !mail.q;
+    const rows = drafts ? mail.drafts : mail.threads;
+    $('mail-all').closest('label').hidden = drafts;
+    if (!rows.length) {
+      const [title, words] = emptyWords();
+      const box = el('div', 'mempty');
+      box.append(el('b', '', title), document.createTextNode(words));
+      list.append(box);
+    }
+    rows.forEach((t, i) => list.append(drafts ? draftRowOf(t) : threadRowOf(t, i)));
+    $('mail-more').hidden = !mail.more;
+    $('mail-foot').textContent = rows.length ? plural(rows.length, drafts ? 'draft' : 'conversation', drafts ? 'drafts' : 'conversations') + (mail.more ? ' so far' : '') : '';
+    renderBulk();
+  }
+  function threadRowOf(t, i) {
+    const row = el('div', 'mrow' + (t.unread ? ' unread' : '') + (mail.selected.has(t.id) ? ' sel' : '') + (mail.cursor === i ? ' cursor' : ''));
+    row.setAttribute('role', 'listitem');
+    row.dataset.id = t.id;
+    const check = el('label', 'mcheck');
+    const cb = el('input'); cb.type = 'checkbox'; cb.checked = mail.selected.has(t.id);
+    cb.setAttribute('aria-label', 'Select “' + (t.subject || '(no subject)') + '”');
+    cb.addEventListener('change', () => { if (cb.checked) mail.selected.add(t.id); else mail.selected.delete(t.id); row.classList.toggle('sel', cb.checked); renderBulk(); });
+    check.append(cb);
+    const star = el('button', 'mstar' + (t.starred ? ' on' : '')); star.type = 'button';
+    star.setAttribute('aria-pressed', String(!!t.starred));
+    star.setAttribute('aria-label', 'Star');
+    star.title = t.starred ? 'Starred' : 'Star';
+    star.append(icon(t.starred ? 'star-on' : 'star'));
+    star.addEventListener('click', () => setThreads([t.id], { starred: !t.starred }, true));
+    const open = el('button', 'mopen'); open.type = 'button';
+    const who = el('span', 'mwho', whoLine(t));
+    if (t.count > 1) who.append(el('span', 'mcount', ' ' + t.count));
+    const line = el('span', 'mline');
+    line.append(el('span', 'msubj', t.subject || '(no subject)'));
+    if (t.latest && t.latest.snippet) line.append(el('span', 'msnip', ' — ' + t.latest.snippet));
+    const when = el('span', 'mwhen');
+    if (mail.q && t.folder !== 'inbox') when.append(el('span', 'mtag', FOLDER_WORD[t.folder] || t.folder));
+    if (t.files) { const c = icon('clip'); c.setAttribute('aria-hidden', 'false'); c.setAttribute('role', 'img'); c.setAttribute('aria-label', plural(t.files, 'file', 'files')); when.append(c); }
+    when.append(el('span', '', whenShort(t.last_at)));
+    open.append(who, line, when);
+    open.setAttribute('aria-label', [t.unread ? 'Unread.' : '', whoLine(t) + '.', t.subject || '(no subject)', '·', whenShort(t.last_at)].filter(Boolean).join(' '));
+    open.addEventListener('click', () => openThread(t.id));
+    row.append(check, star, open);
+    return row;
+  }
+  function draftRowOf(d) {
+    const row = el('div', 'mrow');
+    row.setAttribute('role', 'listitem');
+    row.append(el('span', 'mcheck'), el('span', 'mstar'));
+    const open = el('button', 'mopen'); open.type = 'button';
+    const to = (d.to || []).map(personOf).filter(Boolean);
+    const who = el('span', 'mwho');
+    who.append(el('span', 'mtag draft', 'Draft'), document.createTextNode(' ' + (to.length ? to.map(firstOf).join(', ') : '(nobody yet)')));
+    const line = el('span', 'mline');
+    line.append(el('span', 'msubj', d.subject || '(no subject)'));
+    const first = String(d.body || '').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('>') && l !== '--')[0];
+    if (first) line.append(el('span', 'msnip', ' — ' + first.slice(0, 160)));
+    const when = el('span', 'mwhen');
+    if ((d.files || []).length) when.append(icon('clip'));
+    when.append(el('span', '', whenShort(d.updated_at)));
+    open.append(who, line, when);
+    open.addEventListener('click', () => openComposer(d));
+    row.append(open);
+    return row;
+  }
+  function renderBulk() {
+    const box = $('mail-bulk');
+    box.replaceChildren();
+    const all = $('mail-all');
+    const ids = mail.threads.filter((t) => mail.selected.has(t.id)).map((t) => t.id);
+    all.checked = !!mail.threads.length && ids.length === mail.threads.length;
+    all.indeterminate = ids.length > 0 && ids.length < mail.threads.length;
+    if (mail.folder === 'drafts' && !mail.q) return;
+    const add = (name, label, fn, cls) => { const b = iconBtn(name, label, cls); b.addEventListener('click', fn); box.append(b); };
+    const f = mail.folder;
+    if (ids.length) {
+      const picked = mail.threads.filter((t) => mail.selected.has(t.id));
+      if (f === 'trash' || f === 'spam') {
+        add('inbox', f === 'spam' ? 'Not spam' : 'Restore', () => moveThreads(ids, 'inbox'));
+        add('trash', 'Delete forever', () => deleteForever(ids), 'danger');
+      } else {
+        if (f === 'archive') add('inbox', 'Move to Inbox', () => moveThreads(ids, 'inbox'));
+        else add('archive', 'Archive', () => moveThreads(ids, 'archive'));
+        add('trash', 'Delete', () => moveThreads(ids, 'trash'));
+        add('spam', 'Spam', () => reportSpam(ids));
+      }
+      const unread = picked.some((t) => t.unread);
+      add('mail-i', unread ? 'Mark read' : 'Mark unread', () => setThreads(ids, { read: unread }));
+      const starred = picked.every((t) => t.starred);
+      add(starred ? 'star' : 'star-on', starred ? 'Unstar' : 'Star', () => setThreads(ids, { starred: !starred }));
+      box.append(el('span', 'msel', ids.length + ' selected'));
+    } else if ((f === 'trash' || f === 'spam') && mail.threads.length && !mail.q) {
+      add('trash', f === 'trash' ? 'Empty the trash' : 'Empty spam', () => emptyFolder(f), 'danger');
+      box.append(el('span', 'msel', 'Emptied for you after 30 days.'));
+    }
+  }
+  $('mail-all').addEventListener('change', (e) => {
+    mail.selected.clear();
+    if (e.target.checked) for (const t of mail.threads) mail.selected.add(t.id);
+    renderMailList();
+  });
+  $('mail-more').addEventListener('click', () => loadMailList(true));
+  let mailSearchTimer = 0;
+  $('mail-q').addEventListener('input', () => {
+    clearTimeout(mailSearchTimer);
+    mailSearchTimer = setTimeout(() => {
+      const q = $('mail-q').value.trim();
+      if (q === mail.q) return;
+      mail.q = q;
+      closeReader(true);
+      loadMailList();
+    }, 350);
+  });
+  $('mail-q').addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('mail-q').value) { e.preventDefault(); $('mail-q').value = ''; $('mail-q').dispatchEvent(new Event('input')); }
+  });
+
+  async function setThreads(ids, change, quiet) {
+    const { status, data } = await call(Object.assign({ action: 'mail_update', ids }, change));
+    if (status !== 200) { toast(data.error || 'Could not change that.', true); return false; }
+    mail.counts = data.counts || mail.counts;
+    for (const t of mail.threads) {
+      if (!ids.includes(t.id)) continue;
+      if (change.starred !== undefined) t.starred = change.starred;
+      if (change.read === true) t.unread = 0;
+      if (change.read === false) t.unread = Math.max(1, t.unread || 0);
+      if (change.folder) t.folder = change.folder;
+    }
+    if ((change.folder || change.starred === false) && !mail.q) mail.threads = mail.threads.filter((t) => !ids.includes(t.id) || stays(t));
+    for (const id of ids) mail.selected.delete(id);
+    if (mail.view && ids.includes(mail.view.thread.id)) {
+      if (change.starred !== undefined) mail.view.thread.starred = change.starred;
+      if (change.folder) mail.view.thread.folder = change.folder;
+    }
+    renderFolders(); renderMailList();
+    if (!quiet) {
+      const n = ids.length > 1 ? plural(ids.length, 'conversation', 'conversations') + ' ' : '';
+      toast(change.read === true ? n + 'Marked read.' : change.read === false ? n + 'Marked unread.' : change.starred ? n + 'Starred.' : change.starred === false ? n + 'Star removed.' : 'Done.');
+    }
+    return true;
+  }
+  const MOVED_WORDS = { inbox: 'Moved to the Inbox.', archive: 'Archived.', trash: 'Moved to the Trash.', spam: 'Marked as spam.' };
+  /** Moved, with Undo: each goes back to the folder it came from. */
+  async function moveThreads(ids, folder, extra) {
+    const before = new Map(mail.threads.filter((t) => ids.includes(t.id)).map((t) => [t.id, t.folder]));
+    if (mail.view && ids.includes(mail.view.thread.id)) before.set(mail.view.thread.id, mail.view.thread.folder);
+    if (!(await setThreads(ids, Object.assign({ folder }, extra || {}), true))) return false;
+    const n = ids.length > 1 ? plural(ids.length, 'conversation', 'conversations') + ': ' : '';
+    toastUndo(n + MOVED_WORDS[folder], async () => {
+      const back = {};
+      for (const [id, f] of before) if (f && f !== folder && FOLDER_WORD[f] && f !== 'sent') (back[f] = back[f] || []).push(id);
+      for (const [f, list] of Object.entries(back)) await call({ action: 'mail_update', ids: list, folder: f });
+      await loadMailList();
+      toast('Put back.');
+    });
+    return true;
+  }
+  async function reportSpam(ids) {
+    const senders = [...new Set(mail.threads.filter((t) => ids.includes(t.id)).flatMap((t) => (t.people || []).map((p) => p.address)))]
+      .concat(mail.view && ids.includes(mail.view.thread.id) ? mail.view.messages.filter((m) => m.direction === 'in').map((m) => m.from.address) : []);
+    const who = [...new Set(senders)].filter((a) => !isMine(a));
+    const pick = await askSheet('Report spam', who.length
+      ? 'It moves to Spam. Block ' + (who.length === 1 ? who[0] : plural(who.length, 'sender', 'senders')) + ' as well, so whatever they send goes straight there, with no push?'
+      : 'It moves to Spam.', who.length ? [{ key: 'spam', label: 'Spam only', cls: '' }, { key: 'block', label: 'Spam and block', cls: 'danger' }] : [{ key: 'spam', label: 'Spam' }]);
+    if (!pick) return false;
+    const done = await moveThreads(ids, 'spam', pick === 'block' ? { block: true } : null);
+    if (done && mail.view && ids.includes(mail.view.thread.id)) closeReader();
+    return done;
+  }
+  async function deleteForever(ids, fromReader) {
+    const pick = await askSheet('Delete forever?', plural(ids.length, 'conversation', 'conversations') + ' and every file in ' + (ids.length === 1 ? 'it' : 'them') + ' will be gone for good. This cannot be undone.', [{ key: 'yes', label: 'Delete forever', cls: 'danger' }]);
+    if (pick !== 'yes') return;
+    const { status, data } = await call({ action: 'mail_delete', ids });
+    if (status !== 200) { toast(data.error || 'Could not delete them.', true); return; }
+    toast(plural(data.deleted || 0, 'conversation', 'conversations') + ' deleted for good.');
+    if (fromReader) closeReader();
+    loadMailList();
+  }
+  async function emptyFolder(f) {
+    const pick = await askSheet(f === 'trash' ? 'Empty the trash?' : 'Empty spam?', 'Everything in ' + (f === 'trash' ? 'the Trash' : 'Spam') + ', and every file in it, will be gone for good.', [{ key: 'yes', label: 'Empty it', cls: 'danger' }]);
+    if (pick !== 'yes') return;
+    const { status, data } = await call({ action: 'mail_empty', folder: f });
+    if (status !== 200) { toast(data.error || 'Could not empty it.', true); return; }
+    toast(plural(data.deleted || 0, 'conversation', 'conversations') + ' deleted for good.');
+    loadMailList();
+  }
+  /** New mail, now: the scheduled check's work, asked for by the page. */
+  async function syncMailNow(manual) {
+    if (mail.syncing) return;
+    mail.syncing = true;
+    const { status, data } = await call({ action: 'mail_sync' }, !manual);
+    mail.syncing = false;
+    if (status !== 200) { if (manual && status !== 401) toast(data.error || 'Could not check for new mail.', true); return; }
+    if (data.error && manual) toast('Could not check for new mail: ' + data.error, true);
+    if (data.taken > 0 || manual) {
+      if (!mail.view) await loadMailList(); else await refreshCounts(true);
+      if (data.taken > 0 && !manual) toast(plural(data.taken, 'new email', 'new emails') + '.');
+    }
+    if (manual && !data.error) toast(data.taken > 0 ? plural(data.taken, 'new email', 'new emails') + '.' : data.busy ? 'Already checking. It will be here in a moment.' : 'No new mail.');
+    renderMailSub();
+  }
+  $('mail-refresh').addEventListener('click', () => syncMailNow(true));
+
+  // ── one conversation ───────────────────────────────────────────────────
+  async function openThread(id) {
+    const { status, data } = await call({ action: 'mail_thread', id });
+    if (status !== 200) { toast(data.error || 'Could not open it.', true); if (status === 400) loadMailList(); return; }
+    mail.view = data;
+    mail.expanded = new Set();
+    const msgs = data.messages || [];
+    // The latest and every unread one open; the rest are a line each.
+    msgs.forEach((m, i) => { if (i === msgs.length - 1 || (m.direction === 'in' && !m.read)) mail.expanded.add(m.id); });
+    const t = mail.threads.find((x) => x.id === id);
+    if (t) t.unread = 0;
+    mail.cursor = mail.threads.findIndex((x) => x.id === id);
+    $('mail-listview').hidden = true;
+    $('mail-reader').hidden = false;
+    renderReader();
+    window.scrollTo({ top: 0 });
+    refreshCounts(true);
+    picturesOnTheirOwn();
+  }
+  function closeReader(quiet) {
+    if (!mail.view && $('mail-reader').hidden) return;
+    mail.view = null;
+    $('mail-reader').hidden = true;
+    $('mail-reader').replaceChildren();
+    $('mail-listview').hidden = false;
+    if (!quiet) renderMailList();
+  }
+  /** The reader drawn again where it stood: a picture shown or a message opened does not jump the page. */
+  function redrawReader() { const y = window.scrollY; renderReader(); window.scrollTo({ top: y }); }
+  const toLine = (m) => {
+    const to = (m.to || []).map(personOf).filter(Boolean);
+    const cc = (m.cc || []).map(personOf).filter(Boolean);
+    const bcc = (m.bcc || []).map(personOf).filter(Boolean);
+    const list = (l) => l.map((p) => nameOf(p) + (p.name && !isMine(p.address) ? ' <' + p.address + '>' : '')).join(', ');
+    return ['to ' + (to.length ? list(to) : 'nobody'), cc.length ? 'cc ' + list(cc) : '', bcc.length ? 'bcc ' + list(bcc) : ''].filter(Boolean).join(' · ');
+  };
+  const othersOn = (m) => [...(m.to || []), ...(m.cc || [])].map(personOf).filter((p) => p && !isMine(p.address) && p.address !== (m.from && m.from.address)).length;
+  function senderTrusted(address) {
+    const p = (mail.view && mail.view.pictures) || {};
+    const a = String(address || '').toLowerCase();
+    return p.always || (p.trusted || []).some((x) => x === a || (x.startsWith('@') && a.endsWith(x)));
+  }
+  async function showPictures(m, always) {
+    const urls = [...(mail.remote.get(m.id) || [])];
+    if (always) {
+      const trusted = [...new Set([...(mail.view.pictures.trusted || []), m.from.address])];
+      const saved = await call({ action: 'mail_settings', value: { trusted } });
+      if (saved.status !== 200) { toast(saved.data.error || 'Could not remember that.', true); return; }
+      mail.view.pictures.trusted = saved.data.settings.trusted;
+      toast('Pictures from ' + m.from.address + ' will always show.');
+    }
+    if (!urls.length) return;
+    const { status, data } = await call({ action: 'mail_images', message: m.id, urls });
+    if (status !== 200) { toast(data.error || 'Could not get the pictures.', true); return; }
+    mail.shown.set(m.id, new Map(Object.entries(data.images || {})));
+    redrawReader();
+  }
+  /** Pictures for a sender he trusts (or for everyone, if he chose that) come without asking. */
+  function picturesOnTheirOwn() {
+    if (!mail.view) return;
+    for (const m of mail.view.messages) {
+      if (mail.expanded.has(m.id) && m.html && !mail.shown.has(m.id) && (mail.remote.get(m.id) || new Set()).size && senderTrusted(m.from.address)) showPictures(m, false);
+    }
+  }
+  function toggleMessage(id) {
+    if (mail.expanded.has(id)) mail.expanded.delete(id); else mail.expanded.add(id);
+    redrawReader();
+    picturesOnTheirOwn();
+  }
+  function renderReader() {
+    const v = mail.view;
+    const box = $('mail-reader');
+    box.replaceChildren();
+    if (!v) return;
+    const th = v.thread;
+    const bar = el('div', 'mbar');
+    const act = (name, label, fn, cls) => { const b = iconBtn(name, label, cls); b.addEventListener('click', fn); bar.append(b); return b; };
+    act('back', 'Back', () => closeReader(), 'mback');
+    if (th.folder === 'trash' || th.folder === 'spam') {
+      act('inbox', th.folder === 'spam' ? 'Not spam' : 'Restore', async () => { if (await moveThreads([th.id], 'inbox')) redrawReader(); });
+      act('trash', 'Delete forever', () => deleteForever([th.id], true), 'danger');
+    } else {
+      if (th.folder === 'archive') act('inbox', 'Move to Inbox', async () => { if (await moveThreads([th.id], 'inbox')) redrawReader(); });
+      else act('archive', 'Archive', async () => { if (await moveThreads([th.id], 'archive')) closeReader(); });
+      act('trash', 'Delete', async () => { if (await moveThreads([th.id], 'trash')) closeReader(); });
+      act('spam', 'Spam', () => reportSpam([th.id]));
+    }
+    act('mail-i', 'Mark unread', async () => { if (await setThreads([th.id], { read: false }, true)) { closeReader(); toast('Marked unread.'); } });
+    const star = act(th.starred ? 'star-on' : 'star', th.starred ? 'Starred' : 'Star', async () => { if (await setThreads([th.id], { starred: !th.starred }, true)) redrawReader(); });
+    star.setAttribute('aria-pressed', String(!!th.starred));
+    const at = mail.threads.findIndex((t) => t.id === th.id);
+    if (at >= 0 && mail.threads.length > 1) {
+      const nav = el('span', 'mnav');
+      nav.append(el('span', '', (at + 1) + ' of ' + mail.threads.length + (mail.more ? '+' : '')));
+      const newer = iconBtn('back', 'Newer', ''); newer.disabled = at === 0;
+      newer.addEventListener('click', () => openThread(mail.threads[at - 1].id));
+      const older = iconBtn('next', 'Older', ''); older.disabled = at >= mail.threads.length - 1;
+      older.addEventListener('click', () => openThread(mail.threads[at + 1].id));
+      for (const b of [newer, older]) b.querySelector('.label').textContent = '';
+      newer.setAttribute('aria-label', 'Newer conversation (K)'); older.setAttribute('aria-label', 'Older conversation (J)');
+      nav.append(newer, older);
+      bar.append(nav);
+    }
+    box.append(bar);
+    const h = el('h2', 'msubject', th.subject || '(no subject)');
+    h.append(el('span', 'pill', FOLDER_WORD[th.folder] || th.folder));
+    box.append(h);
+    for (const m of v.messages) box.append(messageCard(m));
+    for (const d of v.drafts || []) {
+      const line = el('div', 'mdraft-line');
+      line.append(el('span', 'mtag draft', 'Draft'), el('span', '', (d.subject || '(no subject)') + ' · saved ' + ago(d.updated_at)));
+      const open = el('button', 'btn small', 'Open the draft'); open.type = 'button';
+      open.addEventListener('click', () => openComposer(d));
+      line.append(open);
+      box.append(line);
+    }
+    const last = v.messages[v.messages.length - 1];
+    if (last) {
+      const ans = el('div', 'manswer');
+      const reply = iconBtn('reply', 'Reply'); reply.addEventListener('click', () => compose({ mode: 'reply', source: last.id }));
+      ans.append(reply);
+      if (othersOn(last) > 0) { const all = iconBtn('reply-all', 'Reply all'); all.addEventListener('click', () => compose({ mode: 'reply_all', source: last.id })); ans.append(all); }
+      const fwd = iconBtn('forward', 'Forward'); fwd.addEventListener('click', () => compose({ mode: 'forward', source: last.id }));
+      ans.append(fwd);
+      box.append(ans);
+    }
+  }
+  function messageCard(m) {
+    const open = mail.expanded.has(m.id);
+    const card = el('article', 'mmsg' + (open ? '' : ' closed'));
+    const from = m.from || {};
+    const me = m.direction === 'out' || isMine(from.address);
+    const head = el('div', 'mhead');
+    head.tabIndex = 0;
+    head.setAttribute('role', 'button');
+    head.setAttribute('aria-expanded', String(open));
+    const av = el('span', 'mavatar' + (me ? ' me' : ''), initialOf(from));
+    av.setAttribute('aria-hidden', 'true');
+    const who = el('div', 'mfrom');
+    who.append(el('b', '', me ? (from.name || 'Me') + ' (me)' : from.name || from.address));
+    if (from.name && !me) who.append(el('span', 'maddr', ' <' + from.address + '>'));
+    who.append(el('div', open ? 'mto' : 'mclosed-line', open ? toLine(m) : (m.text || '').replace(/\s+/g, ' ').trim().slice(0, 200)));
+    const side = el('div', 'mside');
+    const date = el('div', 'mdate', whenLong(m.at));
+    date.title = ago(m.at);
+    side.append(date);
+    head.append(av, who, side);
+    head.addEventListener('click', (e) => { if (e.target.closest('button, a, summary, .mmenu')) return; toggleMessage(m.id); });
+    head.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target === head) { e.preventDefault(); toggleMessage(m.id); } });
+    card.append(head);
+    if (!open) return card;
+
+    const tools = el('div', 'mtools');
+    const reply = iconBtn('reply', 'Reply'); reply.querySelector('.label').textContent = '';
+    reply.setAttribute('aria-label', 'Reply'); reply.addEventListener('click', () => compose({ mode: 'reply', source: m.id }));
+    const menu = el('details', 'mmenu');
+    const sum = el('summary', 'btn small'); sum.append(icon('more')); sum.setAttribute('aria-label', 'More'); sum.title = 'More';
+    const list = el('div', 'list');
+    const item = (name, label, fn) => { const b = el('button'); b.type = 'button'; b.append(icon(name), el('span', '', label)); b.addEventListener('click', () => { menu.open = false; fn(); }); list.append(b); };
+    if (othersOn(m) > 0) item('reply-all', 'Reply all', () => compose({ mode: 'reply_all', source: m.id }));
+    item('forward', 'Forward', () => compose({ mode: 'forward', source: m.id }));
+    if (m.html) item('draft', mail.plain.has(m.id) ? 'Show it formatted' : 'Show it as plain text', () => { if (mail.plain.has(m.id)) mail.plain.delete(m.id); else mail.plain.add(m.id); redrawReader(); });
+    if (m.original) item('mail-i', 'Download the original (.eml)', () => openLink({ action: 'mail_original', id: m.id }));
+    if (m.unsubscribe) {
+      const a = el('a'); a.href = m.unsubscribe; a.target = '_blank'; a.rel = 'noopener noreferrer nofollow';
+      a.append(icon('block'), el('span', '', 'Unsubscribe'));
+      a.addEventListener('click', () => { menu.open = false; });
+      list.append(a);
+    }
+    if (!me) item('block', 'Block ' + from.address, () => blockSender(from.address));
+    menu.append(sum, list);
+    menu.addEventListener('toggle', () => { if (menu.open) setTimeout(() => document.addEventListener('click', function shut(e) { if (!menu.contains(e.target)) { menu.open = false; document.removeEventListener('click', shut); } }), 0); });
+    tools.append(reply, menu);
+    side.append(tools);
+
+    if (m.auth && (m.auth.dmarc === 'fail' || (m.auth.spf === 'fail' && m.auth.dkim === 'fail'))) {
+      card.append(el('div', 'mwarn', 'This email failed its sender checks, so it may not really be from ' + from.address + '. Be careful with its links and files.'));
+    }
+    const body = el('div', 'mbodywrap');
+    const plain = !m.html || mail.plain.has(m.id);
+    if (plain) {
+      body.append(plainBody(m.text || '(No words.)'));
+    } else {
+      const out = paperOf(m);
+      if (out.remote.size && !mail.shown.has(m.id)) {
+        const barP = el('div', 'mimgbar');
+        barP.append(icon('picture'), el('span', '', 'Pictures from other sites are hidden, so the sender cannot tell you opened this.'));
+        const show = el('button', 'btn small', 'Show pictures'); show.type = 'button';
+        show.addEventListener('click', () => showPictures(m, false));
+        barP.append(show);
+        if (!me) {
+          const always = el('button', 'btn small', 'Always from ' + from.address); always.type = 'button';
+          always.addEventListener('click', () => showPictures(m, true));
+          barP.append(always);
+        }
+        card.append(barP);
+      }
+      body.append(out.node);
+    }
+    card.append(body);
+    const files = (m.files || []).filter((f) => !f.inline || plain);
+    if (files.length) {
+      const strip = el('div', 'mfiles');
+      for (const f of files) strip.append(fileChip(f));
+      card.append(strip);
+    }
+    return card;
+  }
+  function fileChip(f) {
+    const b = el('button', 'mfile'); b.type = 'button';
+    b.title = 'Download ' + f.name;
+    if (f.url && /^image\//.test(f.type)) { const img = el('img'); img.src = f.url; img.alt = ''; img.loading = 'lazy'; b.append(img); }
+    else b.append(el('span', 'ext', (String(f.name).match(/\.([a-z0-9]{1,5})$/i) || [, 'file'])[1]));
+    b.append(el('b', '', f.name), el('span', 's', sizeWords(f.size || 0) + (f.kept ? '' : ' · at Resend for 30 days')));
+    b.addEventListener('click', () => openLink({ action: 'mail_file', id: f.id }));
+    return b;
+  }
+  /** A link the function makes (a file, the original), opened in a new tab. */
+  async function openLink(body) {
+    const tab = window.open('', '_blank');
+    const { status, data } = await call(body);
+    if (status !== 200 || !data.url) { if (tab) tab.close(); toast(data.error || 'Could not open it.', true); return; }
+    if (tab) { tab.opener = null; tab.location.href = data.url; } else location.assign(data.url);
+  }
+  async function blockSender(address) {
+    const pick = await askSheet('Block ' + address + '?', 'Whatever they send goes straight to Spam, with no push. You can unblock them in Mail settings.', [{ key: 'yes', label: 'Block', cls: 'danger' }]);
+    if (pick !== 'yes') return;
+    const { status, data } = await call({ action: 'mail_block', address, blocked: true });
+    if (status !== 200) { toast(data.error || 'Could not block them.', true); return; }
+    toast(address + ' is blocked.');
+  }
+
+  // ── writing ────────────────────────────────────────────────────────────
+  async function loadContacts() {
+    if (mail.contacts) return;
+    const { status, data } = await call({ action: 'mail_contacts' }, true);
+    if (status !== 200) return;
+    mail.contacts = data.contacts || [];
+    const list = $('mail-contacts');
+    list.replaceChildren();
+    for (const c of mail.contacts) { const o = el('option'); o.value = c.name ? c.name + ' <' + c.address + '>' : c.address; list.append(o); }
+  }
+  /** A new email, or an answer to one: the server addresses, subjects and quotes it, then the composer opens on it. */
+  async function compose(opts) {
+    if (mail.composer) { await mail.composer.close(); }
+    const { status, data } = await call({ action: 'mail_draft_new', mode: opts.mode || 'new', source: opts.source, to: opts.to ? [opts.to] : undefined });
+    if (status !== 200) { toast(data.error || 'Could not start an email.', true); return; }
+    // `again`: a reply already begun on that email, opened as it was left.
+    openComposer(data.draft, Object.assign({}, opts, { fresh: !data.again }));
+  }
+  /** To, Cc or Bcc as chips: each address a chip, typed, pasted or picked from the people he writes to. */
+  function chipsField(label, values, onChange) {
+    const wrap = el('div', 'cfield');
+    const id = 'c-' + label.toLowerCase() + '-' + Math.random().toString(36).slice(2, 7);
+    const lab = el('label', '', label); lab.htmlFor = id;
+    const box = el('div', 'chips');
+    const input = el('input', 'chip-input'); input.id = id;
+    input.setAttribute('list', 'mail-contacts'); input.autocomplete = 'off'; input.spellcheck = false; input.autocapitalize = 'off';
+    input.type = 'text';
+    let list = values.slice();
+    const draw = () => {
+      box.querySelectorAll('.chip').forEach((c) => c.remove());
+      for (const v of list) {
+        const p = personOf(v);
+        const chip = el('span', 'chip' + (p ? '' : ' bad'));
+        chip.title = p ? (p.name ? p.name + ' <' + p.address + '>' : p.address) : v + ' is not an email address';
+        chip.append(el('span', '', p ? p.name || p.address : v));
+        const x = el('button', 'chip-x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Remove ' + v);
+        x.addEventListener('click', () => { list = list.filter((y) => y !== v); draw(); onChange(); input.focus(); });
+        chip.append(x);
+        box.insertBefore(chip, input);
+      }
+    };
+    const commit = () => {
+      const parts = splitTyped(input.value);
+      if (!parts.length) { input.value = ''; return; }
+      for (const part of parts) if (!list.includes(part)) list.push(part);
+      input.value = '';
+      draw(); onChange();
+    };
+    input.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ',' || e.key === ';') && input.value.trim()) { e.preventDefault(); commit(); }
+      else if (e.key === 'Backspace' && !input.value && list.length) { list.pop(); draw(); onChange(); }
+    });
+    input.addEventListener('blur', commit);
+    input.addEventListener('input', () => { if (/[,;\n]/.test(input.value) || (input.value.includes('<') && input.value.trim().endsWith('>'))) commit(); });
+    box.addEventListener('click', (e) => { if (e.target === box) input.focus(); });
+    box.append(input);
+    wrap.append(lab, box);
+    draw();
+    return { wrap, input, get: () => { commit(); return list.slice(); }, bad: () => list.filter((v) => !personOf(v)) };
+  }
+  async function uploadTo(url, file) {
+    const form = new FormData();
+    form.append('cacheControl', '3600');
+    form.append('', file);
+    const res = await fetch(url, { method: 'PUT', body: form, headers: { 'x-upsert': 'false' } }).catch(() => null);
+    return !!res && res.ok;
+  }
+  function openComposer(start, opts) {
+    if (mail.composer) { mail.composer.close().then(() => openComposer(start, opts)); return; }
+    loadContacts();
+    let draft = start;
+    const first = JSON.stringify([draft.to, draft.cc, draft.bcc, draft.subject, draft.body, (draft.files || []).length]);
+    const d = el('dialog', 'sheet compose');
+    d.setAttribute('aria-labelledby', 'compose-title');
+    const inner = el('div', 'body');
+    const title = el('h3', '', { new: 'New email', reply: 'Reply', reply_all: 'Reply all', forward: 'Forward' }[draft.mode] || 'Email');
+    title.id = 'compose-title';
+    inner.append(title);
+    const fromRow = el('div', 'cfield');
+    fromRow.append(el('span', 'lab', 'From'), el('div', 'from', (mail.fromName || 'You') + ' <' + (MAIL_ADDRESS || 'your address') + '>'));
+    inner.append(fromRow);
+    let dirty = false;
+    const changed = () => { dirty = true; schedule(); };
+    const to = chipsField('To', draft.to || [], changed);
+    const cc = chipsField('Cc', draft.cc || [], changed);
+    const bcc = chipsField('Bcc', draft.bcc || [], changed);
+    const ccBtn = el('button', 'ccc', 'Cc Bcc'); ccBtn.type = 'button';
+    to.wrap.append(ccBtn);
+    // Cc and Bcc show when they hold someone; "Cc Bcc" opens whichever is closed.
+    cc.wrap.hidden = !(draft.cc || []).length;
+    bcc.wrap.hidden = !(draft.bcc || []).length;
+    ccBtn.hidden = !cc.wrap.hidden && !bcc.wrap.hidden;
+    ccBtn.addEventListener('click', () => { const first = cc.wrap.hidden ? cc : bcc; cc.wrap.hidden = false; bcc.wrap.hidden = false; ccBtn.hidden = true; first.input.focus(); });
+    const subjRow = el('div', 'cfield');
+    const subjId = 'c-subject-' + Math.random().toString(36).slice(2, 7);
+    const subjLab = el('label', '', 'Subject'); subjLab.htmlFor = subjId;
+    const subject = el('input', 'csubject'); subject.id = subjId; subject.maxLength = 900; subject.value = draft.subject || ''; subject.autocomplete = 'off';
+    subject.addEventListener('input', changed);
+    subjRow.append(subjLab, subject);
+    const text = el('textarea', 'cbody');
+    text.setAttribute('aria-label', 'Message');
+    text.value = draft.body || '';
+    text.addEventListener('input', changed);
+    const files = el('div', 'cfiles');
+    inner.append(to.wrap, cc.wrap, bcc.wrap, subjRow, text, files);
+    const foot = el('div', 'foot');
+    const saved = el('span', 'csaved', 'Draft saved');
+    const attachLab = el('label', 'btn small file');
+    // Out of sight but reachable by Tab, so the keyboard can attach a file too.
+    const picker = el('input', 'sr'); picker.type = 'file'; picker.multiple = true;
+    attachLab.append(icon('clip'), el('span', '', 'Attach'), picker);
+    const discard = el('button', 'btn small danger', 'Discard'); discard.type = 'button';
+    const later = el('button', 'btn', 'Close'); later.type = 'button'; later.title = 'Close and keep it in Drafts';
+    const send = el('button', 'btn primary', 'Send'); send.type = 'button'; send.title = 'Send (Ctrl Enter)';
+    const note = el('p', 'cnote'); note.setAttribute('role', 'alert');
+    foot.append(saved, attachLab, discard, later, send, note);
+    d.append(inner, foot);
+
+    // A forward's own files, as the server named them; removing one only ever takes it off this email.
+    let carried = (draft.carried || []).slice();
+    const carriedFiles = () => (draft.carried_files || []).filter((f) => carried.includes(f.id));
+    let uploading = 0;
+    const drawFiles = () => {
+      files.replaceChildren();
+      const chip = (name, size, remove, extra) => {
+        const c = el('div', 'mfile');
+        c.append(el('span', 'ext', (String(name).match(/\.([a-z0-9]{1,5})$/i) || [, 'file'])[1]), el('b', '', name), el('span', 's', sizeWords(size || 0) + (extra || '')));
+        if (remove) { const x = el('button', 'chip-x x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Remove ' + name); x.addEventListener('click', remove); c.append(x); }
+        files.append(c);
+      };
+      for (const f of draft.files || []) chip(f.name, f.size, () => removeFile(f));
+      for (const f of carriedFiles()) chip(f.name, f.size, () => { carried = carried.filter((x) => x !== f.id); dirty = true; schedule(); drawFiles(); }, ' · forwarded');
+      if (uploading) files.append(el('span', 'privacy', 'Uploading ' + plural(uploading, 'file', 'files') + '…'));
+    };
+    drawFiles();
+
+    const fields = () => ({ id: draft.id, to: to.get(), cc: cc.get(), bcc: bcc.get(), subject: subject.value, body: text.value, carried });
+    let timer = 0;
+    let chain = Promise.resolve();
+    function schedule() { clearTimeout(timer); saved.textContent = 'Editing…'; timer = setTimeout(save, 1200); }
+    function save() {
+      clearTimeout(timer);
+      if (!dirty) return chain;
+      dirty = false;
+      saved.textContent = 'Saving…';
+      chain = chain.then(async () => {
+        const { status, data } = await call({ action: 'mail_draft_save', draft: fields() }, true);
+        if (status === 200) { draft = Object.assign(draft, data.draft); saved.textContent = 'Draft saved'; }
+        else { dirty = true; saved.textContent = data.error || 'Not saved yet'; }
+      });
+      return chain;
+    }
+    async function removeFile(f) {
+      const { status, data } = await call({ action: 'mail_upload_remove', draft: draft.id, path: f.path });
+      if (status !== 200) { toast(data.error || 'Could not remove it.', true); return; }
+      draft = Object.assign(draft, data.draft);
+      drawFiles();
+    }
+    picker.addEventListener('change', async () => {
+      const list = [...picker.files];
+      picker.value = '';
+      for (const file of list) {
+        uploading++; drawFiles();
+        const start = await call({ action: 'mail_upload', draft: draft.id, filename: file.name, size: file.size });
+        if (start.status !== 200) { uploading--; drawFiles(); toast(start.data.error || 'Could not add ' + file.name + '.', true); continue; }
+        const ok = await uploadTo(start.data.url, file);
+        if (!ok) { uploading--; drawFiles(); toast(file.name + ' did not upload. Try again.', true); continue; }
+        const done = await call({ action: 'mail_upload_done', draft: draft.id, path: start.data.path, filename: file.name });
+        uploading--;
+        if (done.status !== 200) { drawFiles(); toast(done.data.error || 'Could not add ' + file.name + '.', true); continue; }
+        draft = Object.assign(draft, done.data.draft);
+        drawFiles();
+      }
+    });
+    // Files dropped onto the composer go the same way.
+    d.addEventListener('dragover', (e) => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); });
+    d.addEventListener('drop', (e) => {
+      if (!e.dataTransfer || !e.dataTransfer.files.length) return;
+      e.preventDefault();
+      const dt = new DataTransfer();
+      for (const f of e.dataTransfer.files) dt.items.add(f);
+      picker.files = dt.files;
+      picker.dispatchEvent(new Event('change'));
+    });
+
+    let shut = false;
+    const finish = () => { if (shut) return; shut = true; clearTimeout(timer); d.close(); d.remove(); mail.composer = null; };
+    // Started here and never written in: not kept. A draft reopened (from Drafts, or a reply begun before) always is.
+    const fresh = !!(opts && opts.fresh);
+    const untouched = () => fresh && JSON.stringify([to.get(), cc.get(), bcc.get(), subject.value, text.value, (draft.files || []).length]) === first;
+    /** Closed, kept: saved first. One never written in is not kept at all. */
+    async function close() {
+      if (shut) return;
+      if (untouched()) {
+        finish();
+        await call({ action: 'mail_draft_delete', id: draft.id }, true);
+        refreshCounts(true);
+        return;
+      }
+      dirty = true;
+      await save();
+      finish();
+      toast('Saved to Drafts.');
+      refreshCounts(true);
+      if (mail.folder === 'drafts' && !mail.view) loadMailList();
+      else if (mail.view) openThreadQuiet();
+    }
+    async function openThreadQuiet() {
+      if (!mail.view) return;
+      const { status, data } = await call({ action: 'mail_thread', id: mail.view.thread.id, read: false }, true);
+      if (status === 200 && mail.view) { mail.view = Object.assign(mail.view, { drafts: data.drafts, messages: data.messages, thread: data.thread }); redrawReader(); }
+    }
+    let sure = false;
+    discard.addEventListener('click', async () => {
+      if (!sure) { sure = true; discard.textContent = 'Discard it?'; setTimeout(() => { sure = false; discard.textContent = 'Discard'; }, 4000); return; }
+      clearTimeout(timer);
+      dirty = false;
+      await chain;
+      const { status, data } = await call({ action: 'mail_draft_delete', id: draft.id });
+      if (status !== 200) { toast(data.error || 'Could not discard it.', true); return; }
+      finish();
+      toast('Draft discarded.');
+      refreshCounts(true);
+      if (mail.folder === 'drafts' && !mail.view) loadMailList();
+      else if (mail.view) openThreadQuiet();
+    });
+    later.addEventListener('click', close);
+    let noSubjectOk = false;
+    async function sendIt() {
+      note.textContent = '';
+      if (uploading) { note.textContent = 'Wait for the files to finish uploading.'; return; }
+      const people = [...to.get(), ...cc.get(), ...bcc.get()];
+      const bad = [...to.bad(), ...cc.bad(), ...bcc.bad()];
+      if (!people.length) { note.textContent = 'Add someone to send it to.'; to.input.focus(); return; }
+      if (bad.length) { note.textContent = '“' + bad[0] + '” is not an email address.'; return; }
+      if (!subject.value.trim() && !noSubjectOk) { noSubjectOk = true; note.textContent = 'It has no subject. Press Send again to send it anyway.'; subject.focus(); return; }
+      send.disabled = true; send.textContent = 'Sending…';
+      clearTimeout(timer);
+      await chain;
+      const { status, data } = await call({ action: 'mail_send', draft: fields() });
+      send.disabled = false; send.textContent = 'Send';
+      if (status !== 200) { note.textContent = data.error || 'It did not send. Try again.'; return; }
+      finish();
+      toast(data.kept === false ? data.note : 'Sent.');
+      mail.contacts = null;
+      if (mail.view && data.thread === mail.view.thread.id) openThreadQuiet();
+      else if (mail.folder === 'sent' || mail.folder === 'drafts') loadMailList();
+      refreshCounts(true);
+    }
+    send.addEventListener('click', sendIt);
+    d.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); sendIt(); } });
+    d.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
+    document.body.append(d);
+    d.showModal();
+    mail.composer = { close, drop: finish };
+    if (draft.mode === 'reply' || draft.mode === 'reply_all') { text.focus(); text.setSelectionRange(0, 0); text.scrollTop = 0; }
+    else if (!(draft.to || []).length) to.input.focus();
+    else if (!subject.value) subject.focus();
+    else { text.focus(); text.setSelectionRange(0, 0); }
+  }
+  $('mail-compose').addEventListener('click', () => compose({ mode: 'new' }));
+
+  // ── settings ───────────────────────────────────────────────────────────
+  async function openMailSettings() {
+    const [s, u] = await Promise.all([call({ action: 'mail_settings' }), call({ action: 'mail_usage' })]);
+    if (s.status !== 200) { toast(s.data.error || 'Could not open the settings.', true); return; }
+    let settings = s.data.settings;
+    const usage = u.status === 200 ? u.data : null;
+    const d = el('dialog', 'sheet mail-settings');
+    d.setAttribute('aria-labelledby', 'ms-title');
+    const inner = el('div', 'body');
+    const h = el('h3', '', 'Mail settings'); h.id = 'ms-title';
+    inner.append(h, el('p', 'note', 'For ' + MAIL_ADDRESS + '. Each choice is saved as you make it.'));
+    const grid = el('div', 'grid');
+    async function saveSetting(value, words) {
+      const { status, data } = await call({ action: 'mail_settings', value });
+      if (status !== 200) { toast(data.error || 'Could not save that.', true); return false; }
+      settings = data.settings;
+      if (words) toast(words);
+      return true;
+    }
+    const nameLab = el('label', '', 'Your name on what you send');
+    const name = el('input', 'input'); name.maxLength = 80; name.value = settings.fromName; name.autocomplete = 'name';
+    name.addEventListener('change', async () => { if (await saveSetting({ fromName: name.value.trim() }, 'Saved: your email now comes from ' + name.value.trim() + '.')) mail.fromName = settings.fromName; });
+    nameLab.append(name);
+    const sigLab = el('label', '', 'Signature, added under what you write');
+    const sig = el('textarea', 'input'); sig.maxLength = 2000; sig.value = settings.signature;
+    sig.placeholder = 'Chris Korzen\nKorzen LLC';
+    sig.addEventListener('change', () => saveSetting({ signature: sig.value }, 'Signature saved.'));
+    sigLab.append(sig);
+    const switchRow = (key, title, words) => {
+      const row = el('div', 'push-rows');
+      const r = el('div');
+      const lab = el('label', 'switch');
+      const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!settings[key]; cb.setAttribute('aria-label', title);
+      const state = el('span', '', cb.checked ? 'On' : 'Off');
+      cb.addEventListener('change', async () => { cb.disabled = true; const ok = await saveSetting({ [key]: cb.checked }, title + (cb.checked ? ': on.' : ': off.')); cb.disabled = false; if (!ok) cb.checked = !cb.checked; state.textContent = cb.checked ? 'On' : 'Off'; });
+      lab.append(cb, state);
+      r.append(el('b', '', title), lab, el('div', 'd', words));
+      row.append(r);
+      return row;
+    };
+    const pics = el('div', 'push-rows');
+    const pr = el('div');
+    const seg = el('div', 'seg');
+    for (const [v, label] of [['ask', 'When I ask'], ['always', 'Always']]) {
+      const b = el('button', '', label); b.type = 'button'; b.setAttribute('aria-pressed', String(settings.images === v));
+      b.addEventListener('click', async () => { if (await saveSetting({ images: v }, v === 'always' ? 'Pictures will always show.' : 'Pictures will wait until you ask.')) for (const x of seg.children) x.setAttribute('aria-pressed', String(x === b)); });
+      seg.append(b);
+    }
+    pr.append(el('b', '', 'Pictures from other sites'), seg, el('div', 'd', 'Shown through this site, so a sender never sees where you are. Hidden until you ask, they also cannot tell when you opened it.'));
+    pics.append(pr);
+    const listBox = (key, title, empty, addLabel) => {
+      const wrap = el('div');
+      wrap.append(el('b', '', title));
+      const list = el('div', 'mlist');
+      const draw = () => {
+        list.replaceChildren();
+        if (!settings[key].length) { list.append(el('p', 'privacy', empty)); return; }
+        for (const a of settings[key]) {
+          const r = el('div');
+          r.append(el('span', '', a));
+          const x = el('button', 'btn small', key === 'blocked' ? 'Unblock' : 'Remove'); x.type = 'button';
+          x.addEventListener('click', async () => { if (await saveSetting({ [key]: settings[key].filter((y) => y !== a) }, a + (key === 'blocked' ? ' is unblocked.' : ' is off the list.'))) draw(); });
+          r.append(x);
+          list.append(r);
+        }
+      };
+      draw();
+      wrap.append(list);
+      if (addLabel) {
+        const row = el('form', 'addrow'); row.noValidate = true;
+        const input = el('input', 'input'); input.placeholder = 'An address, or @domain.com for all of it'; input.autocomplete = 'off'; input.spellcheck = false;
+        input.setAttribute('aria-label', addLabel);
+        const add = el('button', 'btn small', addLabel); add.type = 'submit';
+        row.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const v = input.value.trim().toLowerCase();
+          if (!/^(@[a-z0-9-]+(\.[a-z0-9-]+)+|[^@\s]+@[a-z0-9-]+(\.[a-z0-9-]+)+)$/.test(v)) { toast('That is not an address or an @domain.', true); return; }
+          if (await saveSetting({ [key]: [...settings[key], v] }, v + (key === 'blocked' ? ' is blocked.' : ' is trusted.'))) { input.value = ''; draw(); }
+        });
+        row.append(input, add);
+        wrap.append(row);
+      }
+      return wrap;
+    };
+    grid.append(
+      nameLab,
+      sigLab,
+      switchRow('notify', 'A push for new mail', 'To Convoy on your phone, like the sign-in code: who it is from. Never for spam or what you have already read.'),
+      switchRow('notifySubject', 'Say the subject in the push', 'Off, the push says only who it is from, for a lock screen others can see.'),
+      pics,
+      listBox('trusted', 'Trusted senders', 'Nobody yet. “Not spam” and “Always from …” add them here: their pictures show, and they never land in Spam.', 'Trust'),
+      listBox('blocked', 'Blocked senders', 'Nobody is blocked.', 'Block'),
+    );
+    if (usage) {
+      const st = usage.state || {};
+      grid.append(el('p', 'privacy', plural(usage.emails || 0, 'email', 'emails') + ' kept, with ' + plural(usage.files || 0, 'file', 'files') + ' (' + sizeWords(usage.bytes || 0) + ').' + (st.last_sync_at ? ' Last checked ' + ago(st.last_sync_at) + '.' : '') + (st.last_error ? ' The last check failed: ' + st.last_error : '') + ' Resend allows 100 emails a day on its free plan, sent and received together, shared with Convoy’s own emails.'));
+    }
+    inner.append(grid);
+    const foot = el('div', 'foot');
+    const ok = el('button', 'btn primary', 'Done'); ok.type = 'button';
+    foot.append(ok);
+    d.append(inner, foot);
+    const close = () => { d.close(); d.remove(); if (mail.view) { mail.view.pictures = { always: settings.images === 'always', trusted: settings.trusted }; picturesOnTheirOwn(); } };
+    ok.addEventListener('click', close);
+    d.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
+    d.addEventListener('click', (e) => { if (e.target === d) close(); });
+    document.body.append(d);
+    d.showModal();
+    name.focus();
+  }
+  $('mail-settings').addEventListener('click', openMailSettings);
+
+  /** Mail's keys, like a mail app's: J and K to move, Enter to open, E, #, S, Shift U; R, A and F in a conversation. */
+  function mailKey(e) {
+    const k = e.key;
+    const reading = !!mail.view;
+    if (k === 'c' || k === 'C') { compose({ mode: 'new' }); return true; }
+    if (reading) {
+      const th = mail.view.thread;
+      const last = mail.view.messages[mail.view.messages.length - 1];
+      if (k === 'Escape' || k === 'u') { closeReader(); return true; }
+      if (k === 'r' && last) { compose({ mode: 'reply', source: last.id }); return true; }
+      if (k === 'a' && last) { compose({ mode: othersOn(last) ? 'reply_all' : 'reply', source: last.id }); return true; }
+      if (k === 'f' && last) { compose({ mode: 'forward', source: last.id }); return true; }
+      if (k === 'e' && th.folder !== 'trash' && th.folder !== 'spam') { moveThreads([th.id], th.folder === 'archive' ? 'inbox' : 'archive').then((ok) => ok && closeReader()); return true; }
+      if (k === '#' || k === 'Delete') { if (th.folder === 'trash' || th.folder === 'spam') deleteForever([th.id], true); else moveThreads([th.id], 'trash').then((ok) => ok && closeReader()); return true; }
+      if (k === 's') { setThreads([th.id], { starred: !th.starred }, true).then((ok) => ok && redrawReader()); return true; }
+      if (k === 'U') { setThreads([th.id], { read: false }, true).then((ok) => { if (ok) { closeReader(); toast('Marked unread.'); } }); return true; }
+      const at = mail.threads.findIndex((t) => t.id === th.id);
+      if (k === 'j' && at >= 0 && at < mail.threads.length - 1) { openThread(mail.threads[at + 1].id); return true; }
+      if (k === 'k' && at > 0) { openThread(mail.threads[at - 1].id); return true; }
+      return false;
+    }
+    const rows = mail.folder === 'drafts' && !mail.q ? [] : mail.threads;
+    const move = (to) => {
+      mail.cursor = Math.max(0, Math.min(rows.length - 1, to));
+      renderMailList();
+      const row = $('mail-list').children[mail.cursor];
+      if (row) { row.scrollIntoView({ block: 'nearest' }); const b = row.querySelector('.mopen'); if (b) b.focus({ preventScroll: true }); }
+    };
+    if (k === 'j' && rows.length) { move(mail.cursor + 1); return true; }
+    if (k === 'k' && rows.length) { move(mail.cursor - 1); return true; }
+    const target = mail.selected.size ? [...mail.selected] : rows[mail.cursor] ? [rows[mail.cursor].id] : [];
+    if ((k === 'Enter' || k === 'o') && rows[mail.cursor]) { openThread(rows[mail.cursor].id); return true; }
+    if (k === 'x' && rows[mail.cursor]) { const id = rows[mail.cursor].id; if (mail.selected.has(id)) mail.selected.delete(id); else mail.selected.add(id); renderMailList(); return true; }
+    if (!target.length) return false;
+    if (k === 'e' && mail.folder !== 'trash' && mail.folder !== 'spam') { moveThreads(target, mail.folder === 'archive' ? 'inbox' : 'archive'); return true; }
+    if (k === '#' || k === 'Delete') { if (mail.folder === 'trash' || mail.folder === 'spam') deleteForever(target); else moveThreads(target, 'trash'); return true; }
+    if (k === 's') { const t = rows.find((r) => r.id === target[0]); setThreads(target, { starred: !(t && t.starred) }, true); return true; }
+    if (k === 'U') { setThreads(target, { read: false }); return true; }
+    if (k === 'I') { setThreads(target, { read: true }); return true; }
+    return false;
+  }
+
   // ── the shell (2026-10-02): notices, the palette and keys ───────────────
   /** A short notice in the corner: what just happened, or why it did not. */
   function toast(text, bad) {
@@ -2356,6 +3876,11 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
       { group: 'Go to', label: 'Collection', keys: '1', run: () => showTab('collection', true) },
       { group: 'Go to', label: 'Net Worth', keys: '2', run: () => toView('overview') },
       ...VIEWS.filter((v) => v !== 'overview').map((v) => ({ group: 'Go to', label: VIEW_LABEL[v], sub: 'Net Worth', run: () => toView(v) })),
+      { group: 'Go to', label: 'Mail', keys: '3', sub: MAIL_ADDRESS, run: () => { showTab('mail', true); openFolder('inbox'); } },
+      ...MAIL_FOLDERS.filter((f) => f.key !== 'inbox').map((f) => ({ group: 'Go to', label: f.label, sub: 'Mail', run: () => { showTab('mail'); openFolder(f.key); } })),
+      { group: 'Do', label: 'Write an email', sub: 'from ' + MAIL_ADDRESS, keys: 'C', run: () => { showTab('mail'); compose({ mode: 'new' }); } },
+      { group: 'Do', label: 'Check for new mail', run: () => { showTab('mail'); syncMailNow(true); } },
+      { group: 'Do', label: 'Mail settings', sub: 'signature, pushes, pictures, blocked senders', run: () => { showTab('mail'); openMailSettings(); } },
       { group: 'Do', label: 'Add a firearm', run: () => { showTab('collection'); openEditor(null); } },
       { group: 'Do', label: 'Add to net worth', sub: 'an asset or a debt', run: () => { toView('overview'); openNwEditor(null); } },
       { group: 'Do', label: 'Add a goal', run: () => { toView('goals'); openGoal(null); } },
@@ -2382,6 +3907,7 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     }
     list.push({ group: 'Search', label: 'Search the collection for “' + text + '”', always: true, run: () => { showTab('collection'); searchIn($('search'), text); } });
     list.push({ group: 'Search', label: 'Search transactions for “' + text + '”', always: true, run: () => { toView('spending'); searchIn($('mo-q'), text); } });
+    list.push({ group: 'Search', label: 'Search mail for “' + text + '”', always: true, run: () => { showTab('mail'); closeReader(true); searchIn($('mail-q'), text); } });
     return list;
   }
 
@@ -2462,12 +3988,29 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     row([MAC ? '⌘' : 'Ctrl', 'K'], 'Search, jump anywhere, or find something of yours');
     row(['1'], 'Collection');
     row(['2'], 'Net Worth');
+    row(['3'], 'Mail');
     row(['N'], 'Add to the list on screen');
-    row(['R'], 'Refresh');
+    row(['R'], 'Refresh (in a conversation: reply)');
     row(['/'], 'Search the list on screen');
     row(['?'], 'This list');
     row(['Esc'], 'Close a box like this one');
     inner.append(keys);
+    inner.append(el('h3', 'keys-head', 'In Mail'));
+    const mk = el('div', 'keys');
+    const mrow = (ks, text) => { const k = el('span'); for (const x of ks) k.append(el('kbd', 'kbd', x)); mk.append(k, el('span', '', text)); };
+    mrow(['C'], 'Write an email');
+    mrow(['J', 'K'], 'The next or the previous conversation');
+    mrow(['Enter'], 'Open it');
+    mrow(['X'], 'Select it');
+    mrow(['E'], 'Archive (in the Archive: back to the Inbox)');
+    mrow(['#'], 'Delete');
+    mrow(['S'], 'Star');
+    mrow(['Shift', 'U'], 'Mark unread');
+    mrow(['A'], 'Reply all, in a conversation');
+    mrow(['F'], 'Forward, in a conversation');
+    mrow(['U'], 'Back to the list');
+    mrow([MAC ? '⌘' : 'Ctrl', 'Enter'], 'Send, while writing');
+    inner.append(mk);
     const foot = el('div', 'foot');
     const ok = el('button', 'btn primary', 'Close'); ok.type = 'button';
     foot.append(ok);
@@ -2481,13 +4024,15 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     ok.focus();
   }
 
-  function refreshHere() { $(tabNow === 'networth' ? 'nw-refresh' : 'refresh').click(); }
+  function refreshHere() { $(tabNow === 'networth' ? 'nw-refresh' : tabNow === 'mail' ? 'mail-refresh' : 'refresh').click(); }
   function searchHere() {
     if (tabNow === 'networth') { showView('spending'); $('mo-q').focus(); }
+    else if (tabNow === 'mail') { closeReader(); $('mail-q').focus(); }
     else $('search').focus();
   }
   function addHere() {
     if (tabNow === 'collection') openEditor(null);
+    else if (tabNow === 'mail') compose({ mode: 'new' });
     else if (nwView === 'goals') openGoal(null);
     else { showView('overview'); openNwEditor(null); }
   }
@@ -2500,8 +4045,10 @@ dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; 
     if (document.querySelector('dialog[open]')) return;
     const t = e.target;
     if (t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]')) return;
+    if (tabNow === 'mail' && mailKey(e)) { e.preventDefault(); return; }
     if (e.key === '1') { e.preventDefault(); showTab('collection', true); }
     else if (e.key === '2') { e.preventDefault(); showTab('networth', true); }
+    else if (e.key === '3') { e.preventDefault(); showTab('mail', true); }
     else if (e.key === 'r' || e.key === 'R') { e.preventDefault(); refreshHere(); }
     else if (e.key === 'n' || e.key === 'N') { e.preventDefault(); addHere(); }
     else if (e.key === '/') { e.preventDefault(); searchHere(); }
