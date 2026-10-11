@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-NVG5MZG64+qF/c8IU4jIsi9gM4F5wlAq4dTLKxwmGNM=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-BfaEj3qZ9Iq7WT9FN/ASn753+YvqdMYDa6neT2hwm5c='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-3pkD26i5wG5lfRbXFiIsKeZzcsan0m3CYAtKlJ/sc7w=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-BfaEj3qZ9Iq7WT9FN/ASn753+YvqdMYDa6neT2hwm5c='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -3607,6 +3607,20 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     });
     police.append(sw.label);
     box.append(police);
+
+    // One device per account (0107, 2026-10-11): off unless switched on, so a build in App Review is never signed out on the reviewer's second device.
+    const single = setting('One device per account', 'Signing in on a phone signs the account out of every other phone, which says why, never in the middle of a run. Keep it off while a build is in App Review: the reviewer signs in on an iPhone and an iPad at once.', changed('features'));
+    const one = switchEl(features.one_device === true, 'One device per account');
+    one.input.addEventListener('change', async () => {
+      const on = one.input.checked;
+      if (on && !(await ask({ title: 'One device per account?', body: 'From now on a sign-in ends the account everywhere else. An account already on two phones keeps the first to open and signs the other out. Phones on a version before 1.5 are only stopped once you raise the minimum version.', confirm: 'Switch on' }))) { one.input.checked = false; return; }
+      one.input.disabled = true;
+      const ok = await save('features', Object.assign({}, features, { one_device: on }), on ? 'One device per account is on.' : 'Accounts can be on more than one device again.', null);
+      one.input.disabled = false;
+      if (ok) loadControl(); else one.input.checked = !on;
+    });
+    single.append(one.label);
+    box.append(single);
 
     const m = value('maintenance', { on: false, title: '', message: '' });
     const maint = setting('Maintenance banner', 'A notice across the top of the app, on the sign-in screen too: an outage, or work on the servers. It shows until you take it down.', changed('maintenance'));
