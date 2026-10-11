@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-HWL3vRHdDYImLiZqD8v0aoYQI9h71zFeizn/fvnU97I=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-BfaEj3qZ9Iq7WT9FN/ASn753+YvqdMYDa6neT2hwm5c='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-U5jT6Apn4+aJtPP1jnrlCJk7U1AaujTbfeD5SAxw6Ac=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-Eob9uBMV1SyyUb4OlvhGcUXrPoCmQW6HzyeTMutHT40='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -247,6 +247,12 @@ button.stat[aria-expanded="true"] { border-color: var(--ink-2); }
 .form textarea { min-height: 70px; resize: vertical; }
 .form input:focus, .form select:focus, .form textarea:focus { outline: 2px solid rgba(57,135,229,.6); outline-offset: 1px; }
 .form input:disabled, .form select:disabled { opacity: .55; }
+/* Ticks in a form (the notifications' days and lines, 2026-10-11): a box and its words, not a full-width field. */
+.ticks { display: grid; gap: 8px 14px; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); margin-top: 8px; }
+.ticks.days { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.ticks label { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 0; font-size: 14px; color: var(--ink); cursor: pointer; }
+.form .ticks input { display: inline-block; width: 18px; height: 18px; margin: 0; padding: 0; accent-color: #3987e5; flex: none; }
+.ticks label .small { flex-basis: 100%; padding-left: 26px; }
 .hint { color: var(--muted); font-size: 13px; margin: 0; }
 .picked { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
@@ -867,7 +873,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
           <div class="card" id="sys-pushes" data-needs="push_health"></div>
         </div>
         <div class="grid">
-          <div class="card" id="sys-briefing" data-needs="briefing_settings"></div>
+          <div class="card" id="sys-briefing" data-needs="digests"></div>
           <div class="card" id="sys-house" data-needs="housekeeping_run"></div>
           <div class="card" id="sys-backup" data-needs="backup_rows"></div>
           <div class="card" id="sys-passkeys"></div>
@@ -1195,6 +1201,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     'admins', 'admin_invite', 'admin_update', 'admin_remove',
     'rollback_choices', 'rollback_check', 'rollback', 'rollback_probe', 'person_export',
     'briefing_settings', 'briefing_save', 'briefing_preview', 'briefing_send',
+    'digests', 'digest_save', 'digest_delete', 'digest_preview', 'digest_send',
   ]);
   let me = { role: 'owner', name: '' };
   const can = (action) => me.role === 'owner' || (!OWNER_ONLY.has(action) && (me.role === 'admin' || MODERATOR.has(action)));
@@ -1589,6 +1596,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     rollback: 'Update rolled back', content_restore: 'Put back', content_remove: 'Content removed', auto_hide_save: 'Auto-hide changed',
     support_replies_save: 'Saved replies changed', support_ack_save: 'Automatic reply changed', person_export: 'Data exported',
     briefing_save: 'Morning briefing changed', briefing_send: 'Morning briefing sent',
+    digest_save: 'Notification saved', digest_delete: 'Notification deleted', digest_send: 'Notification sent',
   };
   // The Dashboard's money pushes, by kind (2026-10-05).
   const PUSH_WORDS = { reminders: 'bills coming up', summary: 'the week in money', large: 'a large charge', low: 'a low balance', budget: 'a budget running high' };
@@ -4363,14 +4371,14 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       call({ action: 'passkeys' }),
       ask1(can('admins'), { action: 'admins' }),
       ask1(can('push_health'), { action: 'push_health' }),
-      ask1(can('briefing_settings'), { action: 'briefing_settings' }),
+      ask1(can('digests'), { action: 'digests' }),
     ]);
     $('refresh').disabled = false;
     if (keys.status === 401) return;
     banner(''); stamp(new Date().toISOString());
     if (alerts) renderAlertsCard(alerts, jobsR && jobsR.status === 200 ? jobsR.data.schedule || {} : null);
     if (pushes) renderPushesCard(pushes);
-    if (briefing) renderBriefingCard(briefing);
+    if (briefing) renderDigestsCard(briefing);
     if (jobsR) { renderScheduleCard(jobsR); renderHouseCard(jobsR); renderBackupCard(jobsR); }
     renderPasskeys(keys);
     if (admins) renderAdmins(admins);
@@ -4436,7 +4444,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
   */
   const PUSH_KIND_WORDS = {
     app: 'From the app', alerts: 'Alerts to you and the team', admin_code: 'Admin sign-in codes', dashboard_code: 'Dashboard sign-in codes',
-    money: 'Dashboard money', announcement: 'Announcements', warning: 'Warnings', security: 'Sign-in alerts', briefing: 'Morning briefing',
+    money: 'Dashboard money', announcement: 'Announcements', warning: 'Warnings', security: 'Sign-in alerts', briefing: 'Morning briefing', digest: 'Your other notifications',
   };
   function renderPushesCard({ status, data }) {
     const c = $('sys-pushes'); c.replaceChildren();
@@ -4455,54 +4463,170 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     if (reasons.length) { c.append(el('h2', '', 'Why they did not arrive')); c.append(rowsList(reasons.map(([why, n]) => [why, plural(n, 'push', 'pushes')]))); }
     c.append(el('p', 'muted small mt-12', data.deadPhonesWeek ? plural(data.deadPhonesWeek, 'push', 'pushes') + ' in the last week went to a phone the app is gone from. Those phones are off the list now.' : 'No push in the last week went to a phone the app is gone from.'));
   }
-  /** The morning briefing (2026-10-06): one push a day, at his hour, New York time. */
-  function renderBriefingCard({ status, data }) {
+  /*
+    The morning briefing, and every notification made like it (2026-10-11,
+    Chris: "Add the ability to edit and create new admin notifications like
+    the morning brief I receive", "Keep the current morning brief", "I should
+    be able to edit it"). Each is a push at its hour, New York time, on its
+    days, saying the numbers picked for it. The morning briefing changes like
+    the rest and can be switched off, but not deleted.
+  */
+  const DIGEST_WORDS = {
+    signups: ['Sign-ups', 'in its period'],
+    active: ['People active', 'opened Convoy in its period'],
+    runs: ['Runs', 'started in its period'],
+    posts: ['New posts', 'in its period'],
+    messages: ['Messages sent', 'a count in its period, never what they say'],
+    reports: ['Reports open', 'right now'],
+    hidden: ['Hidden for review', 'taken down by reports, right now'],
+    issues: ['Issue reports open', 'right now'],
+    deletions: ['Deletion requests waiting', 'right now'],
+    support: ['Support email waiting', 'right now'],
+    crashes: ['New crashes', 'first seen by Sentry in its period'],
+    reviews: ['New reviews', 'on the App Store, in its period'],
+    accounts: ['Accounts in all', 'right now'],
+  };
+  const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const DAY_WORDS = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+  const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
+  function digestWhen(d) {
+    const days = (d.days || []).join(',');
+    const on = days === '0,1,2,3,4,5,6' ? 'Every day' : days === '1,2,3,4,5' ? 'Weekdays' : days === '0,6' ? 'Weekends'
+      : (d.days || []).length === 1 ? DAY_WORDS[d.days[0]] : (d.days || []).map((x) => DAY_NAMES[x]).join(', ');
+    return on + ' at ' + hourLabel(d.hour) + ' · numbers from ' + (d.period === 'week' ? 'the last week' : 'the last day') + ' · ' + (d.to === 'team' ? 'to you and the team' : 'to you');
+  }
+  async function reloadDigests() {
+    const r = await call({ action: 'digests' });
+    if (r.status !== 401) renderDigestsCard(r);
+  }
+  function renderDigestsCard({ status, data }) {
     const c = $('sys-briefing'); c.replaceChildren();
-    c.append(el('h3', '', 'Morning briefing'), el('p', 'hint', 'One push a day to your phone: sign-ups and runs in the last day, reports open, posts hidden for review, support mail waiting, new crashes and new reviews.'));
-    if (status !== 200) { c.append(el('p', 'muted mt-12', data.error || 'Could not load the briefing.')); return; }
-    const cur = { on: data.on !== false, hour: data.hour || 8 };
-    const row = setting('Send it every day', 'At the first check from this hour, New York time.');
-    row.classList.add('stack');
-    const ctl = el('div', 'actions ctl');
-    const hour = selectEl(Array.from({ length: 17 }, (_, i) => [String(i + 5), hourLabel(i + 5)]), cur.hour);
-    hour.setAttribute('aria-label', 'Hour, New York time');
-    hour.disabled = !cur.on;
-    const sw = switchEl(cur.on, 'Send the morning briefing');
-    const save = async (next, undo) => {
-      sw.input.disabled = true; hour.disabled = true;
-      const ok = await act(null, { action: 'briefing_save', value: next }, null, { done: next.on ? 'Every day at ' + hourLabel(next.hour) + ', New York time.' : 'No morning briefing.' });
-      if (ok) Object.assign(cur, next); else undo();
-      sw.input.disabled = false; hour.disabled = !cur.on;
+    c.append(el('h3', '', 'Notifications to your phone'), el('p', 'hint', 'The morning briefing, and any others you make: each one a push at its hour, New York time, on the days you pick, saying the numbers you choose. One for the team also reaches every admin and moderator with Convoy linked.'));
+    if (status !== 200) { c.append(el('p', 'muted mt-12', data.error || 'Could not load the notifications.')); return; }
+    const list = data.list || [], sent = data.sent || {}, max = data.max || 10;
+    const box = el('div', 'mt-14');
+    for (const d of list) {
+      const last = sent[d.id] && sent[d.id].at ? 'Last sent ' + ago(sent[d.id].at) : sent[d.id] ? 'Last sent ' + sent[d.id].date : 'Not sent yet';
+      const s = setting(d.name, digestWhen(d), last);
+      const ctl = el('div', 'actions ctl');
+      const edit = el('button', 'btn small', 'Edit'); edit.type = 'button';
+      edit.setAttribute('aria-label', 'Edit ' + d.name);
+      edit.addEventListener('click', () => openDigestEditor(c, d));
+      const sw = switchEl(d.on, d.name);
+      sw.input.addEventListener('change', async () => {
+        sw.input.disabled = true;
+        const ok = await act(null, { action: 'digest_save', value: { id: d.id, on: sw.input.checked } }, null, { done: d.name + (sw.input.checked ? ' is on.' : ' is off.') });
+        sw.input.disabled = false;
+        if (ok) d.on = sw.input.checked; else sw.input.checked = !sw.input.checked;
+      });
+      ctl.append(edit, sw.label);
+      s.append(ctl);
+      box.append(s);
+    }
+    c.append(box);
+    const add = el('button', 'btn small mt-12', 'New notification'); add.type = 'button';
+    add.disabled = list.length >= max;
+    add.addEventListener('click', () => openDigestEditor(c, null));
+    c.append(add);
+    if (add.disabled) c.append(el('p', 'muted small', 'Up to ' + max + '. Delete one to make another.'));
+  }
+  /** One notification's editor, under the list: a new one, or a change to one already there. */
+  function openDigestEditor(card, d) {
+    const isNew = !d;
+    const cur = d || { name: '', title: '', note: '', on: true, hour: 18, days: EVERY_DAY, period: 'day', items: ['signups', 'runs', 'reports'], to: 'me' };
+    const old = card.querySelector('.digest-editor'); if (old) old.remove();
+    const panel = el('div', 'panel digest-editor');
+    panel.append(el('b', '', isNew ? 'New notification' : 'Edit: ' + cur.name));
+    const form = el('form', 'form'); form.noValidate = true;
+    const field = (label, control, wide) => { const l = el('label', wide ? 'wide' : '', label); l.append(control); form.append(l); return control; };
+    const name = field('Name', inputEl({ value: cur.name, max: 40, placeholder: 'Evening recap' }));
+    const title = field('Title on your phone', inputEl({ value: cur.title, max: 40, placeholder: cur.period === 'week' ? 'Convoy, the last week' : 'Convoy, the last day' }));
+    const note = field('A line of your own, said first (optional)', inputEl({ value: cur.note, max: 100, placeholder: 'Check App Store Connect' }), true);
+    const hour = field('Hour, New York time', selectEl(Array.from({ length: 24 }, (_, h) => [String(h), hourLabel(h)]), cur.hour));
+    const period = field('Its numbers cover', selectEl([['day', 'The last day'], ['week', 'The last week']], cur.period));
+    period.addEventListener('change', () => { title.placeholder = period.value === 'week' ? 'Convoy, the last week' : 'Convoy, the last day'; });
+    const to = field('Who gets it', selectEl([['me', 'Just me'], ['team', 'Me and the team']], cur.to));
+    const ticks = (label, pairs, picked, cls) => {
+      const wrap = el('div', 'wide');
+      wrap.append(el('span', '', label));
+      const row = el('div', 'ticks' + (cls ? ' ' + cls : ''));
+      const boxes = pairs.map(([value, text, detail]) => {
+        const l = el('label'), b = el('input');
+        b.type = 'checkbox'; b.value = String(value); b.checked = picked.includes(value);
+        l.append(b, document.createTextNode(text));
+        if (detail) l.append(el('span', 'muted small', detail));
+        row.append(l);
+        return b;
+      });
+      wrap.append(row);
+      form.append(wrap);
+      return { wrap, boxes };
     };
-    sw.input.addEventListener('change', () => save({ on: sw.input.checked, hour: cur.hour }, () => { sw.input.checked = cur.on; }));
-    hour.addEventListener('change', () => save({ on: cur.on, hour: Number(hour.value) }, () => { hour.value = String(cur.hour); }));
-    ctl.append(hour, sw.label);
-    row.append(ctl);
-    c.append(row);
+    const days = ticks('Days', DAY_NAMES.map((n, i) => [i, n]), cur.days || EVERY_DAY, 'days');
+    const presets = el('div', 'actions');
+    for (const [label, set] of [['Every day', EVERY_DAY], ['Weekdays', [1, 2, 3, 4, 5]], ['Mondays', [1]]]) {
+      const b = el('button', 'btn small', label); b.type = 'button';
+      b.addEventListener('click', () => days.boxes.forEach((x, i) => { x.checked = set.includes(i); }));
+      presets.append(b);
+    }
+    days.wrap.append(presets);
+    const items = ticks('What it says', Object.entries(DIGEST_WORDS).map(([k, [text, detail]]) => [k, text, detail]), cur.items || []);
+    panel.append(form);
+    const draft = () => Object.assign(isNew ? {} : { id: cur.id }, {
+      name: name.value.trim(), title: title.value.trim(), note: note.value.trim(),
+      hour: Number(hour.value), period: period.value, to: to.value,
+      days: days.boxes.flatMap((b, i) => (b.checked ? [i] : [])),
+      items: items.boxes.filter((b) => b.checked).map((b) => b.value),
+    });
     const out = el('div');
-    const actions = el('div', 'actions mt-12');
-    const preview = el('button', 'btn small', 'What it would say now'); preview.type = 'button';
+    const row = el('div', 'actions');
+    const save = el('button', 'btn primary', isNew ? 'Create it' : 'Save'); save.type = 'button';
+    const preview = el('button', 'btn', 'What it would say now'); preview.type = 'button';
     preview.addEventListener('click', async () => {
       preview.disabled = true;
-      const r = await call({ action: 'briefing_preview' });
+      const r = await call({ action: 'digest_preview', value: draft() });
       preview.disabled = false;
       out.replaceChildren();
       if (r.status !== 200) { toast(r.data.error || 'That did not work.', true); return; }
-      const box = el('div', 'panel');
-      box.append(el('b', '', r.data.text.title), el('div', 'small', r.data.text.body));
-      if (r.data.sentToday) box.append(el('div', 'muted small', 'Today’s has gone already.'));
-      out.append(box);
+      const b = el('div', 'panel');
+      b.append(el('b', '', r.data.text.title), el('div', 'small', r.data.text.body));
+      out.append(b);
     });
-    const send = el('button', 'btn small', 'Send one now'); send.type = 'button';
-    send.addEventListener('click', async () => {
-      send.disabled = true;
-      const r = await call({ action: 'briefing_send' });
-      send.disabled = false;
-      if (r.status !== 200) { toast(r.data.error || 'That did not work.', true); return; }
-      toast(r.data.sent ? 'Sent to your phone. The one at your hour still comes.' : 'It did not reach a phone: is Convoy signed in with its notifications on?', !r.data.sent);
-    });
-    actions.append(preview, send);
-    c.append(actions, out);
+    row.append(save, preview);
+    if (!isNew) {
+      const send = el('button', 'btn', 'Send one now'); send.type = 'button';
+      send.addEventListener('click', async () => {
+        send.disabled = true;
+        const r = await call({ action: 'digest_send', id: cur.id });
+        send.disabled = false;
+        if (r.status !== 200) { toast(r.data.error || 'That did not work.', true); return; }
+        toast(r.data.sent ? 'Sent, as saved. The scheduled one still comes.' : 'It did not reach a phone: is Convoy signed in with its notifications on?', !r.data.sent);
+      });
+      row.append(send);
+      if (cur.id !== 'morning') {
+        const del = el('button', 'btn danger', 'Delete'); del.type = 'button';
+        del.addEventListener('click', async () => {
+          if (await act(del, { action: 'digest_delete', id: cur.id }, 'Delete ' + cur.name + '? It stops at once.', { title: 'Delete the notification', confirm: 'Delete', danger: true, done: cur.name + ' is deleted.' })) reloadDigests();
+        });
+        row.append(del);
+      }
+    }
+    const cancel = el('button', 'btn', 'Cancel'); cancel.type = 'button';
+    cancel.addEventListener('click', () => panel.remove());
+    row.append(cancel);
+    const submit = async () => {
+      const v = draft();
+      if (!v.name) { toast('Give it a name.', true); name.focus(); return; }
+      if (!v.days.length) { toast('Pick at least one day.', true); return; }
+      if (!v.items.length && !v.note) { toast('Pick something for it to say, or write a note.', true); return; }
+      if (await act(save, { action: 'digest_save', value: v }, null, { done: isNew ? v.name + ' is made: ' + digestWhen(Object.assign({}, cur, v)) + '.' : 'Saved.' })) reloadDigests();
+    };
+    save.addEventListener('click', () => void submit());
+    // Enter in a field saves too.
+    form.addEventListener('submit', (e) => { e.preventDefault(); void submit(); });
+    panel.append(row, out);
+    card.append(panel);
+    name.focus();
   }
   /*
     Every job the database runs on its own (0099, 0100), with its newest run
