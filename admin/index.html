@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-3pkD26i5wG5lfRbXFiIsKeZzcsan0m3CYAtKlJ/sc7w=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-BfaEj3qZ9Iq7WT9FN/ASn753+YvqdMYDa6neT2hwm5c='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-HWL3vRHdDYImLiZqD8v0aoYQI9h71zFeizn/fvnU97I=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-BfaEj3qZ9Iq7WT9FN/ASn753+YvqdMYDa6neT2hwm5c='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -1577,6 +1577,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     announcement_end: 'Announcement taken down', announcement_delete: 'Announcement deleted', achievement_delete: 'Achievement deleted',
     announcement_photo: 'Announcement picture added', announcement_photo_remove: 'Announcement picture removed', note_add: 'Note added', note_delete: 'Note deleted',
     warn: 'Warning sent', profile_clear: 'Profile cleared', car_photo_remove: 'Car photo removed', sign_out_all: 'Signed out everywhere',
+    two_step_off: 'Two-step sign-in turned off',
     crew_rename: 'Crew renamed', crew_remove: 'Crew removed', crew_owner: 'Crew handed over', crew_member_remove: 'Taken out of a crew',
     run_end: 'Run ended', police_source_save: 'Police source saved', police_source_toggle: 'Police source switched',
     housekeeping_run: 'Clean-up run', backup_saved: 'Backup downloaded', support_reply: 'Support reply sent', support_status: 'Support email marked',
@@ -1999,6 +2000,8 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     pair('Last seen', u.lastSeen ? ago(u.lastSeen) : 'never');
     pair('Last sign-in', u.lastSignIn ? ago(u.lastSignIn) : '—');
     pair('Recovery email', u.recoveryEmail ? u.recoveryEmail + (u.recoveryVerified ? (u.recoveryAddedHere ? ' (verified · added here)' : ' (verified)') : ' (not verified)') : 'none');
+    // Two-step sign-in (0108): null when the auth server could not be asked, and then nothing is said.
+    if (u.twoStep) pair('Two-step sign-in', u.twoStep.on ? 'On, authenticator app' + (u.twoStep.since ? ' (since ' + when(u.twoStep.since) + ')' : '') : 'Off');
     pair('Phones for push', u.devices.total ? u.devices.total + ' (iOS ' + u.devices.ios + ', Android ' + u.devices.android + ')' : 'none');
     if (u.topSpeedMph) pair('Top speed', Math.round(u.topSpeedMph) + ' mph');
     if (u.location) pair('Location', u.location);
@@ -3160,6 +3163,18 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
         if (await act(s, { action: 'sign_out_all', id: u.id }, 'Sign ' + who + ' out on every phone? They are signed out within the hour and can sign straight back in; pushes stop until they do.', { title: 'Sign out everywhere', confirm: 'Sign out', done: 'Signed out everywhere.' })) openPerson(u.id);
       });
       row.append(s);
+    }
+    /*
+      For somebody who lost their authenticator app (0108): their password
+      alone signs them in again. Only once the request is plainly theirs, an
+      email from their verified recovery address being the usual proof.
+    */
+    if (u.twoStep && u.twoStep.on && can('two_step_off')) {
+      const t = el('button', 'btn', 'Turn off two-step sign-in'); t.type = 'button';
+      t.addEventListener('click', async () => {
+        if (await act(t, { action: 'two_step_off', id: u.id }, 'Turn off two-step sign-in for ' + who + '? Their password alone signs them in again, and they can set it up afresh in Settings → Account. Do it only once you are sure the request is theirs, for example an email from their verified recovery address.', { title: 'Turn off two-step sign-in', confirm: 'Turn it off', danger: true, done: 'Two-step sign-in is off for ' + who + '.' })) openPerson(u.id);
+      });
+      row.append(t);
     }
     if (can('person_export')) {
       const x = el('button', 'btn', 'Export data…'); x.type = 'button';
