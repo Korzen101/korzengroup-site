@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-/1b5Wz5pHWLkQhkOSj7CQbqOyx2XwfHLReB5Xa20q3U=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-Eob9uBMV1SyyUb4OlvhGcUXrPoCmQW6HzyeTMutHT40='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-FP2aLbkoO2lTs7qv65wGMHcpDH9O0pVMa7/naIzI3uI=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-0vuVHZpRulIKVbmJp1aqL6RO5M+BQh+J03urBHyqT70='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -166,6 +166,8 @@ button.stat[aria-expanded="true"] { border-color: var(--ink-2); }
 .tag { font-size: 12px; font-weight: 700; letter-spacing: .02em; padding: 2px 9px; border-radius: 999px; background: rgba(57,135,229,.16); color: #cfe0f7; }
 .tag.grey { background: rgba(255,255,255,.07); color: var(--ink-2); }
 .item .when { margin-left: auto; color: var(--muted); font-size: 12px; }
+.report-photo { display: block; width: fit-content; max-width: 100%; margin: 4px 0; }
+.report-photo img { display: block; max-width: 100%; max-height: 320px; border-radius: 10px; border: 1px solid var(--line-2); }
 .quote { border-left: 3px solid var(--line-2); padding: 6px 10px; color: var(--ink-2); background: rgba(255,255,255,.02); border-radius: 0 8px 8px 0; white-space: pre-wrap; word-break: break-word; }
 .who { font-size: 13px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; }
 .who button, .kv button { border: 0; background: none; padding: 0; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-size: 13px; text-align: left; }
@@ -1842,6 +1844,15 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
       if (hid) head.append(hid);
       head.append(el('span', 'when', ago(r.at)));
       it.append(head);
+      // The photo it is about (0112), as it was when reported; opens whole in a new tab.
+      if (r.photo) {
+        const open = document.createElement('a');
+        open.href = r.photo.full; open.target = '_blank'; open.rel = 'noopener noreferrer';
+        open.className = 'report-photo';
+        const img = document.createElement('img');
+        img.src = r.photo.thumb; img.alt = 'The reported photo'; img.loading = 'lazy';
+        open.append(img); it.append(open);
+      }
       if (r.excerpt) it.append(el('div', 'quote', r.excerpt));
       if (r.detail) it.append(el('div', 'muted small', 'Their note: ' + r.detail));
       const who = el('div', 'who');
