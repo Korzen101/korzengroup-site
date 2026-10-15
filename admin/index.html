@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-HqPFtX/RZuo2S7TwYoF+K6tf5am7ed/mSnr+ds3eoXE=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://convoy.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-6+mpeRaPK91jKZBPtv74zwfV5Q5wc3xGuntg2+yfu6k=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://convoy.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -4650,34 +4650,67 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
   }
   /*
     The emailed report (2026-10-15, Chris: "I would also like a report emailed
-    to me twice a week ..."): on or off, its days and hour, what it would say
-    now, and one now. It goes to the function's REPORT_EMAIL_TO, which this
-    page only ever shows masked. Switched on after its hour, it starts with the
-    next report day; "Send one now" is for one at once.
+    to me twice a week ..."): on or off, and one now. And, the same day ("I
+    would also like the option to manually send and edit my bi-weekly
+    email"), the editor: its title, a line of his own said first, the parts
+    it says, its days and hour, with a preview of the unsaved draft. It goes
+    to the function's REPORT_EMAIL_TO, which this page only ever shows
+    masked. Switched on after its hour, it starts with the next report day;
+    "Send one now" is for one at once, as saved.
   */
+  const REPORT_PART_WORDS = {
+    actions: ['Things to action', 'what needs you, most pressing first'],
+    brief: ['The week at a glance', 'the morning briefing, the last 7 days, 14-day charts'],
+    app: ['Application status', 'the App Store, phones, crashes and pushes'],
+    services: ['Backend services', 'each service, its plan and its limits'],
+    network: ['Network report', 'traffic, friends and crews, voice'],
+  };
+  const REPORT_PARTS = Object.keys(REPORT_PART_WORDS);
   function reportWhen(s) {
     const days = (s.days || []).join(',');
     const on = days === '0,1,2,3,4,5,6' ? 'Every day' : days === '1,2,3,4,5' ? 'Weekdays'
       : (s.days || []).length === 1 ? DAY_WORDS[s.days[0]] : (s.days || []).map((x) => DAY_NAMES[x]).join(', ');
     return on + ' at ' + hourLabel(s.hour) + ', New York time';
   }
+  function reportSays(s) {
+    const parts = s.parts || REPORT_PARTS;
+    return parts.length === REPORT_PARTS.length ? 'every part' : parts.map((p) => REPORT_PART_WORDS[p][0]).join(', ');
+  }
   const reportDay = (date) => new Date(date + 'T12:00:00Z').toLocaleDateString('en-US', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric' });
   async function reloadEmailReport() {
     const r = await call({ action: 'email_report' });
     if (r.status !== 401) renderEmailReportCard(r);
   }
+  /** The report as it would go now, the editor's draft when one is given; nothing is saved or sent. */
+  async function previewReport(button, draft) {
+    const words = button.textContent;
+    button.disabled = true; button.textContent = 'Gathering…';
+    const r = await call(draft ? { action: 'email_report_preview', value: draft } : { action: 'email_report_preview' });
+    button.disabled = false; button.textContent = words;
+    if (r.status === 401) return;
+    if (r.status !== 200) { toast(r.data.error || 'That did not work.', true); return; }
+    showEmail(r.data.subject, r.data.html);
+  }
+  function sendReportButton(data) {
+    const send = el('button', 'btn small', 'Send one now'); send.type = 'button';
+    send.disabled = !data.ready;
+    send.addEventListener('click', async () => {
+      if (await act(send, { action: 'email_report_send' }, 'Send the report, as saved, to ' + (data.to || 'your email') + ' now? The scheduled ones still come.', { title: 'Send the email report', confirm: 'Send', done: 'Sent. It reaches your inbox in a minute or so.' })) reloadEmailReport();
+    });
+    return send;
+  }
   function renderEmailReportCard({ status, data }) {
     const c = $('sys-report'); c.replaceChildren();
-    c.append(el('h3', '', 'Email report'), el('p', 'hint', 'To your email on the days you pick: what needs you, the week in numbers with the morning briefing, the app in the store and on phones, every service and its limits, and the network.'));
+    c.append(el('h3', '', 'Email report'), el('p', 'hint', 'To your email on the days you pick: what needs you, the week in numbers with the morning briefing, the app in the store and on phones, every service and its limits, and the network. Edit it to change what it says.'));
     if (status !== 200) { c.append(el('p', 'muted mt-12', data.error || 'Could not load the email report.')); return; }
     const s = data.settings;
     const next = !s.on ? 'Off' : data.next ? 'Next: ' + reportDay(data.next) + ' at ' + hourLabel(s.hour) : 'Nothing scheduled';
     const last = data.sent && data.sent.at ? 'Last sent ' + ago(data.sent.at) : 'Not sent yet';
-    const row = setting('To ' + (data.to || 'nobody yet'), reportWhen(s) + ' · ' + next, last);
+    const row = setting((s.title || 'Convoy report') + ' · to ' + (data.to || 'nobody yet'), reportWhen(s) + ' · ' + next + ' · says ' + reportSays(s), last);
     const ctl = el('div', 'actions ctl');
     const edit = el('button', 'btn small', 'Edit'); edit.type = 'button';
     edit.setAttribute('aria-label', 'Edit the email report');
-    edit.addEventListener('click', () => openReportEditor(c, s));
+    edit.addEventListener('click', () => openReportEditor(c, s, data));
     const sw = switchEl(s.on, 'Email report');
     sw.input.addEventListener('change', async () => {
       sw.input.disabled = true;
@@ -4688,68 +4721,77 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     ctl.append(edit, sw.label);
     row.append(ctl);
     c.append(row);
+    if (s.note) c.append(el('p', 'muted small', 'Your note: ' + s.note));
     if (data.why) c.append(el('p', 'muted small', data.why));
     const btns = el('div', 'actions mt-12');
     const preview = el('button', 'btn small', 'Preview'); preview.type = 'button';
-    preview.addEventListener('click', async () => {
-      preview.disabled = true; preview.textContent = 'Gathering…';
-      const r = await call({ action: 'email_report_preview' });
-      preview.disabled = false; preview.textContent = 'Preview';
-      if (r.status === 401) return;
-      if (r.status !== 200) { toast(r.data.error || 'That did not work.', true); return; }
-      showEmail(r.data.subject, r.data.html);
-    });
-    const send = el('button', 'btn small', 'Send one now'); send.type = 'button';
-    send.disabled = !data.ready;
-    send.addEventListener('click', async () => {
-      if (await act(send, { action: 'email_report_send' }, 'Send the report to ' + (data.to || 'your email') + ' now? The scheduled ones still come.', { title: 'Send the email report', confirm: 'Send', done: 'Sent. It reaches your inbox in a minute or so.' })) reloadEmailReport();
-    });
-    btns.append(preview, send);
+    preview.addEventListener('click', () => void previewReport(preview, null));
+    btns.append(preview, sendReportButton(data));
     c.append(btns);
   }
-  function openReportEditor(card, cur) {
+  /** The editor, under the card: what it says and when it goes. */
+  function openReportEditor(card, cur, data) {
     const old = card.querySelector('.report-editor'); if (old) old.remove();
     const panel = el('div', 'panel report-editor');
-    panel.append(el('b', '', 'When it goes'));
+    panel.append(el('b', '', 'Edit the email report'));
     const form = el('form', 'form'); form.noValidate = true;
-    const hourWrap = el('label', '', 'Hour, New York time');
-    const hour = selectEl(Array.from({ length: 24 }, (_, h) => [String(h), hourLabel(h)]), cur.hour);
-    hourWrap.append(hour); form.append(hourWrap);
-    const wrap = el('div', 'wide');
-    wrap.append(el('span', '', 'Days'));
-    const ticks = el('div', 'ticks days');
-    const boxes = DAY_NAMES.map((n, i) => {
-      const l = el('label'), b = el('input');
-      b.type = 'checkbox'; b.value = String(i); b.checked = (cur.days || []).includes(i);
-      l.append(b, document.createTextNode(n));
-      ticks.append(l);
-      return b;
-    });
-    wrap.append(ticks);
+    const field = (label, control, wide) => { const l = el('label', wide ? 'wide' : '', label); l.append(control); form.append(l); return control; };
+    const title = field('Title, the start of the subject', inputEl({ value: cur.title || 'Convoy report', max: 60, placeholder: 'Convoy report' }));
+    const hour = field('Hour, New York time', selectEl(Array.from({ length: 24 }, (_, h) => [String(h), hourLabel(h)]), cur.hour));
+    const note = field('A line of your own, said first (optional)', inputEl({ value: cur.note || '', max: 200, placeholder: 'Reply to the App Store reviews' }), true);
+    const ticks = (label, pairs, picked, cls) => {
+      const wrap = el('div', 'wide');
+      wrap.append(el('span', '', label));
+      const row = el('div', 'ticks' + (cls ? ' ' + cls : ''));
+      const boxes = pairs.map(([value, text, detail]) => {
+        const l = el('label'), b = el('input');
+        b.type = 'checkbox'; b.value = String(value); b.checked = picked.includes(value);
+        l.append(b, document.createTextNode(text));
+        if (detail) l.append(el('span', 'muted small', detail));
+        row.append(l);
+        return b;
+      });
+      wrap.append(row);
+      form.append(wrap);
+      return { wrap, boxes };
+    };
+    const parts = ticks('What it says', REPORT_PARTS.map((p) => [p, REPORT_PART_WORDS[p][0], REPORT_PART_WORDS[p][1]]), cur.parts || REPORT_PARTS);
+    const days = ticks('Days', DAY_NAMES.map((n, i) => [i, n]), cur.days || [1, 4], 'days');
     const presets = el('div', 'actions');
     for (const [label, set] of [['Mon and Thu', [1, 4]], ['Weekdays', [1, 2, 3, 4, 5]], ['Mondays', [1]]]) {
       const b = el('button', 'btn small', label); b.type = 'button';
-      b.addEventListener('click', () => boxes.forEach((x, i) => { x.checked = set.includes(i); }));
+      b.addEventListener('click', () => days.boxes.forEach((x, i) => { x.checked = set.includes(i); }));
       presets.append(b);
     }
-    wrap.append(presets);
-    form.append(wrap);
+    days.wrap.append(presets);
     panel.append(form);
+    const draft = () => ({
+      title: title.value.trim(), note: note.value.trim(), hour: Number(hour.value),
+      parts: parts.boxes.filter((b) => b.checked).map((b) => b.value),
+      days: days.boxes.flatMap((b, i) => (b.checked ? [i] : [])),
+    });
+    const ready = (v) => {
+      if (!v.parts.length) { toast('Pick at least one part for it to say.', true); return false; }
+      if (!v.days.length) { toast('Pick at least one day.', true); return false; }
+      return true;
+    };
     const row = el('div', 'actions');
     const save = el('button', 'btn primary', 'Save'); save.type = 'button';
+    const preview = el('button', 'btn', 'Preview this'); preview.type = 'button';
+    preview.addEventListener('click', () => { const v = draft(); if (ready(v)) void previewReport(preview, v); });
     const cancel = el('button', 'btn', 'Cancel'); cancel.type = 'button';
     cancel.addEventListener('click', () => panel.remove());
     const submit = async () => {
-      const days = boxes.flatMap((b, i) => (b.checked ? [i] : []));
-      if (!days.length) { toast('Pick at least one day.', true); return; }
-      if (await act(save, { action: 'email_report_save', value: { days, hour: Number(hour.value) } }, null, { done: 'Saved.' })) reloadEmailReport();
+      const v = draft();
+      if (!ready(v)) return;
+      if (await act(save, { action: 'email_report_save', value: v }, null, { done: 'Saved. The next one says this.' })) reloadEmailReport();
     };
     save.addEventListener('click', () => void submit());
     form.addEventListener('submit', (e) => { e.preventDefault(); void submit(); });
-    row.append(save, cancel);
-    panel.append(row);
+    row.append(save, preview, sendReportButton(data), cancel);
+    panel.append(row, el('p', 'muted small', 'Send one now sends it as saved: save first to send your changes.'));
     card.append(panel);
-    hour.focus();
+    title.focus();
   }
   /*
     The report as the email draws it, under this page's policy. This is the
