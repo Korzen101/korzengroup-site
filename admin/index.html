@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-6+mpeRaPK91jKZBPtv74zwfV5Q5wc3xGuntg2+yfu6k=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://convoy.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-+3EwaCqlVL4cg/+zVnYNYDyYAhql4Dnz751MiT2SEvY=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://convoy.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -4863,7 +4863,9 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     d.addEventListener('click', (e) => { if (e.target === d) done(); });
     document.body.append(d);
     d.showModal();
-    close.focus();
+    // Close takes the keyboard, but the email opens at its top, not scrolled down to the button.
+    close.focus({ preventScroll: true });
+    d.scrollTop = 0;
   }
   /*
     Every job the database runs on its own (0099, 0100), with its newest run
