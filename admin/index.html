@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-FP2aLbkoO2lTs7qv65wGMHcpDH9O0pVMa7/naIzI3uI=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-0vuVHZpRulIKVbmJp1aqL6RO5M+BQh+J03urBHyqT70='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-HqPFtX/RZuo2S7TwYoF+K6tf5am7ed/mSnr+ds3eoXE=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -343,6 +343,10 @@ dialog::backdrop { background: rgba(3,4,6,.62); -webkit-backdrop-filter: blur(3p
 .sheet .keys { display: grid; grid-template-columns: auto 1fr; gap: 12px 16px; align-items: center; margin-top: 10px; font-size: 14px; color: var(--ink-2); }
 .sheet .keys > span:nth-child(odd) { display: inline-flex; gap: 4px; }
 dialog.palette { width: min(640px, calc(100vw - 24px)); margin: 12vh auto auto; }
+dialog.sheet.email-sheet { width: min(760px, calc(100vw - 16px)); }
+.email-sheet .body { padding: 18px 16px 4px; }
+.email-sheet .subject { margin: 0 0 12px; font-size: 13px; color: var(--ink-2); }
+.email-paper { border-radius: 14px; overflow: hidden; }
 .palette .q { position: relative; border-bottom: 1px solid var(--line); --i: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"); }
 .palette .q::before { content: ""; position: absolute; left: 18px; top: 50%; margin-top: -8px; width: 16px; height: 16px; background: var(--muted); -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
 .palette input { width: 100%; border: 0; background: transparent; padding: 17px 18px 17px 46px; font-size: 16px; color: var(--ink); outline: none; }
@@ -868,7 +872,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     </section>
 
     <section id="system" role="tabpanel" aria-labelledby="tab-system" hidden>
-      <p class="lede">What reaches your phone and whether pushes arrive, the morning briefing, the scheduled clean-up, backups, how you sign in here, and who else can.</p>
+      <p class="lede">What reaches your phone and whether pushes arrive, the morning briefing, the email report, the scheduled clean-up, backups, how you sign in here, and who else can.</p>
       <div class="sys-grid">
         <div class="grid">
           <div class="card" id="sys-alerts" data-needs="alerts_settings"></div>
@@ -876,6 +880,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
         </div>
         <div class="grid">
           <div class="card" id="sys-briefing" data-needs="digests"></div>
+          <div class="card" id="sys-report" data-needs="email_report"></div>
           <div class="card" id="sys-house" data-needs="housekeeping_run"></div>
           <div class="card" id="sys-backup" data-needs="backup_rows"></div>
           <div class="card" id="sys-passkeys"></div>
@@ -1204,6 +1209,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     'rollback_choices', 'rollback_check', 'rollback', 'rollback_probe', 'person_export',
     'briefing_settings', 'briefing_save', 'briefing_preview', 'briefing_send',
     'digests', 'digest_save', 'digest_delete', 'digest_preview', 'digest_send',
+    'email_report', 'email_report_save', 'email_report_preview', 'email_report_send',
   ]);
   let me = { role: 'owner', name: '' };
   const can = (action) => me.role === 'owner' || (!OWNER_ONLY.has(action) && (me.role === 'admin' || MODERATOR.has(action)));
@@ -1599,6 +1605,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     support_replies_save: 'Saved replies changed', support_ack_save: 'Automatic reply changed', person_export: 'Data exported',
     briefing_save: 'Morning briefing changed', briefing_send: 'Morning briefing sent',
     digest_save: 'Notification saved', digest_delete: 'Notification deleted', digest_send: 'Notification sent',
+    email_report_save: 'Email report changed', email_report_send: 'Email report sent',
   };
   // The Dashboard's money pushes, by kind (2026-10-05).
   const PUSH_WORDS = { reminders: 'bills coming up', summary: 'the week in money', large: 'a large charge', low: 'a low balance', budget: 'a budget running high' };
@@ -4376,13 +4383,14 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
   async function loadSystem() {
     $('refresh').disabled = true;
     const ask1 = (ok, body) => (ok ? call(body) : Promise.resolve(null));
-    const [alerts, jobsR, keys, admins, pushes, briefing] = await Promise.all([
+    const [alerts, jobsR, keys, admins, pushes, briefing, report] = await Promise.all([
       ask1(can('alerts'), { action: 'alerts' }),
       ask1(can('jobs'), { action: 'jobs' }),
       call({ action: 'passkeys' }),
       ask1(can('admins'), { action: 'admins' }),
       ask1(can('push_health'), { action: 'push_health' }),
       ask1(can('digests'), { action: 'digests' }),
+      ask1(can('email_report'), { action: 'email_report' }),
     ]);
     $('refresh').disabled = false;
     if (keys.status === 401) return;
@@ -4390,6 +4398,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     if (alerts) renderAlertsCard(alerts, jobsR && jobsR.status === 200 ? jobsR.data.schedule || {} : null);
     if (pushes) renderPushesCard(pushes);
     if (briefing) renderDigestsCard(briefing);
+    if (report) renderEmailReportCard(report);
     if (jobsR) { renderScheduleCard(jobsR); renderHouseCard(jobsR); renderBackupCard(jobsR); }
     renderPasskeys(keys);
     if (admins) renderAdmins(admins);
@@ -4638,6 +4647,181 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     panel.append(row, out);
     card.append(panel);
     name.focus();
+  }
+  /*
+    The emailed report (2026-10-15, Chris: "I would also like a report emailed
+    to me twice a week ..."): on or off, its days and hour, what it would say
+    now, and one now. It goes to the function's REPORT_EMAIL_TO, which this
+    page only ever shows masked. Switched on after its hour, it starts with the
+    next report day; "Send one now" is for one at once.
+  */
+  function reportWhen(s) {
+    const days = (s.days || []).join(',');
+    const on = days === '0,1,2,3,4,5,6' ? 'Every day' : days === '1,2,3,4,5' ? 'Weekdays'
+      : (s.days || []).length === 1 ? DAY_WORDS[s.days[0]] : (s.days || []).map((x) => DAY_NAMES[x]).join(', ');
+    return on + ' at ' + hourLabel(s.hour) + ', New York time';
+  }
+  const reportDay = (date) => new Date(date + 'T12:00:00Z').toLocaleDateString('en-US', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric' });
+  async function reloadEmailReport() {
+    const r = await call({ action: 'email_report' });
+    if (r.status !== 401) renderEmailReportCard(r);
+  }
+  function renderEmailReportCard({ status, data }) {
+    const c = $('sys-report'); c.replaceChildren();
+    c.append(el('h3', '', 'Email report'), el('p', 'hint', 'To your email on the days you pick: what needs you, the week in numbers with the morning briefing, the app in the store and on phones, every service and its limits, and the network.'));
+    if (status !== 200) { c.append(el('p', 'muted mt-12', data.error || 'Could not load the email report.')); return; }
+    const s = data.settings;
+    const next = !s.on ? 'Off' : data.next ? 'Next: ' + reportDay(data.next) + ' at ' + hourLabel(s.hour) : 'Nothing scheduled';
+    const last = data.sent && data.sent.at ? 'Last sent ' + ago(data.sent.at) : 'Not sent yet';
+    const row = setting('To ' + (data.to || 'nobody yet'), reportWhen(s) + ' · ' + next, last);
+    const ctl = el('div', 'actions ctl');
+    const edit = el('button', 'btn small', 'Edit'); edit.type = 'button';
+    edit.setAttribute('aria-label', 'Edit the email report');
+    edit.addEventListener('click', () => openReportEditor(c, s));
+    const sw = switchEl(s.on, 'Email report');
+    sw.input.addEventListener('change', async () => {
+      sw.input.disabled = true;
+      const ok = await act(null, { action: 'email_report_save', value: { on: sw.input.checked } }, null, { done: sw.input.checked ? 'The email report is on.' : 'The email report is off.' });
+      sw.input.disabled = false;
+      if (ok) reloadEmailReport(); else sw.input.checked = !sw.input.checked;
+    });
+    ctl.append(edit, sw.label);
+    row.append(ctl);
+    c.append(row);
+    if (data.why) c.append(el('p', 'muted small', data.why));
+    const btns = el('div', 'actions mt-12');
+    const preview = el('button', 'btn small', 'Preview'); preview.type = 'button';
+    preview.addEventListener('click', async () => {
+      preview.disabled = true; preview.textContent = 'Gathering…';
+      const r = await call({ action: 'email_report_preview' });
+      preview.disabled = false; preview.textContent = 'Preview';
+      if (r.status === 401) return;
+      if (r.status !== 200) { toast(r.data.error || 'That did not work.', true); return; }
+      showEmail(r.data.subject, r.data.html);
+    });
+    const send = el('button', 'btn small', 'Send one now'); send.type = 'button';
+    send.disabled = !data.ready;
+    send.addEventListener('click', async () => {
+      if (await act(send, { action: 'email_report_send' }, 'Send the report to ' + (data.to || 'your email') + ' now? The scheduled ones still come.', { title: 'Send the email report', confirm: 'Send', done: 'Sent. It reaches your inbox in a minute or so.' })) reloadEmailReport();
+    });
+    btns.append(preview, send);
+    c.append(btns);
+  }
+  function openReportEditor(card, cur) {
+    const old = card.querySelector('.report-editor'); if (old) old.remove();
+    const panel = el('div', 'panel report-editor');
+    panel.append(el('b', '', 'When it goes'));
+    const form = el('form', 'form'); form.noValidate = true;
+    const hourWrap = el('label', '', 'Hour, New York time');
+    const hour = selectEl(Array.from({ length: 24 }, (_, h) => [String(h), hourLabel(h)]), cur.hour);
+    hourWrap.append(hour); form.append(hourWrap);
+    const wrap = el('div', 'wide');
+    wrap.append(el('span', '', 'Days'));
+    const ticks = el('div', 'ticks days');
+    const boxes = DAY_NAMES.map((n, i) => {
+      const l = el('label'), b = el('input');
+      b.type = 'checkbox'; b.value = String(i); b.checked = (cur.days || []).includes(i);
+      l.append(b, document.createTextNode(n));
+      ticks.append(l);
+      return b;
+    });
+    wrap.append(ticks);
+    const presets = el('div', 'actions');
+    for (const [label, set] of [['Mon and Thu', [1, 4]], ['Weekdays', [1, 2, 3, 4, 5]], ['Mondays', [1]]]) {
+      const b = el('button', 'btn small', label); b.type = 'button';
+      b.addEventListener('click', () => boxes.forEach((x, i) => { x.checked = set.includes(i); }));
+      presets.append(b);
+    }
+    wrap.append(presets);
+    form.append(wrap);
+    panel.append(form);
+    const row = el('div', 'actions');
+    const save = el('button', 'btn primary', 'Save'); save.type = 'button';
+    const cancel = el('button', 'btn', 'Cancel'); cancel.type = 'button';
+    cancel.addEventListener('click', () => panel.remove());
+    const submit = async () => {
+      const days = boxes.flatMap((b, i) => (b.checked ? [i] : []));
+      if (!days.length) { toast('Pick at least one day.', true); return; }
+      if (await act(save, { action: 'email_report_save', value: { days, hour: Number(hour.value) } }, null, { done: 'Saved.' })) reloadEmailReport();
+    };
+    save.addEventListener('click', () => void submit());
+    form.addEventListener('submit', (e) => { e.preventDefault(); void submit(); });
+    row.append(save, cancel);
+    panel.append(row);
+    card.append(panel);
+    hour.focus();
+  }
+  /*
+    The report as the email draws it, under this page's policy. This is the
+    one place the page parses markup, and only admin-stats' own report, never
+    an email somebody sent (Support shows those as text). Its <style> is taken
+    out and each style attribute renamed before it is parsed (a parsed
+    document keeps this page's policy, which refuses inline styles and says
+    so), then it is rebuilt element by element from a list of tags, each style
+    set through the element's style object, which the policy allows. No
+    script or other tag outside the list is copied; links and pictures only
+    over https, links in a new tab.
+  */
+  const EMAIL_TAGS = new Set(['table', 'tbody', 'thead', 'tr', 'td', 'th', 'div', 'span', 'b', 'strong', 'i', 'em', 'br', 'a', 'img', 'p']);
+  const EMAIL_ATTRS = new Set(['width', 'height', 'align', 'valign', 'colspan', 'rowspan', 'cellpadding', 'cellspacing', 'border', 'class', 'role', 'alt', 'title']);
+  function emailPaper(html) {
+    const host = el('div', 'email-paper');
+    const shadow = host.attachShadow({ mode: 'open' });
+    const css = [];
+    const body = String(html)
+      .replace(/<style\b[^>]*>([\s\S]*?)<\/style\s*>/gi, (_, t) => { css.push(t); return ''; })
+      .replace(/(<[a-z][^<>]*?\s)style(\s*=)/gi, '$1data-e-style$2');
+    const doc = new DOMParser().parseFromString(body, 'text/html');
+    const copy = (from, to) => {
+      for (const node of from.childNodes) {
+        if (node.nodeType === 3) { to.append(document.createTextNode(node.nodeValue)); continue; }
+        if (node.nodeType !== 1) continue;
+        const tag = node.localName;
+        if (!EMAIL_TAGS.has(tag)) { if (!/^(script|style|title|head|template|iframe|object|embed)$/.test(tag)) copy(node, to); continue; }
+        const out = document.createElement(tag);
+        for (const a of node.attributes) {
+          if (a.name === 'data-e-style') out.style.cssText = a.value;
+          else if (EMAIL_ATTRS.has(a.name)) out.setAttribute(a.name, a.value);
+        }
+        const href = node.getAttribute('href') || '', src = node.getAttribute('src') || '';
+        if (tag === 'a' && /^https:\/\//i.test(href)) { out.href = href; out.target = '_blank'; out.rel = 'noopener noreferrer'; }
+        if (tag === 'img' && /^https:\/\//i.test(src)) out.src = src;
+        copy(node, out);
+        to.append(out);
+      }
+    };
+    const root = document.createElement('div');
+    if (doc.body) {
+      const look = doc.body.getAttribute('data-e-style');
+      if (look) root.style.cssText = look;
+      copy(doc.body, root);
+    }
+    try {
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(':host { display: block; } img { max-width: 100%; }\n' + css.join('\n'));
+      shadow.adoptedStyleSheets = [sheet];
+    } catch { /* an old browser: the report unstyled, still readable */ }
+    shadow.append(root);
+    return host;
+  }
+  function showEmail(subject, html) {
+    const d = el('dialog', 'sheet email-sheet');
+    const inner = el('div', 'body');
+    const h = el('h3', '', 'The email report, as it would go now');
+    h.id = 'email-title';
+    d.setAttribute('aria-labelledby', 'email-title');
+    inner.append(h, el('p', 'subject', 'Subject: ' + subject), emailPaper(html));
+    const foot = el('div', 'foot');
+    const close = el('button', 'btn primary', 'Close'); close.type = 'button';
+    foot.append(close);
+    d.append(inner, foot);
+    const done = () => { d.close(); d.remove(); };
+    close.addEventListener('click', done);
+    d.addEventListener('cancel', (e) => { e.preventDefault(); done(); });
+    d.addEventListener('click', (e) => { if (e.target === d) done(); });
+    document.body.append(d);
+    d.showModal();
+    close.focus();
   }
   /*
     Every job the database runs on its own (0099, 0100), with its newest run
