@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-+3EwaCqlVL4cg/+zVnYNYDyYAhql4Dnz751MiT2SEvY=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://convoy.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-byqBOisjDVwBvQA/sIjCivrVfMGck4JsEQx2T58tarE=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://convoy.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -4375,6 +4375,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     runs_ended: ['stuck run ended', 'stuck runs ended'], live_cleared: ['live flag cleared', 'live flags cleared'], positions: ['old position', 'old positions'],
     alerts: ['old alert', 'old alerts'], snapshots: ['old snapshot', 'old snapshots'], posts: ['expired post', 'expired posts'], device_logs: ['old log line', 'old log lines'],
     removed_for_good: ['removed post or comment deleted for good', 'removed posts and comments deleted for good'], hidden_orphans: ['hidden row let go', 'hidden rows let go'],
+    post_photos_removed: ['post photo removed with its post', 'post photos removed with their posts'],
   };
   const houseText = (s) => {
     const parts = Object.entries(s || {}).filter(([, n]) => Number(n) > 0).map(([k, n]) => (HOUSE[k] ? plural(Number(n), HOUSE[k][0], HOUSE[k][1]) : num(n) + ' ' + k));
