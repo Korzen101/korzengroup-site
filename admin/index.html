@@ -13,7 +13,7 @@
   talk to that function and nothing else.
 -->
 <!-- The build replaces the inline allowance below with the SHA-256 of this page's own inline script and style, so nothing injected can run. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-1EWw5m5aqo8BciCcYc4zavTEo3CAQ13KFfAQ66rx08s=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://convoy.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-2s4JikmChAAA95fR/hn2fBtrr6hNon8oGy8lYkDieyc=' 'sha256-cw0XPvmgO+IqHnw/7fip94KIYiiEpa8eqori8H3oLAg='; style-src 'sha256-wz0DZMNK5LL5UkYcW64HtE8ThAM5AClOB3BCF1yI+Qg='; font-src 'self'; img-src 'self' data: https://korzengroup.com https://www.korzengroup.com https://convoy.korzengroup.com https://tile.openstreetmap.org https://tmhditmqlunnebzullwt.supabase.co; connect-src https://tmhditmqlunnebzullwt.supabase.co; base-uri 'none'; form-action 'none'">
 <title>Admin · Korzen LLC</title>
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
@@ -4377,6 +4377,7 @@ pre.code { margin: 8px 0 0; font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo,
     removed_for_good: ['removed post or comment deleted for good', 'removed posts and comments deleted for good'], hidden_orphans: ['hidden row let go', 'hidden rows let go'],
     post_photos_removed: ['post photo removed with its post', 'post photos removed with their posts'],
     post_photos_reported: ['post photo kept because a report shows it', 'post photos kept because reports show them'],
+    crew_invites_expired: ['crew invitation expired', 'crew invitations expired'],
   };
   const houseText = (s) => {
     const parts = Object.entries(s || {}).filter(([, n]) => Number(n) > 0).map(([k, n]) => (HOUSE[k] ? plural(Number(n), HOUSE[k][0], HOUSE[k][1]) : num(n) + ' ' + k));
